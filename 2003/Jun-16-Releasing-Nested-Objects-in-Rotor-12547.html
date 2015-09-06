@@ -1,0 +1,67 @@
+<!--
+Date: 6/16/2003 12:00:00 AM  -08:00
+Permalink: 12547
+Disqus: 12547
+Tags: spout
+-->
+<h1>Releasing Nested Objects in Rotor</h1>
+<p>
+Chris Tavares is making more progress finishing up the Ref-Counting in Rotor 
+project:</p><p style="text-autospace: none"><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:blue">
+class</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;"> 
+FinalizerObj {<br>&nbsp; <span style="color:blue">int</span> n;<br><br>&nbsp; <span style="color:blue">
+public</span> FinalizerObj( <span style="color:blue">int</span> n ) {<br>&nbsp;&nbsp;&nbsp; <span style="color:blue">
+this</span>.n = n;<br>&nbsp;&nbsp;&nbsp; Console.WriteLine(&quot;Created Finalizer 
+object {0}&quot;, n);<br>&nbsp; }<br>&nbsp;<br>&nbsp; ~FinalizerObj() {<br>&nbsp;&nbsp;&nbsp; 
+Console.WriteLine(&quot;Finalizing finalizer object {0}&quot;, n);<br>&nbsp; }<br>}<br>&nbsp;<br></span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:blue">
+class</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;"> 
+FinalizerContainingObj {<br>&nbsp; FinalizerObj subObj1;<br>&nbsp; <span style="color:blue">
+int</span> n;<br>&nbsp; FinalizerObj subObj2;<br>&nbsp;<br>&nbsp; <span style="color:blue">
+public</span> FinalizerContainingObj( <span style="color:blue">int</span> n ) {<br>&nbsp;&nbsp;&nbsp; <span style="color:blue">
+this</span>.n = n;<br>&nbsp;&nbsp;&nbsp; subObj1 = <span style="color:blue">new</span> 
+FinalizerObj(n * 100);<br>&nbsp;&nbsp;&nbsp; subObj2 = <span style="color:blue">
+new</span> FinalizerObj((n * 100) + 1);<br>&nbsp;&nbsp;&nbsp; 
+Console.WriteLine(&quot;Creating containing object {0}&quot;, n);<br>&nbsp; }<br>&nbsp;<br>&nbsp; 
+~FinalizerContainingObj( ) {<br>&nbsp;&nbsp;&nbsp; Console.WriteLine(&quot;Finalizing 
+finalizer containing obj {0}&quot;, n);<br>&nbsp; }<br>}<br>&nbsp;<br></span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:blue">
+class</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;"> 
+TestApp {<br>&nbsp; <span style="color:blue">static</span> <span style="color:blue">
+void</span> Main() {<br>&nbsp;&nbsp;&nbsp; <span style="color:blue">for</span>( <span style="color:blue">
+int</span> i = 0; i &lt; 5; ++i ) LeakAnObj(i);<br>&nbsp; }<br>&nbsp;<br>&nbsp; <span style="color:blue">
+static</span> <span style="color:blue">void</span> LeakAnObj(<span style="color:blue">int</span> 
+i) {<br>&nbsp;&nbsp;&nbsp; FinalizerContainingObj obj = <span style="color:blue">
+new</span> FinalizerContainingObj(i);<br>&nbsp; }<br>}</span></p><p>Running&nbsp;this 
+app under our ref-counted Rotor yields the following output:</p>
+<pre>C:\Home\Chris\Projects\Rotor\src\tests&gt;clix FinalizerTest.exe
+Created Finalizer object 0
+Created Finalizer object 1
+Creating containing object 0
+Finalizing finalizer containing obj 0
+Finalizing finalizer object 0
+Finalizing finalizer object 1
+Created Finalizer object 100
+Created Finalizer object 101
+Creating containing object 1
+Finalizing finalizer containing obj 1
+Finalizing finalizer object 100
+Finalizing finalizer object 101
+Created Finalizer object 200
+Created Finalizer object 201
+Creating containing object 2
+Finalizing finalizer containing obj 2
+Finalizing finalizer object 200
+Finalizing finalizer object 201
+Created Finalizer object 300
+Created Finalizer object 301
+Creating containing object 3
+Finalizing finalizer containing obj 3
+Finalizing finalizer object 300
+Finalizing finalizer object 301
+Created Finalizer object 400
+Created Finalizer object 401
+Creating containing object 4
+Finalizing finalizer containing obj 4
+Finalizing finalizer object 400
+Finalizing finalizer object 401</pre><p>In other words, all top-level and 
+2nd-level objects are finalized deterministically. Wahoo!</p>
+

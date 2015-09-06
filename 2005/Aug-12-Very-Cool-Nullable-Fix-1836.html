@@ -1,0 +1,20 @@
+<!--
+Date: 8/12/2005 8:34:29 AM  -08:00
+Permalink: 1836
+Disqus: 1836
+Tags: tools
+-->
+<h1>Very Cool Nullable Fix</h1>
+<P>.NET 2.0 has the idea of a "nullable" type built right in, e.g.</P>
+<BLOCKQUOTE dir=ltr style="MARGIN-RIGHT: 0px">
+<P>Nullable&lt;int&gt; x = null; // legal</P></BLOCKQUOTE>
+<P>This adds nullability to value types as well as reference types. Further, C# adds direct support with this syntax:</P>
+<BLOCKQUOTE dir=ltr style="MARGIN-RIGHT: 0px">
+<P>int? x = null; // legal</P></BLOCKQUOTE>
+<P>However, while the C# language was updated to support nullability, the CLR was not, which lead to problems with boxing:</P>
+<BLOCKQUOTE dir=ltr style="MARGIN-RIGHT: 0px">
+<P>int? x = null;<BR>object y = x;<BR>// a boxed Nullable&lt;T&gt; was never null<BR>if( y != null ) Console.WriteLine("Doh!");</P></BLOCKQUOTE>
+<P>This problem was fixed this late in the .NET 2.0 game by getting a <EM>bunch </EM>of folks together to rejigger things so that the following works the way you expect:</P>
+<BLOCKQUOTE dir=ltr style="MARGIN-RIGHT: 0px">
+<P>int? x = null;<BR>object y = x;<BR>// a boxed Nullable&lt;T&gt; can now be null<BR>if( y == null ) Console.WriteLine("Wahoo!");</P></BLOCKQUOTE>
+<P><A href="http://blogs.msdn.com/somasegar/archive/2005/08/11/450640.aspx">Somasgar has the full scoop.</A></P>

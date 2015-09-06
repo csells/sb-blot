@@ -1,0 +1,12 @@
+<!--
+Date: 11/4/2005 10:32:17 PM  -08:00
+Permalink: 1898
+Disqus: 1898
+Tags: tools
+-->
+<h1>Generics Q: Best way to convert a string to a T?</h1>
+<P>What's the best way to implement the following semantic (feel free to change the signature)?</P>
+<P>bool ConvertFromStringToT&lt;T&gt;(string in, ref T out) {...}</P>
+<P>I'd like to be able to call it like so:</P>
+<P>int x = 452;<BR>double y = 77.7;<BR><BR>ConvertFromStringToT("123", ref x); // x is now 123<BR>ConvertFromStringToT("abc", ref y); // y remains 77.7</P>
+<P>I came up with a solution that relies more than I'd like on run-time behavior rather than compile-time behavior, which is why I'm asking.</P>

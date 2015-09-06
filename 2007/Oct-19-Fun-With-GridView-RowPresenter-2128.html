@@ -1,0 +1,100 @@
+<!--
+Date: 10/19/2007 12:44:57 PM  -08:00
+Permalink: 2128
+Disqus: 2128
+Tags: spout,writing
+-->
+<h1>Fun With GridView*RowPresenter</h1>
+<DIV id=ctl00_Content1_divcontent>
+<P>I was searching for advanced WPF tree samples the other day and ran into <A href="http://blogs.msdn.com/atc_avalon_team/archive/2006/03/01/541206.aspx"><FONT color=#000000>t</FONT></A><A href="http://blogs.msdn.com/atc_avalon_team/archive/2006/03/01/541206.aspx"><FONT color=#000000>he tree-list-view sample</FONT></A>:</P>
+<P><IMG src="http://blogs.msdn.com/photos/atc_avalon_team/images/541212/original.aspx"></P>
+<P>Notice how the left-most column does the indenting, while the rest of the columns line up nicely. The code for the tree-view-sample is a little C# and a bunch of sophisticated XAML templates I didn't understand, so I stripped it down to the bare nubbins to discover what was going on. Assume a simple class holding the data:</P><FONT color=#0000ff><PRE>class</FONT> <FONT color=#2b91af>Person</FONT><FONT class=style9> {
+  </FONT><FONT color=#2b91af>List</FONT>&lt;<FONT color=#2b91af>Person</FONT>&gt; children = <FONT color=#0000ff>new</FONT> <FONT color=#2b91af>List</FONT>&lt;<FONT color=#2b91af>Person</FONT><FONT class=style9>&gt;();
+  </FONT><FONT color=#0000ff>public</FONT> <FONT color=#0000ff>string</FONT> Name { <FONT color=#0000ff>get</FONT>; <FONT color=#0000ff>set</FONT><FONT class=style9>; }
+  </FONT><FONT color=#0000ff>public</FONT> <FONT color=#0000ff>int</FONT> Age { <FONT color=#0000ff>get</FONT>; <FONT color=#0000ff>set</FONT><FONT class=style9>; }
+  </FONT><FONT color=#0000ff>public</FONT> <FONT color=#2b91af>List</FONT>&lt;<FONT color=#2b91af>Person</FONT>&gt; Children { <FONT color=#0000ff>get</FONT> { <FONT color=#0000ff>return</FONT><FONT class=style9> children; } }
+}</PRE></FONT>
+<P>The juicy bit that makes the tree-list view above possible is the GridViewRowPresenter:</P><FONT color=#0000ff><PRE>&lt;</FONT><FONT color=#a31515>Window ...</FONT>
+<FONT color=#ff0000>  xmlns</FONT><FONT color=#0000ff>:</FONT><FONT color=#ff0000>local</FONT><FONT class=style9 color=#0000ff>="clr-namespace:WpfApplication10"
+</FONT> <FONT color=#ff0000> Title</FONT><FONT class=style9 color=#0000ff>="GridView*RowPresenter Fun"&gt;
+</FONT><FONT color=#0000ff>
+  &lt;</FONT><FONT color=#a31515>Window.DataContext</FONT><FONT color=#0000ff>&gt;
+    &lt;</FONT><FONT color=#a31515>local</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Person</FONT><FONT color=#ff0000> Name</FONT><FONT color=#0000ff>="John"</FONT><FONT color=#ff0000> Age</FONT><FONT class=style9 color=#0000ff>="13" /&gt;
+  &lt;/</FONT><FONT color=#a31515>Window.DataContext</FONT><FONT color=#0000ff>&gt;
+
+<STRONG>  &lt;</STRONG></FONT><FONT color=#a31515><STRONG>GridViewRowPresenter</STRONG></FONT><FONT color=#ff0000><STRONG> Content</STRONG></FONT><FONT color=#0000ff><STRONG>="{</STRONG></FONT><FONT color=#a31515><STRONG>Binding</STRONG></FONT><FONT class=style9 color=#0000ff><STRONG>}"&gt;
+    &lt;</STRONG></FONT><FONT color=#a31515><STRONG>GridViewRowPresenter.Columns</STRONG></FONT><FONT color=#0000ff><STRONG>&gt;</STRONG></FONT>
+<FONT color=#008000><STRONG>      &lt;!-- NOTE: must explicitly create the collection --&gt;
+        </STRONG></FONT><FONT color=#0000ff><STRONG>&lt;</STRONG></FONT><FONT color=#a31515><STRONG>GridViewColumnCollection</STRONG></FONT><FONT color=#0000ff>&gt;
+<STRONG>          &lt;</STRONG></FONT><FONT color=#a31515><STRONG>GridViewColumn</STRONG></FONT><FONT color=#ff0000><STRONG> Header</STRONG></FONT><FONT color=#0000ff><STRONG>="Name"</STRONG></FONT><FONT color=#ff0000> <STRONG>DisplayMemberBinding</STRONG></FONT><FONT color=#0000ff><STRONG>="{</STRONG></FONT><FONT color=#a31515><STRONG>Binding</STRONG></FONT><FONT color=#ff0000><STRONG> Name</STRONG></FONT><FONT class=style9 color=#0000ff><STRONG>}" /&gt;
+          &lt;</STRONG></FONT><FONT color=#a31515><STRONG>GridViewColumn</STRONG></FONT><FONT color=#ff0000><STRONG> Header</STRONG></FONT><FONT color=#0000ff><STRONG>="Age"</STRONG></FONT><FONT color=#ff0000> <STRONG>DisplayMemberBinding</STRONG></FONT><FONT color=#0000ff><STRONG>="{</STRONG></FONT><FONT color=#a31515><STRONG>Binding</STRONG></FONT><FONT color=#ff0000><STRONG> Age</STRONG></FONT><FONT class=style9 color=#0000ff><STRONG>}" /&gt;
+      &lt;/</STRONG></FONT><FONT color=#a31515><STRONG>GridViewColumnCollection</STRONG></FONT><FONT color=#0000ff>&gt;<STRONG>
+    &lt;/</STRONG></FONT><FONT color=#a31515><STRONG>GridViewRowPresenter.Columns</STRONG></FONT><FONT color=#0000ff>&gt;<STRONG>
+</STRONG></FONT><SPAN class=style1><STRONG>  </STRONG></SPAN><FONT color=#0000ff><STRONG>&lt;/</STRONG></FONT><FONT color=#a31515><STRONG>GridViewRowPresenter</STRONG></FONT><FONT color=#0000ff>&gt;<STRONG>
+</STRONG>
+&lt;/</FONT><FONT color=#a31515>Window</FONT><FONT color=#0000ff>&gt;</PRE></FONT>
+<P>Here, we're creating an instance of the GridViewRowPresenter, which is the thing that the ListView creates for you if you use the GridView. Here, we're using it explicitly and setting the columns explicitly, binding it to our data and yielding the following:</P>
+<P><IMG height=97 alt="" src="/public/writing/FunWithGridViewPresenter_files/img16.jpg" width=377></P>
+<P>Notice that we're showing a single item, arranged as a row of values according to our column definition above. It's boring and not at all interactive, at least because we don't have a header, which we can get with an instance of the GridViewHeaderRowPresenter:</P><FONT color=#0000ff><PRE>&lt;</FONT><FONT color=#a31515>Window.Resources</FONT><FONT color=#0000ff>&gt;
+  &lt;</FONT><FONT color=#a31515>GridViewColumnCollection</FONT><FONT color=#ff0000> x</FONT><FONT color=#0000ff>:</FONT><FONT color=#ff0000>Key</FONT><FONT class=style9 color=#0000ff>="columns"&gt;
+    &lt;</FONT><FONT color=#a31515>GridViewColumn</FONT><FONT color=#ff0000> Header</FONT><FONT color=#0000ff>="Name"</FONT><FONT color=#ff0000> DisplayMemberBinding</FONT><FONT color=#0000ff>="{</FONT><FONT color=#a31515>Binding</FONT><FONT color=#ff0000> Name</FONT><FONT class=style9 color=#0000ff>}" /&gt;
+    &lt;</FONT><FONT color=#a31515>GridViewColumn</FONT><FONT color=#ff0000> Header</FONT><FONT color=#0000ff>="Age"</FONT><FONT color=#ff0000> DisplayMemberBinding</FONT><FONT color=#0000ff>="{</FONT><FONT color=#a31515>Binding</FONT><FONT color=#ff0000> Age</FONT><FONT class=style9 color=#0000ff>}" /&gt;
+  &lt;/</FONT><FONT color=#a31515>GridViewColumnCollection</FONT><FONT color=#0000ff>&gt;
+&lt;/</FONT><FONT color=#a31515>Window.Resources</FONT><FONT color=#0000ff>&gt;
+
+&lt;</FONT><FONT color=#a31515>StackPanel</FONT><FONT color=#0000ff>&gt;
+</FONT><FONT class=style9 color=#008000><STRONG>  &lt;!-- NOTE: must share access to same column collection to get shared resizing --&gt;
+  </STRONG></FONT><FONT color=#0000ff><STRONG>&lt;</STRONG></FONT><FONT color=#a31515><STRONG>GridViewHeaderRowPresenter</STRONG></FONT><FONT color=#ff0000><STRONG> Columns</STRONG></FONT><FONT color=#0000ff><STRONG>="{</STRONG></FONT><FONT color=#a31515><STRONG>StaticResource</STRONG></FONT><FONT color=#ff0000><STRONG> columns</STRONG></FONT><FONT color=#0000ff><STRONG>}" /&gt;
+</STRONG>  &lt;</FONT><FONT color=#a31515>GridViewRowPresenter</FONT><FONT color=#ff0000> Content</FONT><FONT color=#0000ff>="{</FONT><FONT color=#a31515>Binding</FONT><FONT color=#0000ff>}"</FONT><FONT color=#ff0000> Columns</FONT><FONT color=#0000ff>="{</FONT><FONT color=#a31515>StaticResource</FONT><FONT color=#ff0000> columns</FONT><FONT class=style9 color=#0000ff>}" /&gt;
+&lt;/</FONT><FONT color=#a31515>StackPanel</FONT><FONT color=#0000ff>&gt;</PRE></FONT>
+<P>Here we're creating an instance of the row presenter, passing in a reference to the same columns collection used by the row presenter so that the column sizes and positions are shared between the header row and the row presenters:</P>
+<P><IMG height=111 alt="" src="/public/writing/FunWithGridViewPresenter_files/img18.jpg" width=369></P>
+<P>If we want more than one piece of data, all we have to do is use an items control with an item template that in turn creates a row presenter for each item in the collection:</P><FONT color=#0000ff><PRE>&lt;</FONT><FONT color=#a31515>Window.DataContext</FONT><FONT color=#0000ff>&gt;
+  &lt;</FONT><FONT color=#a31515>x</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Array</FONT><FONT color=#ff0000> Type</FONT><FONT color=#0000ff>="{</FONT><FONT color=#a31515>x</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Type</FONT><FONT color=#ff0000> local</FONT><FONT color=#0000ff>:</FONT><FONT color=#ff0000>Person</FONT><FONT class=style9 color=#0000ff>}"&gt;
+    &lt;</FONT><FONT color=#a31515>local</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Person</FONT><FONT color=#ff0000> Name</FONT><FONT color=#0000ff>="John"</FONT><FONT color=#ff0000> Age</FONT><FONT class=style9 color=#0000ff>="13" /&gt;
+    &lt;</FONT><FONT color=#a31515>local</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Person</FONT><FONT color=#ff0000> Name</FONT><FONT color=#0000ff>="Tom"</FONT><FONT color=#ff0000> Age</FONT><FONT class=style9 color=#0000ff>="12" /&gt;
+  &lt;/</FONT><FONT color=#a31515>x</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Array</FONT><FONT color=#0000ff>&gt;
+&lt;/</FONT><FONT color=#a31515>Window.DataContext</FONT><FONT color=#0000ff>&gt;
+
+&lt;</FONT><FONT color=#a31515>Window.Resources</FONT><FONT color=#0000ff>&gt;
+  &lt;</FONT><FONT color=#a31515>GridViewColumnCollection</FONT><FONT color=#ff0000> x</FONT><FONT color=#0000ff>:</FONT><FONT color=#ff0000>Key</FONT><FONT class=style9 color=#0000ff>="columns"&gt;
+    &lt;</FONT><FONT color=#a31515>GridViewColumn</FONT><FONT color=#ff0000> Header</FONT><FONT color=#0000ff>="Name"</FONT><FONT color=#ff0000> DisplayMemberBinding</FONT><FONT color=#0000ff>="{</FONT><FONT color=#a31515>Binding</FONT><FONT color=#ff0000> Name</FONT><FONT class=style9 color=#0000ff>}" /&gt;
+    &lt;</FONT><FONT color=#a31515>GridViewColumn</FONT><FONT color=#ff0000> Header</FONT><FONT color=#0000ff>="Age"</FONT><FONT color=#ff0000> DisplayMemberBinding</FONT><FONT color=#0000ff>="{</FONT><FONT color=#a31515>Binding</FONT><FONT color=#ff0000> Age</FONT><FONT class=style9 color=#0000ff>}" /&gt;
+  &lt;/</FONT><FONT color=#a31515>GridViewColumnCollection</FONT><FONT color=#0000ff>&gt;
+&lt;/</FONT><FONT color=#a31515>Window.Resources</FONT><FONT color=#0000ff>&gt;
+
+&lt;</FONT><FONT color=#a31515>StackPanel</FONT><FONT color=#0000ff>&gt;
+  &lt;</FONT><FONT color=#a31515>GridViewHeaderRowPresenter</FONT><FONT color=#ff0000> Columns</FONT><FONT color=#0000ff>="{</FONT><FONT color=#a31515>StaticResource</FONT><FONT color=#ff0000> columns</FONT><FONT class=style9 color=#0000ff>}" /&gt;
+<STRONG>  &lt;</STRONG></FONT><FONT color=#a31515><STRONG>ItemsControl</STRONG></FONT><FONT color=#ff0000> <STRONG>ItemsSource</STRONG></FONT><FONT color=#0000ff><STRONG>="{</STRONG></FONT><FONT color=#a31515><STRONG>Binding</STRONG></FONT><FONT class=style9 color=#0000ff><STRONG>}"&gt;
+    &lt;</STRONG></FONT><FONT color=#a31515><STRONG>ItemsControl.ItemTemplate</STRONG></FONT><FONT color=#0000ff>&gt;
+<STRONG>      &lt;</STRONG></FONT><FONT color=#a31515><STRONG>DataTemplate</STRONG></FONT><FONT color=#0000ff>&gt;
+<STRONG>        &lt;</STRONG></FONT><FONT color=#a31515><STRONG>GridViewRowPresenter</STRONG></FONT><FONT color=#ff0000><STRONG> Content</STRONG></FONT><FONT color=#0000ff><STRONG>="{</STRONG></FONT><FONT color=#a31515><STRONG>Binding</STRONG></FONT><FONT color=#0000ff><STRONG>}"</STRONG></FONT><FONT color=#ff0000><STRONG> Columns</STRONG></FONT><FONT color=#0000ff><STRONG>="{</STRONG></FONT><FONT color=#a31515><STRONG>StaticResource</STRONG></FONT><FONT color=#ff0000><STRONG> columns</STRONG></FONT><FONT class=style9 color=#0000ff><STRONG>}" /&gt;
+      &lt;/</STRONG></FONT><FONT color=#a31515><STRONG>DataTemplate</STRONG></FONT><FONT color=#0000ff>&gt;<STRONG>
+    &lt;/</STRONG></FONT><FONT color=#a31515><STRONG>ItemsControl.ItemTemplate</STRONG></FONT><FONT color=#0000ff>&gt;<STRONG>
+  &lt;/</STRONG></FONT><FONT color=#a31515><STRONG>ItemsControl</STRONG></FONT><FONT color=#0000ff>&gt;<STRONG>
+</STRONG>&lt;/</FONT><FONT color=#a31515>StackPanel</FONT><FONT color=#0000ff>&gt;</PRE></FONT>
+<P>Now, we've got a stack panel that combines the header to the grid view rows with the grid view rows themselves, one per item in our collection:</P>
+<P><IMG height=124 alt="" src="/public/writing/FunWithGridViewPresenter_files/img1C.jpg" width=367></P>
+<P>Now on a rush of discovery and simplicity, I took the next step to show hierarchical data, hosting the data in a TreeView control and using a hierarchical data template so that I could build the tree list view shown above with the tiniest bit of XAML and code:</P><FONT color=#0000ff><PRE>&lt;</FONT><FONT color=#a31515>Window.DataContext</FONT><FONT color=#0000ff>&gt;
+  &lt;</FONT><FONT color=#a31515>x</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Array</FONT><FONT color=#ff0000> Type</FONT><FONT color=#0000ff>="{</FONT><FONT color=#a31515>x</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Type</FONT><FONT color=#ff0000> local</FONT><FONT color=#0000ff>:</FONT><FONT color=#ff0000>Person</FONT><FONT class=style9 color=#0000ff>}"&gt;
+  &lt;</FONT><FONT color=#a31515>local</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Person</FONT><FONT color=#ff0000> Name</FONT><FONT color=#0000ff>="Chris"</FONT><FONT color=#ff0000> Age</FONT><FONT class=style9 color=#0000ff>="38"&gt;
+    &lt;</FONT><FONT color=#a31515>local</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Person.Children</FONT><FONT color=#0000ff>&gt;
+      &lt;</FONT><FONT color=#a31515>local</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Person</FONT><FONT color=#ff0000> Name</FONT><FONT color=#0000ff>="John"</FONT><FONT color=#ff0000> Age</FONT><FONT class=style9 color=#0000ff>="13" /&gt;
+      &lt;</FONT><FONT color=#a31515>local</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Person</FONT><FONT color=#ff0000> Name</FONT><FONT color=#0000ff>="Tom"</FONT><FONT color=#ff0000> Age</FONT><FONT class=style9 color=#0000ff>="12" /&gt;
+    &lt;/</FONT><FONT color=#a31515>local</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Person.Children</FONT><FONT color=#0000ff>&gt;
+  &lt;/</FONT><FONT color=#a31515>local</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Person</FONT><FONT color=#0000ff>&gt;
+  &lt;</FONT><FONT color=#a31515>local</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Person</FONT><FONT color=#ff0000> Name</FONT><FONT color=#0000ff>="Melissa"</FONT><FONT color=#ff0000> Age</FONT><FONT class=style9 color=#0000ff>="39" /&gt;
+  &lt;/</FONT><FONT color=#a31515>x</FONT><FONT color=#0000ff>:</FONT><FONT color=#a31515>Array</FONT><FONT color=#0000ff>&gt;
+&lt;/</FONT><FONT color=#a31515>Window.DataContext</FONT><FONT color=#0000ff>&gt;</FONT></PRE><PRE>...</PRE><PRE><SPAN class=style8><FONT color=#0000ff>&lt;</FONT><FONT color=#a31515>StackPanel</FONT></SPAN><FONT color=#0000ff>&gt;
+  &lt;</FONT><SPAN class=style8><FONT color=#a31515>GridViewHeaderRowPresenter</FONT><FONT color=#ff0000> Columns</FONT><FONT color=#0000ff>="{</FONT><FONT color=#a31515>StaticResource</FONT><FONT color=#ff0000> columns</FONT></SPAN><FONT class=style9 color=#0000ff><SPAN class=style8>}" /&gt;
+  &lt;</SPAN><SPAN class=style1><STRONG>TreeView</STRONG></SPAN></FONT><FONT color=#ff0000> ItemsSource</FONT><SPAN class=style8><FONT color=#0000ff>="{</FONT><FONT color=#a31515>Binding</FONT></SPAN><FONT color=#0000ff><SPAN class=style8>}" </SPAN></FONT><FONT color=#ff0000>BorderThickness</FONT><FONT color=#0000ff>="0"</FONT><FONT class=style6 color=#0000ff><SPAN class=style8>&gt;
+    &lt;</SPAN><SPAN class=style1>TreeView</SPAN></FONT><FONT color=#a31515>.ItemTemplate</FONT><FONT color=#0000ff>&gt;
+</FONT><SPAN class=style1><STRONG>      </STRONG></SPAN><SPAN class=style8><FONT color=#0000ff><STRONG>&lt;</STRONG></FONT><FONT color=#a31515><STRONG>HierarchicalDataTemplate</STRONG></FONT></SPAN><FONT color=#ff0000> <STRONG>ItemsSource</STRONG></FONT><SPAN class=style8><FONT color=#0000ff><STRONG>="{</STRONG></FONT><FONT color=#a31515><STRONG>Binding</STRONG></FONT><FONT color=#ff0000><STRONG> Children</STRONG></FONT></SPAN><FONT class=style6 color=#0000ff><SPAN class=style8><STRONG>}"&gt;
+</STRONG>       &lt;</SPAN></FONT><SPAN class=style8><FONT color=#a31515>GridViewRowPresenter</FONT><FONT color=#ff0000> Content</FONT><FONT color=#0000ff>="{</FONT><FONT color=#a31515>Binding</FONT><FONT color=#0000ff>}"</FONT><FONT color=#ff0000> Columns</FONT><FONT color=#0000ff>="{</FONT><FONT color=#a31515>StaticResource</FONT><FONT color=#ff0000> columns</FONT></SPAN><FONT class=style9 color=#0000ff><SPAN class=style8>}" /&gt;
+<STRONG>      &lt;/</STRONG></SPAN></FONT><FONT color=#a31515><STRONG>HierarchicalDataTemplate</STRONG></FONT><FONT color=#0000ff><SPAN class=style6>&gt;</SPAN><STRONG>
+</STRONG>    &lt;/<SPAN class=style1>TreeView</SPAN></FONT><FONT color=#a31515>.ItemTemplate</FONT><FONT color=#0000ff>&gt;
+  &lt;/<SPAN class=style1><STRONG>TreeView</STRONG></SPAN>&gt;
+&lt;/</FONT><FONT color=#a31515>StackPanel</FONT><FONT color=#0000ff>&gt;</PRE></FONT>
+<P>Unfortunately, that's where we run into the limit of what we can do without cranking things up a notch:</P>
+<P><IMG height=161 alt="" src="/public/writing/FunWithGridViewPresenter_files/img30.jpg" width=369>&nbsp;</P>
+<P>Beside the border around the tree view (caused by focus), the worst part about our simple tree-list-view is that, while each grid view row has the proper column sizes and relative positions, because the tree does the indenting, all of the columns are offset, not just the first one. The key to fixing this problem is to put the styling for indenting into the template for the first column only using the CellTemplate property of the GridViewRowColumn, taking over the drawing of the tree view items, which is what <A href="http://blogs.msdn.com/atc_avalon_team/archive/2006/03/01/541206.aspx"><FONT color=#000000>the tree-list-view sample</FONT></A> does.</P></DIV>

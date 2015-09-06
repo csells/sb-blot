@@ -1,0 +1,11 @@
+<!--
+Date: 10/9/2005 9:18:11 AM  -08:00
+Permalink: 1871
+Disqus: 1871
+Tags: .net
+-->
+<h1>John Gossman on Model/View/ViewModel</h1>
+<P>John Gossman, architect on the Sparkle team, has just made a post about <A href="http://blogs.msdn.com/johngossman/archive/2005/10/08/478683.aspx">how Sparkle uses data binding to hook up the view of the data to the data itself</A>.</P>
+<P>Interestingly, his post isn't about whether they used data binding -- that's a foregone conclusion. Data binding is so powerful that pretty much every non-trivial Avalon app will use it, and Sparkle (a large app with a very rich UI) uses the hell out of it.</P>
+<P>The main thrust of the Model/View/ViewModel architecture seems to be that on top of the data ("the Model"), there's another layer of non-visual components ("the ViewModel") that map the concepts of the data more closely to the concepts of the view of the data ("the View"). It's the ViewModel that the View binds to, not the Model directly.</P>
+<P>I've been a fan of value converters (implementations of IValueConverter) for this kind of work, but John's technique has its charms, not least that it allows for much more radical slicing and dicing than value converters allow easily.</P>

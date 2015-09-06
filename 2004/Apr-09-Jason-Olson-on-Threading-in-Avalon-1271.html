@@ -1,0 +1,19 @@
+<!--
+Date: 4/9/2004 12:26:41 PM  -08:00
+Permalink: 1271
+Disqus: 1271
+Tags: .net
+-->
+<h1>Jason Olson on Threading in Avalon</h1>
+<P>Jason Olson, an enterprising 3rd party, posts a look at the benefits of knowing about threading when building an entire UI stack from scratch. Instead of requiring you to transition from a worker thread to the UI thread to talk to a control, <A href="http://geekswithblogs.net/jolson/articles/3749.aspx">Avalon lets you grab the UI context that owns the control and party on</A>:</P>
+<P class=MsoNormal style="BACKGROUND: #e6e6e6; MARGIN: 0in 0in 0pt"><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana">void ShowProgress(int secondsElapsed) </SPAN><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana">{<?xml:namespace prefix = o ns = "urn:schemas-microsoft-com:office:office" /><o:p></o:p></SPAN></P>
+<P class=MsoNormal style="BACKGROUND: #e6e6e6; MARGIN: 0in 0in 0pt"><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana"><SPAN style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>try </SPAN><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana">{<o:p></o:p></SPAN></P>
+<P class=MsoNormal style="BACKGROUND: #e6e6e6; MARGIN: 0in 0in 0pt"><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana"><SPAN style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN><B style="mso-bidi-font-weight: normal">this.Context.Enter();<o:p></o:p></B></SPAN></P>
+<P class=MsoNormal style="BACKGROUND: #e6e6e6; MARGIN: 0in 0in 0pt"><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana"><SPAN style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN>txtSeconds.Text = secondsElapsed.ToString();</SPAN></P>
+<P class=MsoNormal style="BACKGROUND: #e6e6e6; MARGIN: 0in 0in 0pt"><B style="mso-bidi-font-weight: normal"><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana"><SPAN style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></B><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana">}<o:p></o:p></SPAN></P>
+<P class=MsoNormal style="BACKGROUND: #e6e6e6; MARGIN: 0in 0in 0pt"><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana"><SPAN style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>finally </SPAN><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana">{</SPAN></P>
+<P class=MsoNormal style="BACKGROUND: #e6e6e6; MARGIN: 0in 0in 0pt"><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <STRONG>this.Context.Exit();<o:p></o:p></STRONG></SPAN></P>
+<P class=MsoNormal style="BACKGROUND: #e6e6e6; MARGIN: 0in 0in 0pt"><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana"><SPAN style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}<o:p></o:p></SPAN></P>
+<P class=MsoNormal style="BACKGROUND: #e6e6e6; MARGIN: 0in 0in 0pt"><SPAN style="FONT-SIZE: 8pt; FONT-FAMILY: Verdana">}<o:p></o:p></SPAN></P>
+<P>This is far simpler code than what would be required in code based on User32. Nice.</P>
+<p>UPDATE: <a href="http://www.interact-sw.co.uk/iangblog/2004/04/09/usinguicontext">Ian Griffiths points out that the code can be even sweeter</a>!</p>

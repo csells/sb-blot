@@ -1,0 +1,125 @@
+<!--
+Date: 11/11/2001 12:00:00 AM  -08:00
+Permalink: 12598
+Disqus: 12598
+Tags: spout
+-->
+<h1>If you knew .NET like I know .NET...</h1>
+<p>
+            <i><span class="created">Sun, 11/11/01</span></i>
+        </p>
+        <p>
+            Many years ago when Java was new, I dove in. My first program I wrote like a 
+            C++ programmer and I didn't get it. Then I rewrote the program as a Java 
+            program and it was much nicer, but I still didn't get it. Then I discovered the 
+            lack of deterministic finalization and that's all she wrote; my C++ thinking 
+            turned me away (the fact that Java was ashamed of my favorite platform and, in 
+            fact, all platforms didn't help).
+        </p>
+        <p>
+            Now I've spent the last year doing .NET programming, mostly focused on Managed 
+            C++ and I didn't get it. I've participated in DevelopMentor's
+                ASP.NET and
+                Guerrilla .NET and loved both of them, but still didn't get it. I 
+            rewrote (with my good friend Jon's help) my entire web site in ASP.NET and 
+            didn't get it. And I spent most of last week preparing for my teach of the 
+            latest version of DevelopMentor's
+                Essential .NET and I *still* didn't get it. Until today. Today I 
+            finally got it. The major power of Java wasn't that it was platform 
+            independent, as Sun so often touts. The power of Java (and therefore the power 
+            of .NET) is that it provides a major productivity boost for the programmer. I 
+            realized this today for the first time.
+        </p>
+        <p>
+            It started yesterday. Yesterday I ported a tiny little application (<a href="/public/samples/timecli.zip">a 
+                time client</a>) from MFC and C++ to .NET and C#. The first time I ported 
+            it, I ported it like it was still C++ and the result was ugly (I was trying to 
+            do the standard library trick of representing time as a the number of seconds 
+            since some marker time and then translating it into a formatted string at the 
+            last moment). In fact, I couldn't even do the nice formatting of the current 
+            time since .NET didn't support that means of conversion. But then I remembered 
+            that, unlike C++, .NET has proper date, time and span classes. Once I rewrote 
+            it in .NET style, it was a thing of beauty. With knowledge of only the name of 
+            the sockets namespace (System.Net), I was able to learn .NET and build a time 
+            client in under an hour. To paraphrase the closing sentence of <a href="/public/writing/#extapps">
+                one of my first articles</a>, <i>it just makes you want to grab the back the of 
+                computer monitor and feel the power of .NET</i>.
+        </p>
+        <p>
+            Encouraged by my success and armed with the courage of my convictions (and a 
+            couple of <a href="http://www.tlsecurity.net/Textware/Misc/draft-movva-msn-messenger-protocol-00.txt">
+                web</a> <a href="http://www.venkydude.com/articles/msn2.htm">sites</a>
+            given me by <a href="http://staff.develop.com/jasonw/">Jason</a>
+            and <a href="http://www.razorsoft.net/">Peter</a>), I sat down 
+            to write a MSN Instant Messenger application. Those of you unlucky enough to 
+            have me as an IM contact saw me log in and log out about a hundred times 
+            yesterday (sorry : ). This was because every step of the way, I'd run my client 
+            and every step of the way, I'd make more progress. 90% of my code was reading 
+            and writing from the sockets and parsing strings. For the former, I used the 
+            StreamReader and StreamWriter and for the latter, I used the Regex class. Both 
+            did a ton of heavy lifting so I didn't have to. It was amazing.
+        </p>
+        <p>
+            But yesterday, I still didn't get it. I was so focused on getting my IM client 
+            working (about a half day's work) that I completely missed the magnitude of 
+            what I was doing. I was implementing an async notification-based socket 
+            protocol after reading an example doc, skimming a spec and digging in. And the 
+            code I ended up with wasn't spaghetti. It wasn't production ready yet (my error 
+            handling, while present, was rudimentary) and I didn't implement the entire 
+            spec, but I had refactored along the way and now I have the beginnings of a 
+            nice little namespace for doing IM work. And all of this happened the same day 
+            that I first discovered the existence of the System.Net namespace. It's only 
+            after reflection (and a good night's sleep) that I finally get it. The power of 
+            .NET is the <i>programmer productivity</i>.
+        </p>
+        <p>
+            This productivity comes from a combination of ease of use and flexibility 
+            that's going to attract almost everyone. It will attract the VB programmers 
+            because of the continued ease of use and the new functionality of the .NET 
+            Foundation Classes. It's also going to attract the C++ and the Java programmers 
+            for the same reason, but they won't admit that's why they like it. They'll 
+            claim to love .NET because of the power and flexibility. Not only are the .NET 
+            languages themselves allowed to be fully-featured, but the framework itself has 
+            tons of amazing functionality built right in. So much so that it's easy to miss 
+            some of it. When I needed to calculate an MD5 hash in my IM client, I went to 
+            the net, downloaded some C++ code and built myself a COM object (although I 
+            could have easily built a MC++ component, too) and then brought it into my app 
+            via interop (see what not being ashamed of the platform can do? : ). That was 
+            great, but this morning Peter asked me why I hadn't just used the MD5 
+            functionality built into .NET. There's so much stuff in there that I missed it. 
+            As a community, we'll be digging into it for a long time to come.
+        </p>
+        <p>
+            In the past, I had scoffed at the value of programmer productive over user 
+            productivity. My argument was that programmers are soldiers on the field of 
+            combat taking bullets and protecting the users at home. This was how I 
+            justified the complexity of C++, but measured it against the flexibility of the 
+            language and the performance of the produced code, and therefore the pleasure 
+            of the user. Don't get me wrong. We're still going to be using C++ for 
+            high-performance, shrink-wrap software for some time to come. Windows and 
+            Office XQ (or whatever they're going to call them) will still be implemented in 
+            C++. Client applications that cannot dictate their deployment environment, i.e. 
+            can't dictate the presence of the .NET runtime, will still be implemented in 
+            C++ or VB6. Most of the rest is going to be built in .NET without 12-24 months. 
+            Stand-alone corporate applications can dictate the presence of the runtime, as 
+            can server-side n-tier applications. Web-based applications can take advantage 
+            of the compiled and caching performance gains using ASP-style programming, will 
+            still enjoying the flexibility and power of ISAPI-style programming via .NET 
+            modules and handlers. Everyone in these spaces that works under Windows is 
+            going to be moving to .NET, especially the Windows Java programmers who already 
+            know the power of such a platform, but want easy access to their DLLs and their 
+            COM servers. The reason that people in these environments can now afford to 
+            move is that continued research in virtual machine-style environments and 
+            increase in machine power has brought about the first platform where <i>ease of use 
+                for the programmer does not mean that the user has to suffer</i>. 
+            Applications built with .NET are going to be <i>fast enough</i> and when it 
+            comes to ASP, they're going to be much faster than what we've had in the past.
+        </p>
+        <p>
+            The combination of ease of use for the home-by-5 style programmer and the 
+            flexibility for the computers-are-my-life style programmer was so great in Java 
+            that tens of thousands flooded the Java conferences from the first year. Mix in 
+            a user experience that doesn't have to suffer from the programmers' choice of 
+            .NET and I finally get it.
+        </p>
+        

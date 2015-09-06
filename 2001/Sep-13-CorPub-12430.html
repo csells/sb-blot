@@ -1,0 +1,38 @@
+<!--
+Date: 9/13/2001 12:00:00 AM  -08:00
+Permalink: 12430
+Disqus: 12430
+Tags: tools
+-->
+<h1>CorPub</h1>
+<P>
+        <EM>Oct 10, 2001</EM>
+    </P>
+    <P>
+        I've updated CorPub to show *all* managed AppDomains by initializing the COR 
+        debugging sub-system prior to enumerating them. Thanks to <A href="mailto:atif.aziz@skybow.com">
+            Atif Aziz</A> for the tip.
+    </P>
+    <p>
+        <i><span class="created">September 13, 2001</span></i>
+    </p>
+    <p>
+        I built <a href="/public/tools/CorPub.zip">the CorPub utility</a> when my friend Jason 
+        pointed me at the .NET corpub.idl interfaces (his exact words were 
+        "ICorPublishProcess rocks!"). CorPub lists the managed processes on the current 
+        machine and the AppDomains in each process, as follows:
+    </p>
+    <pre>Managed process 0xa54: D:\project\mine\RegexPlorer\bin\Debug\RegexPlorer.exe
+	AppDomain 0x1: RegexPlorer.exe
+
+Managed process 0xdc8: C:\vs.net\Common7\IDE\devenv.exe
+	AppDomain 0x1: DefaultDomain
+
+Managed process 0x1ec: C:\PROGRA~1\MICROS~2.NET\FRAMEW~1\Bin\ildasm.exe
+	AppDomain 0x1: DefaultDomain</pre>
+    <p>
+        It's fun for spelunking. Enjoy.
+    </p>
+    <p>
+        NOTE: .NET beta 2 is required to run this utility.
+    </p>

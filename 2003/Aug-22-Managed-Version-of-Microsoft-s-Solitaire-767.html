@@ -1,0 +1,22 @@
+<!--
+Date: 8/22/2003 4:28:08 PM  -08:00
+Permalink: 767
+Disqus: 767
+-->
+<h1>Managed Version of Microsoft's Solitaire</h1>
+<a href="http://www.gotdotnet.com/Community/Workspaces/workspace.aspx?id=abb6903e-a603-408e-8201-39f86d8a9ea9">Here</a>. Christine Morin, a fellow Microsoft employee, came to my rescue when I went looking for a sol.exe implementation (I love working at Microsoft...).
+
+I found the original C implementation (which can still compile for 16 or 32 bits!) and hers, the very nicely done WinForms version (from scratch!). Christine's implementation is not quite perfect yet, but it's very, very close.
+
+I did some coding on it and then talked her into opening the source up in a GotDotNet Workspace. The project has two goals:
+
+1. Perfectly recreating sol.exe in managed code
+2. Separating the UI completely from the data
+
+The 1st goal is to provide homage to the world's most popular Windows application (!), although I've already violated it while keeping to the spirit (Undo needs a Ctrl+Z mapping!).
+
+The 2nd goal is to enable other UIs to be placed on top of the sol.exe data model for future versions of Windows which may or may not have amazing new UI capabilities (and which may or may not be discussed in glowing details at the PDC [1]) and about which I may or may not be writing about in the future (vague enough? : ).
+
+Got some time? Instead of firing up the existing sol.exe, help us finish our .NET version!
+
+[1] http://msdn.com/pdc

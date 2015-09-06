@@ -1,0 +1,191 @@
+<!--
+Date: 6/30/2001 9:40:00 PM  -08:00
+Permalink: 12659
+Disqus: 12659
+Tags: tools
+-->
+<h1>Codename TextBox</h1>
+    <h2>
+        The Need for Code Generation
+    </h2>
+    <p>
+        Have you ever wanted to generate code like the wizards do, i.e. start with a 
+        template, mix in some symbols and boom, out comes the code? If you're building 
+        a custom AppWizard, you define code like so:
+    </p>
+    <pre>    int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int nShow) {
+    $$IF(coinit)
+        // Initialize COM
+        CoInitialize(0);
+
+    $$ENDIF
+        // Initialize the ATL module
+        _Module.Init(0, hinst);
+    $$IF(axhost)
+
+        // Initialize support for control containment
+        AtlAxWinInit();
+    $$ENDIF
+
+        // Create and show the main window
+        HMENU   hMenu = LoadMenu(_Module.GetResourceInstance(),
+                       MAKEINTRESOURCE(IDR_$$ROOT$$));
+    ...
+    </pre>
+    <p>
+        This is fine if you've got the MFC-based interpreter building your code and 
+        you're willing to live within the boundaries of a very small set of features. 
+        The ATL Object Wizard-style of generation is similar, i.e.
+    </p>
+    <pre>    class [!ClassName] : 
+     public CAxDialogImpl&lt;[!ClassName]&gt;
+    {
+    public:
+     [!ClassName]()
+     {
+     }
+    [!crlf]
+    ...
+    </pre>
+    <p>
+        Again, only good if you're running under the ObjectWizard and again, somewhat 
+        limited. What you really want is to be able to do things ASP-style, e.g.
+    </p>
+    <pre>    <span class=asp>&lt;%@ language=vbscript %&gt;</span>
+    <span class=asp>&lt;% ' test.cpp.asp %&gt;</span>
+    <span class=asp>&lt;%</span>
+        <span class=asp>greeting = Request.QueryString(&quot;greeting&quot;)</span>
+        <span class=asp>if len(greeting) = 0 then greeting = &quot;Hello, World.&quot;</span>
+    <span class=asp>%&gt;</span>
+    // test.cpp
+
+    <span class=asp>&lt;% if Request.QueryString(&quot;iostream&quot;) &lt;&gt; &quot;&quot; then %&gt;</span>
+    #include &lt;iostream&gt;
+    using namespace std;
+    <span class=asp>&lt;% else %&gt;</span>
+    #include &lt;stdio.h&gt;
+    <span class=asp>&lt;% end if %&gt;</span>
+
+    int main()
+    {
+    <span class=asp>&lt;% if Request.QueryString(&quot;iostream&quot;) &lt;&gt; &quot;&quot; then %&gt;</span>
+        cout &lt;&lt; &quot;<span class=asp>&lt;%= greeting %&gt;</span>&quot; &lt;&lt; endl;
+    <span class=asp>&lt;% else %&gt;</span>
+        printf(&quot;<span class=asp>&lt;%= greeting %&gt;</span>\n&quot;);
+    <span class=asp>&lt;% end if %&gt;</span>
+        return 0;
+    }</pre>
+    <p>
+        In this case, you get the same effect as the other two, but you've got the full 
+        power of a scripting language. However, for this to work, you had to run under 
+        ASP... until now...
+    </p>
+    <h2>
+        TextBox
+    </h2>
+    <p>
+        TextBox is a ASP-like script host that will process any file you give it 
+        looking for:
+    </p>
+    <ul>
+        <li>
+        text blocks
+        <li>
+        script blocks (&lt;% script %&gt;)
+        <li>
+        output blocks (&lt;%= output %&gt;)
+        <li>
+            An optional language block as the first line in the file <i>only</i> (&lt;%@ 
+            language= language %&gt;)
+            <br>
+        (TextBox defaults to vbscript and currently only works with vbscript and 
+        jscript).
+    </ul>
+    <p>
+        TextBox pre-processes the text to turn the whole thing into into script and 
+        hands it to the scripting engine for execution, outputting the result to 
+        standard out. Whatever features of the scripting language you want to use, feel 
+        free.
+    </p>
+    <h2>
+        Usage
+    </h2>
+    <p>
+        To provide for I/O, TextBox emulates ASP somewhat. It provides two intrinsics, 
+        the request object and the response object. The Request object has a single 
+        property, QueryString, that works just like ASP. The Response object has a 
+        single property, Write, just like ASP. In fact, if you only use 
+        Request.QueryString and Response.Write, you should be able to test your script 
+        files using ASP.
+    </p>
+    <p>
+        To set name/value pairs for use by the script via the Request object, the usage 
+        of TextBox is like so:
+        <pre>    usage: textbox &lt;file&gt; [name=value]</pre>
+    <p>
+        For example, to interpret the file above, any of the following command lines 
+        would work:
+    </p>
+    <pre>    textbox test.cpp.asp
+    textbox test.cpp.asp greeting=&quot;Double Wahoo!&quot;
+    textbox test.cpp.asp iostream=true greeting=&quot;Double Wahoo!&quot;
+    </pre>
+    <p>
+        The first would yield the following output:
+    </p>
+    <pre>    // test.cpp
+
+    #include &lt;stdio.h&gt;
+
+    int main()
+    {
+        printf(&quot;Hello, World.\n&quot;);
+        return 0;
+    }
+    </pre>
+    <p>
+        while the last would yield the following:
+    </p>
+    <pre>    // test.cpp
+
+    #include &lt;iostream&gt;
+    using namespace std;
+
+    int main()
+    {
+        cout &lt;&lt; &quot;Double Wahoo!&quot; &lt;&lt; endl;
+        return 0;
+    }
+    </pre>
+    <h2>
+        Errors and Debugging
+    </h2>
+    <p>
+        If the scripting engine finds an error, it will notify TextBox, who will notify 
+        you. However, if you've got script debugging enabled on your machine, the 
+        scripting engine will ask you if you'd like to fire up the debugger, showing 
+        you exactly the offending code.
+    </p>
+    <h2>
+        Not Just Code
+    </h2>
+    <p>
+        Of course, TextBox is good for the generation of any text, not just code.
+    </p>
+    <h2>
+        Download
+    </h2>
+    <p>
+        TextBox is available for <a href="/public/tools/textbox/textbox.zip">download</a>. It's just a 
+        prototype, so please adjust your expectations accordingly. If you have any 
+        comments, please send them to <a href="mailto:csells@sellsbrothers.com?subject=TextBox">
+            csells@sellsbrothers.com</a>.
+    </p>
+    <h2>
+        Copyright
+    </h2>
+    <p>
+        Copyright (c) 1998-2001, Chris Sells All rights reserved. NO WARRANTIES 
+        EXTENDED. Use at your own risk.
+    </p>
+

@@ -1,0 +1,13 @@
+<!--
+Date: 11/16/2003 9:29:02 AM  -08:00
+Permalink: 952
+Disqus: 952
+Tags: .net
+-->
+<h1>WinFS = Windows Foo System </h1>
+<a href="http://anopinion.net/posts/241.aspx">Here</a>. Mike Deem, PM on the WinFS team, lays out the core story of WinFS. It's an object store, not a file system. WinFS uses XML to describe the types of items that can be stored and then exposes .NET types for creating and finding items in the store.
+
+Also, and this is where the confusion comes from (and the codename of the technology doesn't help), when a file is created in a certain part of the system (\\localhost\DefaultStore), an item is created in the underlying store automatically. This item is used to allow the same finding code to work for things that are file-backed, like images, and for things that aren't file-backed, like contacts.
+
+Unfortunately, the story that Mike tells isn't complete yet, because custom item types can't be added using the PDC Longhorn bits, but a few of today's facts shouldn't ruin a good story of tomorrow. : )
+

@@ -1,0 +1,71 @@
+<!--
+Date: 7/21/2001 12:00:00 AM  -08:00
+Permalink: 12450
+Disqus: 12450
+Tags: tools
+-->
+<h1>TraceHook</h1>
+<span class="created">July 21, 2001</span>
+    <p>
+        TraceHook is a member function call tracing delegator hook based on <a href="http://www.develop.com/kbrown/com/samples.htm">
+            Keith Brown's most excellent universal delegator</a>. It allows you to 
+        write:
+    </p>
+    <pre>    // Get a COM object to wrap
+    CComPtr&lt;ICalc&gt;  spCalc;
+    spCalc.CoCreateInstance(CLSID_Calc);
+
+<b>    // Wrap it (when _DEBUG is defined only)
+    TRACEHOOK(OLESTR("MyCalc"), &amp;spCalc.p);
+</b>
+    // Use it
+    spCalc-&gt;put_Sum(0);
+    spCalc-&gt;Add(2);
+    spCalc-&gt;Add(2);
+    long nSum;
+    spCalc-&gt;get_Sum(&amp;nSum);
+</pre>
+    <p>
+        and see the following in the debug output (with no changes to the object's 
+        source) :
+    </p>
+    <pre>    MyCalc, ICalc::put_Sum(0)
+    MyCalc, ICalc::Add(2)
+    MyCalc, ICalc::Add(2)
+    MyCalc, ICalc::get_Sum()
+</pre>
+    <p>
+        Notice that the call stack is now dumped (for duals, either directly or via 
+        IDispatch, or any method with automation-compliant data types, thanks to 
+        features added by the most excellent <a href="mailto:simon@fell.com">Simon Fell</a>! 
+        He also added the ability to hook objects created in scripting environments (or 
+        VB or Java, too), e.g.
+    </p>
+    <pre>    ' WSH Test script for CalcSvr / TraceHook
+
+    ' Create the implementation of ITraceHookFactory
+    set th = CreateObject("UDTraceHookSvr.TraceHook")
+
+    ' Create an object (an &lt;object&gt; tag in HTML would be fine, too)
+    set calc = CreateObject("CalcSvr.Calc")
+
+<b>    ' Trace all further calls on calc
+    th.ComTrace "MyCalc", calc
+</b>
+    calc.sum = 0
+    calc.add 2
+    calc.add 2
+    msgbox "2+2= " &amp; calc.sum
+</pre>
+    <p>
+        would yield the following debug output:
+    </p>
+    <pre>    MyCalc, IDispatch::(Invoke) sum(0)
+    MyCalc, IDispatch::(Invoke) add(2)
+    MyCalc, IDispatch::(Invoke) add(2)
+    MyCalc, IDispatch::(Invoke) sum() returned 4
+</pre>
+    <p>
+        The source, pre-built binaries and client-side headers are available <a href="/public/tools/TraceHook.zip">
+            here</a>. The pre-built binaries include Keith's delegator as well.
+    </p>

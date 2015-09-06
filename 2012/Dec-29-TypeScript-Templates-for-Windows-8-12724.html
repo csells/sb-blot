@@ -1,0 +1,126 @@
+<!--
+Date: 12/29/2012 4:11:13 PM  -08:00
+Permalink: 12724
+Disqus: 12724
+-->
+<h1>TypeScript Templates for Windows 8</h1>
+<p><a href="/public/post-images/12724-154.png"><img title="image" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; float: right; padding-top: 0px; padding-left: 0px; margin: 0px 0px 5px 5px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="image" align="right" src="/public/post-images/12724-155.png" width="240" height="64" /></a>As soon as I saw <a href="http://www.typescriptlang.org/#Download">Anders’ talk on TypeScript</a>, I fell in love. If you’re not familiar with it, TypeScript adds a lot of necessary features to JavaScript to make it suitable for building real apps, while still “compiling down” to JavaScript to maintain JS’s single biggest advantage: ubiquity. Further, TypeScript has tooling inside Visual Studio so that it works nicely with a wide variety of Windows projects, including Win8/JS projects.</p>  <p>However, while Microsoft has made <a href="http://www.typescriptlang.org/Samples/#Encyclopedia">a nice Win8/TS sample</a> available, there are currently no Visual Studio project templates for building my own apps. Luckily, it was easy enough to build some:</p>  <p><a href="/public/post-images/12724-156.png"><img title="image" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; padding-top: 0px; padding-left: 0px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="image" src="/public/post-images/12724-157.png" width="640" height="411" /></a></p>  <p>You’ll notice three new templates: TypeScript versions of Blank App, Fixed Layout App and Navigation App. All three projects generate code that acts the same, except the code is in TypeScript instead of JavaScript (although the JavaScript is generated and very visible to your inspection).</p>  <p>I didn’t build the Grid App or Split App templates yet, since there is a lot of code there. I also haven’t ported any of the item templates. Now that I have the Navigation App template done (which includes an empty Page Control), the Grid and Split and other item templates will all flow from there (eventually : ).</p>  <h2>JavaScript Patterns to TypeScript Constructs</h2>  <p>Moving JavaScript to TypeScript involves two major pieces: porting the code from JS patterns to TS language constructs and bringing in references to the types that are used.</p>  <p>The first step, moving from JS patterns to TS language constructs, largely involved modules, classes and functions. For example, the navigator.js file defines the PageControlNavigator class in the Application namespace using JS patterns:</p>  <pre class="code"><span style="background: white; color: green">// navigator.js
+</span><strong><span style="background: white; color: black">(</span><span style="background: white; color: blue">function </span></strong><span style="background: white; color: black"><strong>() {
+</strong>  </span><span style="background: white; color: #a31515">&quot;use strict&quot;</span><span style="background: white; color: black">;
+
+  </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">appView = Windows.UI.ViewManagement.ApplicationView;
+  </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">nav = WinJS.Navigation;
+
+<strong>  WinJS.Namespace.define(</strong></span><span style="background: white; color: #a31515"><strong>&quot;Application&quot;</strong></span><span style="background: white; color: black"><strong>, {
+    PageControlNavigator: WinJS.Class.define(
+</strong>        </span><span style="background: white; color: green">// Define the constructor function for the PageControlNavigator.
+        </span><span style="background: white; color: blue">function </span><span style="background: white; color: black">PageControlNavigator(element, options) {
+          </span><span style="background: white; color: green">...
+<pre class="code"><strong><span style="background: white; color: black">          Application.navigator = </span><span style="background: white; color: blue">this</span></strong><span style="background: white; color: black"><strong>;
+</strong></span></pre>        </span><span style="background: white; color: black">}, {
+          home: </span><span style="background: white; color: #a31515">&quot;&quot;</span><span style="background: white; color: black">,
+          </span><span style="background: white; color: green">/// &lt;field domElement=&quot;true&quot; /&gt;
+          </span><span style="background: white; color: black">_element: </span><span style="background: white; color: blue">null</span><span style="background: white; color: black">,
+          _lastNavigationPromise: WinJS.Promise.as(),
+          _lastViewstate: 0,
+
+          </span><span style="background: white; color: green">// This is the currently loaded Page object.
+          </span><span style="background: white; color: black">pageControl: { get: </span><span style="background: white; color: blue">function </span><span style="background: white; color: black">() { ... } },
+
+          </span><span style="background: white; color: green">...
+        </span><span style="background: white; color: black">}
+      )
+<strong>  });
+})();
+</strong></span></pre>
+
+
+<p>The common pattern for a module that contains private and public parts is to use a self-executing anonymous function (which wraps all the code in navigator.js) to make everything private and then to use helpers to expose public parts explicitly (like the use of WinJS.Namespace.define). Further, to define a class is a matter of gathering up a constructor function with a set of member properties and functions, which is what the WinJS.Class.define helper does. Finally, right in the middle of that is the exposing of a namespace-wide property called Application.navigator, which makes it available to anyone using the Application namespace.</p>
+
+<p>TypeScript provides actual language constructs for these patterns:</p>
+
+<pre class="code"><span style="background: white; color: green">///&lt;reference path='../declare/declare.ts' /&gt;
+// navigator.ts
+</span><span style="background: white; color: blue"><strong>module </strong></span><span style="background: white; color: black"><strong>Application {
+</strong>    </span><span style="background: white; color: #a31515">&quot;use strict&quot;</span><span style="background: white; color: black">;
+
+    </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">appView = Windows.UI.ViewManagement.ApplicationView;
+    </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">nav = WinJS.Navigation;
+
+<strong>    </strong></span><span style="background: white; color: blue"><strong>export var </strong></span><span style="background: white; color: black"><strong>navigator: PageControlNavigator;
+</strong>
+    </span><span style="background: white; color: blue">interface </span><span style="background: white; color: black">PageControl {
+        getAnimationElements: () =&gt; Element;
+        updateLayout: (
+            element: Element,
+            viewState: Windows.UI.ViewManagement.ApplicationViewState,
+            lastViewstate: Windows.UI.ViewManagement.ApplicationViewState) =&gt; </span><span style="background: white; color: blue">void</span><span style="background: white; color: black">;
+    }
+
+<strong>    </strong></span><span style="background: white; color: blue"><strong>export class </strong></span><span style="background: white; color: black"><strong>PageControlNavigator {
+</strong>        home: </span><span style="background: white; color: blue">string </span><span style="background: white; color: black">= </span><span style="background: white; color: #a31515">&quot;&quot;</span><span style="background: white; color: black">;
+        _element: Element = </span><span style="background: white; color: blue">null</span><span style="background: white; color: black">;
+        _lastNavigationPromise: WinJS.Promise = WinJS.Promise.as();
+        _lastViewstate: Windows.UI.ViewManagement.ApplicationViewState;
+
+        </span><span style="background: white; color: blue">constructor </span><span style="background: white; color: black">(element, options) {
+            </span><span style="background: white; color: green">...
+        </span><span style="background: white; color: black">}
+
+        </span><span style="background: white; color: green">// This is the currently loaded Page object.
+        </span><span style="background: white; color: blue">get </span><span style="background: white; color: black">pageControl(): PageControl { </span><span style="background: white; color: green">... </span><span style="background: white; color: black">}
+
+        </span><span style="background: white; color: green">// ...
+<strong>    </strong></span><span style="background: white; color: black"><strong>}
+}</strong></span></pre>
+
+
+<p>In this TypeScript code, you’ll see the module, export and class keywords that define the elements we were defining via patterns before. Further, the use of the interface keyword lets you define a contract for an argument or variable that the TypeScript compiler can check for you as it generates the corresponding JavaScript. Finally, notice the use of the type annotations after a colon, e.g. the PageControlNavigator type on the exported navigator variable, to give the TypeScript compiler more information. All of these constructs help you to be explicit about what you’re defining, which helps you track down errors and gives you better Intellisense as you code.</p>
+
+<p>As I mentioned, TypeScript provides syntax on top of JavaScript, the idea being that all JavaScript code is already TypeScript code. Further, the TypeScript compiles produces JavaScript as it’s output. When you’re editing a TypeScript file in Visual Studio, you can see the corresponding JavaScript, which helps experienced JavaScript programmers bootstrap their way to TypeScript.</p>
+
+<p><a href="/public/post-images/12724-158.png"><img title="image" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; padding-top: 0px; padding-left: 0px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="image" src="/public/post-images/12724-159.png" width="644" height="199" /></a></p>
+
+<p>You’ll notice in this screenshot that TypeScript introduces shortcut syntax for function objects. For example, the following code from home.js:</p>
+
+<pre class="code"><span style="background: white; color: black">WinJS.UI.Pages.define(</span><span style="background: white; color: #a31515">&quot;/pages/home/home.html&quot;</span><span style="background: white; color: black">, {
+</span><span style="background: white; color: green"><strong>  </strong></span><strong><span style="background: white; color: black">ready: </span><span style="background: white; color: blue">function </span></strong><span style="background: white; color: black"><strong>(element, options) {
+    </strong></span><span style="background: white; color: green"><strong>// TODO: Initialize the page here.
+  </strong></span><span style="background: white; color: black"><strong>}
+</strong>});
+</span></pre>
+
+
+<p>can be written in TypeScript as follows:</p>
+
+<pre class="code"><span style="background: white; color: black">WinJS.UI.Pages.define(</span><span style="background: white; color: #a31515">&quot;/pages/home/home.html&quot;</span><span style="background: white; color: black">, {
+</span><span style="background: white; color: green"><strong>  </strong></span><span style="background: white; color: black"><strong>ready: (element, options) =&gt; {
+    </strong></span><span style="background: white; color: green"><strong>// TODO: Initialize the page here.
+  </strong></span><span style="background: white; color: black"><strong>},
+</strong>});
+</span></pre>
+
+
+<p>The use of the TypeScript lambda syntax is both shorter and works better when it comes to your intuition of what the “this” keyword means.</p>
+
+<p>The other thing to notice about most .ts files is one or more reference lines at the top that look like this:</p>
+
+<pre class="code"><span style="background: white; color: green"><strong>///&lt;reference path='../../declare/declare.ts' /&gt;
+</strong></span></pre>
+
+
+<p>This is the TS way to do “include” or “import” of code from other TS files, instead of relying on an HTML container to pull in the right files.</p>
+
+<h2>TypeScript Declarations</h2>
+
+<p>A lot of the work porting the Win8/JS templates to TypeScript was replacing the use of JS patterns with TS constructs (which, ironically, generated back the same JS code I started with), but an equal amount of the work was in building TypeScript declaration files (*.d.ts files). The idea of a declaration file is that the JavaScript community has created a large number of libraries, none of which have associated TypeScript type information. TypeScript allows you to augment the type information for existing JavaScript libraries, e.g. jQuery, Knockout, WinJS, etc., with external files called declaration files.</p>
+
+<p>The WinJS sample I mentioned earlier (<a href="http://www.typescriptlang.org/Samples/#Encyclopedia">Encyclopedia</a>) provides a number of declaration files that provide type information for the HTML DOM, the WinRT object model, jQuery and for WinJS. Unfortunately, the one for WinJS is far from complete, which meant that a lot of the work I did to get the Win8/TS templates compiling without warnings was augmenting that file. All of the declarations files needed to make the templates compiled as generated are provided in the “declare” folder, but I’m sure there are holes that you’re going to run into as you add your own code. Of course, the authoritative winjs.d.ts file is part of the TypeScript distribution, so I’ll work with the nice folks on <a href="http://typescript.codeplex.com/">the TypeScript codeplex project</a> to get my changes merged in.</p>
+
+<h2>Installing the Win8/TS Templates</h2>
+
+<p>To get started using the Win8/TS templates I’ve built, you’ll first need to <a href="http://www.microsoft.com/en-us/download/details.aspx?id=34790">install the TypeScript plug-in for Visual Studio 2012</a>. Currently these templates have been tested under TS 0.8.1.1 only and the generated .jsproj files have this path hard-coded in. The web-based HTML Application with TypeScript template uses some trick to do away with hard-coded paths that I have yet to figure out.</p>
+
+<p>You can <a href="/public/samples/Win8-TypeScript-Templates-v1.zip">download the Win8/TS samples from here</a>, extract the three folders (blankts, blankfixedts and navts) into your VS2012 JavaScript project template folder, e.g. C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\ProjectTemplates\JavaScript\Windows Store\1033. Once the files are there, shutdown all instances of Visual Studio 2012 and execute “devenv.exe /InstallVSTemplates” as admin. If you have multiple copies of Visual Studio installed, make sure you’re executing the one for VS2012.</p>
+
+<p>Once you’ve completed those steps successfully, you should see three new TypeScript-based templates as shown in the very first figure of this blog post. Enjoy.</p>  

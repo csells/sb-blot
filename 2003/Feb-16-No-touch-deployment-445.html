@@ -1,0 +1,11 @@
+<!--
+Date: 2/16/2003 12:53:52 AM  -08:00
+Permalink: 445
+Disqus: 445
+Tags: .net
+-->
+<h1>No touch deployment</h1>
+From David Taylor: I just read Chris Sell's "Distributed .config Files with Smart Clients" article:
+http://www.ondotnet.com/pub/a/dotnet/2003/01/27/ztd.html
+
+Here is another problem I just came across.  I often use System.Diagnostics.Process.Start("http://www.sellsbrothers.com") to launch a website (or mailto, etc).  However when deploying a simple URL shortcut to the actual application (on a web server), the assembly gets hosted by IEEXEC.exe.  The problem is that the Process.Start method then returns a file not found error!  I did get it working by directly invoking Internet Explorer, but I needed to know it's directory from the registry because it is not always in the path (and there were some other strange behaviors).  So I have ended up using a minimalist setup.msi file that leaves a 5-10 line Loader.exe program on the users computer which in turn loads the assembly from the web server.  That way it is *not* hosted in IEEXEC and Process.Start works as expected.

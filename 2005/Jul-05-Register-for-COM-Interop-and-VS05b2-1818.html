@@ -1,0 +1,10 @@
+<!--
+Date: 7/5/2005 11:43:27 AM  -08:00
+Permalink: 1818
+Disqus: 1818
+Tags: tools
+-->
+<h1>Register for COM Interop and VS05b2</h1>
+<P>I was helping a colleague work through a .NET COM interop issue. He'd found my article on the topic ("<A href="http://www.ondotnet.com/pub/a/dotnet/2003/01/20/winformshosting.html">Hosting Windows Forms Controls in COM Control Containers</A>"), but couldn't get it to work. He'd set the Register for COM Interop setting and adding the Guid attribute to his .NET type, but nothing was registered at build-time.</P>
+<P>The problem was that, unlike VS03, the wizard-generated AssemblyInfo.cs has the assembly-wide ComVisible attribute set to "false" which causes regasm (the command-line version of what VS is doing to register your .NET assembly with COM at build-time) to skip the registration of all of the .NET types in your assembly, defeating the purpose of the Register for COM Interop option pretty thoroughly.</P>
+<P>The trick, of course, is to set ComVisible to "true".</P>

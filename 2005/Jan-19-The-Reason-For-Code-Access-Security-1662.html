@@ -1,0 +1,14 @@
+<!--
+Date: 1/19/2005 12:18:40 PM  -08:00
+Permalink: 1662
+Disqus: 1662
+Tags: spout
+-->
+<h1>The Reason For Code Access Security</h1>
+<P>I had a question in my inbox the other day that went something like this:</P>
+<BLOCKQUOTE dir=ltr style="MARGIN-RIGHT: 0px">
+<P><EM>"Since programming within the partial trust sandbox I get by default when using ClickOnce is so hard, why wouldn't I just kick it up to FullTrust and let the user press the OK button?"</EM></P></BLOCKQUOTE>
+<P>You can do that. Since ClickOnce supports user management of permission awarding for code deployed via ClickOnce (aka there's a dialog that the user has to approve if the app wants more permissions than are the default), you could ask for FullTrust.</P>
+<P>If I were you, I wouldn't ask for FullTrust in my ClickOnce apps and not just because I don't want users to be freaked out by the dialog box I expect to see that says "Danger, Will Robinson, Danger, Danger!" Personally, I don't want the liability. If I write code the requires FullTrust, I have to write my code to take full responsibility for its actions, including if the code is hijacked by other code to do bad things.</P>
+<P>On the other hand, if I request the minimal set of permissions that I need, I'm walking with a net. If I miss an exploit, I'm limited to doing bad things inside of the limited set of permissions that the user has awarded to me and not the whole darn thing.</P>
+<P>Full trust isn't easier; it's much, much harder. I like partial trust because I'm lazy: I don't want to do the work to warrant the user's full trust.</P>

@@ -1,0 +1,56 @@
+<!--
+Date: 6/4/2003 12:00:00 AM  -08:00
+Permalink: 12550
+Disqus: 12550
+Tags: spout
+-->
+<h1>My First API Review</h1>
+<p><i>
+Wed, <span class="created">June 4, 2003</span></i></p><p>Maybe you're getting tired of my posting my &quot;firsts&quot; 
+at MS, but that's the beauty of this medium. I get to say what I feel like and 
+you get to listen or not, as you choose. Mostly this &quot;Dear Diary&quot; format helps 
+me to digest the world around me. Many times, the writing itself has helped me 
+to clear my head. If you haven't tried it yourself, I recommend it.</p><p>So, on 
+with my next &quot;first.&quot; Today I crashed an API review. I happen to be on a few 
+internal Longhorn mailing lists and recently got an announcement of a new API 
+that was going up for its first review. I didn't know what to expect, but I 
+hoped at least to see some familiar faces and to introduce myself around.</p><p>
+Now, the way I work things, I try to really pack myself into meetings when I'm 
+up in Redmond so that I can get the most out of my time away from home (I'm 
+still based in Portland, OR). In this case, I had a meeting scheduled from 9am 
+to 10am in building 5 and then had to truck across campus to building 42 for the 
+API review at 10am. Needless to say, I was late (the only thing harder than 
+finding parking in the sea of cars after 9am is finding your anonymous rental 
+car when you come back for it). Luckily, MS meetings seem to start late as a 
+matter of course, so I hadn't missed anything. However, I was a bit surprised 
+that in more than a month of introducing myself around, there was a room full of 
+10+ people and no familiar faces. They glanced up at me when I came in the door 
+and seemed a bit confused as to who I was, but didn't ask or toss me out on my 
+butt (it's handy being 6'5&quot; sometimes : ).</p><p>The process was pretty cool. 
+Apparently the team building the API had answered a standard questionnaire from 
+the review team, which included target users, potential security problems and 
+representative sample code that users would be expected to construct. The review 
+team had prepared by going over the questionnaire and prepared topics of 
+discussion (the latter making this review process better than most I'd 
+attended). The API team provided answers to the questions and took notes on how 
+to fix their API.</p><p>I was impressed with the whole thing. The API team was 
+very open to suggestions for improvement, even letting me put in my two cents (I 
+couldn't help myself : ). And the design team gave out just the kind of advice I 
+want all .NET APIs to follow, e.g. use best practice coding conventions in 
+sample code, support IDisposable at a macro level instead of a micro level, 
+expose collections from properties returning IEnumerable (not from the parent 
+object itself), prefer properties over Get/Set methods (as appropriate), don't 
+tack the name of the enumeration type onto the enumeration values themselves, 
+prefer overloads to parameters that can be null, prefer typed parameters to 
+object parameters, etc. In addition, where the API team had reinvented the wheel 
+(they were experts in their problem domain, not the entire .NET Framework Class 
+Library, after all), the review team pointed them at what to emulate and where 
+to look for more guidance. The whole process gave me quite a bit of confidence 
+in .NET maintaining the high degree of consistency that's it's achieved to date 
+(the FCL consistency is not perfect, I admit, but it's a damn sight better than 
+COM APIs ever were and don't even get me started on Win32).</p><p>After all 
+that, I did finally get to introduce myself (the note taker on the API team 
+wanted to know who was complaining : ), I helped name a Longhorn data structure 
+and I met a General PM that I needed to talk to anyway, so it was a useful 
+experience all around.</p>
+

@@ -1,0 +1,11 @@
+<!--
+Date: 6/19/2004 11:17:20 PM  -08:00
+Permalink: 1409
+Disqus: 1409
+Tags: .net
+-->
+<h1>Chris Anderson on Avalon Visual Extensibility</h1>
+<P>Chris Anderson just did a fabulous job describing <A href="http://channel9.msdn.com/ShowPost.aspx?PostID=10500">what makes Avalon more extensible than existing popular UI frameworks</A>. What Avalon allows is the ability to have a Button instance like so:</P><PRE>&lt;Window&gt;<BR><STRONG>&nbsp; &lt;Button&gt;Hello&lt;/Button&gt;<BR></STRONG>&lt;Window&gt;</PRE>
+<P>And then, somewhere else, using Styles, setting the VisualTree of what a Button looks like to be whatever you like, e.g.</P><PRE>&lt;Style&gt;<BR>&nbsp; &lt;Button /&gt;<BR>&nbsp; &lt;Style.VisualTree&gt;<BR>&nbsp;&nbsp;&nbsp; &lt;FlowPanel&gt;<BR>&nbsp; &nbsp;&nbsp;&nbsp; &lt;!--&nbsp;anything you like in here,
+e.g. &lt;Text&gt;,&nbsp;&lt;Video&gt;, &lt;Rectangle&gt;, whatever --&gt;<BR><STRONG>&nbsp;&nbsp;&nbsp; &nbsp; &lt;ContentPresenter /&gt;<BR></STRONG>&nbsp;&nbsp;&nbsp; &lt;/FlowPanel&gt;<BR>&nbsp; &lt;/Style.VisualTree&gt;<BR>&lt;/Style&gt;</PRE>
+<P>Two&nbsp;interesting things about this button style. The first is that you can&nbsp;make a Button look however you want it to look,&nbsp;without worrying whether the Avalon team had that in mind up front.&nbsp;Two, when you want to drop in the content inside the Button tag, e.g. "Hello", you drop in the ContentPresentor and it knows how to&nbsp;display what was placed in the Button (again, which&nbsp;could be anything). Simple and flexible: two things that I'm finding to be true more and more about Avalon the further I dig.</P>

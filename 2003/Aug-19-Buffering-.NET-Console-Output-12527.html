@@ -1,0 +1,58 @@
+<!--
+Date: 8/19/2003 12:00:00 AM  -08:00
+Permalink: 12527
+Disqus: 12527
+Tags: spout
+-->
+<h1>Buffering .NET Console Output</h1>
+<p>
+Doing some ad hoc benchmarks, I found that my compute/IO intensive program was 
+significantly slower in .NET than in native C++ (<a href="http://groups.yahoo.com/group/win_tech_off_topic/message/21426">here's 
+a more rigorous test showing the same thing</a>). However, when the IO was taken 
+out (Console.Write), the test showed that the computation in .NET and in native 
+C++ was nearly the same (with C++ still having a slight edge).</p><p>My .NET IO 
+code looked like this:</p><p style="text-autospace: none"><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:blue">
+static</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;"> <span style="color:blue">
+void</span> OutputIt(<span style="color:blue">int</span>[] vect) {<br>&nbsp; <span style="color:blue">
+for</span> (<span style="color:blue">int</span> i = 0; i &lt; vect.Length; ++i) {<br>&nbsp;&nbsp;&nbsp; <span style="color:blue">
+if</span>( i &gt; 0 ) <b>Console.Write</b>(&quot;,&quot;);<br>&nbsp;&nbsp;&nbsp; <b>
+Console.Write</b>(vect[i]);<br>&nbsp; }<br><b>&nbsp; Console.WriteLine();<br></b>
+}</span></p><p>In tracking down this disparity, <a href="http://groups.yahoo.com/group/win_tech_off_topic/message/21427">
+Courteney van den Berg noticed that, unlike STL IO streams in native C++, .NET 
+Console output is not buffered</a>. A simple manual buffering using a 
+StringBuilder brings the performance of .NET back in line with native C++:</p><p style="text-autospace: none"><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:blue">
+static</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;"> <span style="color:blue">
+void</span> OutputIt(<span style="color:blue">int</span>[] vect) {<br><b>&nbsp; 
+StringBuilder sb = <span style="color:blue">new</span> StringBuilder();<br></b>&nbsp; <span style="color:blue">
+for</span> (<span style="color:blue">int</span> i = 0; i &lt; vect.Length; ++i) {<br>&nbsp;&nbsp;&nbsp; <span style="color:blue">
+if</span>( i &gt; 0 ) <b>sb.Append</b>(&quot;,&quot;);<br>&nbsp;&nbsp;&nbsp; <b>sb.Append</b>(vect[i]);<br>&nbsp; 
+}<br><b>&nbsp; Console.WriteLine(sb);<br></b>}</span></p><p>Instead of buffering 
+manually, I could have turned on buffered console IO by reopening console output 
+with a buffer size:</p><p style="text-autospace: none"><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:blue">
+static</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;"> <span style="color:blue">
+void</span> Main(<span style="color:blue">string</span>[] args) {<br><b>&nbsp; <span style="color:blue">
+using</span>( StreamWriter bufferOutput = <span style="color:blue">new</span> 
+StreamWriter(Console.OpenStandardOutput(1024)) ) {<br>&nbsp;&nbsp;&nbsp; 
+Console.SetOut(bufferOutput);<br>&nbsp;&nbsp;&nbsp; <span style="color:green">// 
+Use Console.Write (via OutputIt)...<br></span>&nbsp; }</b></span><span style="font-size: 10.0pt; font-family: Courier New; color: green"><b> 
+// Remaining buffered Console output flushed</b></span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;"><b><br></b>
+}</span></p><p style="text-autospace: none"><b><span style="color: green; font-size: 10.0pt; font-family: Courier New">
+// </span><span style="font-size: 10.0pt; font-family: Courier New; color: #008000">
+Console output now buffered<br></span></b><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:blue">
+static</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;"> <span style="color:blue">
+void</span> OutputIt(<span style="color:blue">int</span>[] vect) {<br>&nbsp; <span style="color:blue">
+for</span> (<span style="color:blue">int</span> i = 0; i &lt; vect.Length; ++i) {<br>&nbsp;&nbsp;&nbsp; <span style="color:blue">
+if</span>( i &gt; 0 ) Console.Write(&quot;,&quot;);<br>&nbsp;&nbsp;&nbsp; 
+Console.Write(vect[i]);<br>&nbsp; }<br>&nbsp; Console.WriteLine();<br>}</span></p><p>
+Why isn't Console output buffered by default? Unlike in C++, which has 
+deterministic finalization, in .NET, console output would have to be manually 
+flushed or closed (closing causes a flush). Failure to do so can cause console 
+output to be incomplete at the end of a program. Notice our careful use of the 
+&quot;using&quot; block in the code above, causing the output stream to be closed at the 
+end of the block and the remaining buffered output to be flushed, even in the 
+face of exceptions. Forgetting to use the &quot;using&quot; block or forgetting to 
+manually flush or close in a finally block, can cause console output to be lost. 
+Rather than imposing the new burden of manually closing the console output, .NET 
+architects opted to turn off buffering by default, while still letting you turn 
+it on at will.</p>
+

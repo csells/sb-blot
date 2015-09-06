@@ -1,0 +1,12 @@
+<!--
+Date: 5/13/2005 3:25:37 PM  -08:00
+Permalink: 1778
+Disqus: 1778
+Tags: tools
+-->
+<h1>When did the cmd shell start doing this?!?</h1>
+<P>Imagine the following C program:</P><PRE>// cmdio.c<BR>#include &lt;stdio.h&gt;</PRE><PRE>void main() {<BR>  char s[256] = "";<BR>  printf("&gt;");<BR>  scanf("%s", s);<BR>  printf("%s\n", s);<BR>}</PRE>
+<P>If I run this from a command shell and I enter "hi" [Enter], it looks like this:</P><PRE>C:\&gt;cmdio.exe<BR>&gt;hi<BR>hi</PRE>
+<P>If I run it again using "lo" [Enter] this time, it would look like this:</P><PRE>C:\&gt;cmdio.exe<BR>&gt;lo<BR>lo</PRE>
+<P>Here's the thing that blew me away. Anytime I run it after the 1st from the same cmd shell, I get history! For example, running it a 3rd time and pressing [Up Arrow][Enter] gives me this!</P><PRE>C:\&gt;cmdio.exe<BR>&gt;lo<BR>lo</PRE>
+<P>The up and down arrows work, F7 works, F8 works, they all work! When the heck did the shell start keeping track of per sub-command histories and why haven't I noticed it 'til now?!?</P>

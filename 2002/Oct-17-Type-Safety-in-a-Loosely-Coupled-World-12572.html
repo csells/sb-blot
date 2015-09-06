@@ -1,0 +1,47 @@
+<!--
+Date: 10/17/2002 12:00:00 AM  -08:00
+Permalink: 12572
+Disqus: 12572
+Tags: spout
+-->
+<h1>Type Safety in a Loosely Coupled World</h1>
+
+        <p>Tim Ewald gave a very rousing keynote address at the WinDev 
+        conference in Boston yesterday. During his talk, he did something I've 
+        never really heard anyone do convincingly before -- he defended the 
+        typeless recordset/rowset/dataset style of programming. His 
+        justification was that you don't always need type-safe object models 
+        and, when getting a subset of data, they're often more trouble than 
+        they're worth (do you really want a set of types for every query in your 
+        app?).</p>
+        <p>My standard objection to the &quot;just the data, ma'am&quot; style of 
+        programming is that I don't get compile-time type checking. Of course, I 
+        can write the code to check all the data I get at runtime, but I don't 
+        like to do that. Instead, I like things like the type safe dataset 
+        generator built into VS.NET. However, that damn tool fooled me. I looked 
+        at those type safe wrappers and considered that compile-time type 
+        checking. Of course, it's not. Instead, it's a hunk of code that 
+        pretends to offer compile-time type checking, but only really offers 
+        run-time type checking, because the data still needs to be coerced at 
+        *runtime*.</p>
+        <p>I have always turned up my nose at run-time type checking until I 
+        realized (and this is the insight I got from Tim's talk) that *all* 
+        marshaling-based type checking is done at run-time. Even the 
+        type-checking done in COM between apartments needs to coerce the data to 
+        and from a serialized format, which means that it's possible for the 
+        data to be mismatched between two endpoints, causing a type exception at 
+        runtime. Since I'm not willing to give up the loose coupling involved 
+        with components talking to each other across 
+        apartment/thread/process/machine/context/appdomain/whatever boundaries, 
+        I need to accept the fact that type checking needs to happen at run-time 
+        as well as at compile-time. As far as type checking is concerned, 
+        unmarshaling an RPC call stack is really no different than 
+        coercing/converting dataset columns or applying an XSD to an XML 
+        document.</p>
+        <p>Once I've accepted run-time type checking, I can take Don's advice to 
+        &quot;free your mind&quot; (he's moved on to other parts of The Matrix not 
+        involving medication) and embrace things like structural typing, which 
+        is much more flexible than the nominal typing that OO languages rely on. 
+        I told you that &quot;nobody makes it the first time,&quot; Don, but I think I've 
+        finally made it across. : )</p>
+        

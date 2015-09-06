@@ -1,0 +1,162 @@
+<!--
+Date: 10/14/2005 12:00:00 AM  -08:00
+Permalink: 12466
+Disqus: 12466
+Tags: spout
+-->
+<h1>Workflow Communication Spelunking</h1>
+<p align="left">I just an interesting week taking a crash course in Windows Workflow Foundation (formerly WWF, not just WF) programming. My big hang-up was, how do I communicate into, out of and between activities?</p><p align="left">I started with <a href="http://www.dennispi.com/#112803113054978800">Dennis's explanation of communications into and out of a workflow</a>. The fundamental idea is that, once a workflow has started, you can't talk to it directly. Instead, you set up a communications interface that the workflow can use to talk to the host and that the workflow can use to watch for events from the host, e.g.</p><div align="left">
+<pre><b>[DataExchangeService]
+</b>public interface IOrderService {
+  void CreateOrder(string customer, string orderDescription);
+  event EventHandler&lt;OrderEventArgs&gt; OrderApproved;
+}</pre></div><p align="left">The interface is marked with the DataExchangeServer attribute to mark it as an interface suitable for host&lt;-&gt;workflow communication, but other than that, it's a normal .NET interface. The<i> host, </i>i.e. the chunk of code that creates the WF runtime, implements data exchange service interfaces as singletons, e.g.</p><div align="left">
+<pre>class OrderServiceImpl : <b>IOrderService</b> {
+  Dictionary&lt;Guid, Order&gt; _workflowOrderMap = new Dictionary&lt;Guid, Order&gt;();
+
+  public void CreateOrder(string customer, string desc) {
+    _workflowOrderMap.Add(<b>BatchEnvironment.CurrentInstanceId</b>, new Order(customer, desc));
+  }
+
+  public void ApproveOrder(WorkflowInstance wf, string comment) {
+    if (OrderApproved != null) {
+      Guid wfId = wf.InstanceId;
+      OrderApproved(null, new OrderEventArgs(wfId, _workflowOrderMap[wfId], comment));
+    }
+  }
+
+  public event EventHandler&lt;OrderEventArgs&gt; OrderApproved;
+}</pre></div><p align="left">With this implementation, the host is allowing the workflow to call the CreateOrder method (which we'll see it do later) and to subscribe to the OrderApproved event. The CreateOrder method uses its arguments to create an Order object and associate it with the ID of the currently executing workflow (available via BatchEnvironment.CurrentInstanceId). Remember, the service implementation is a singleton, but any number of workflows can call it, so when they do, we track information on a per workflow basis.</p><p align="left"><b><i>WF Question #1: How do I associate objects directly w/ a running workflow instead of tracking things in dictionaries?</i></b></p><p align="left">The OrderApproved event is used to get information into the workflow.</p><p align="left">In our scenario, imagine we're creating an order, approving it (w/ a comment) and logging the result. In my sample, I have a workflow imaginatively named &quot;Workflow2&quot; which captures this sequence:</p><p align="left"><img border="0" src="/public/spout/wf.1.jpg" width="171" height="436"></p><p align="left">The invoke method activity is bound to the CreateOrder method of the IOrderMethod method:</p><div align="left">
+<pre>&lt;<b>InvokeMethodActivity</b>
+ID=&quot;invokeMethodActivity1&quot;
+<b>  MethodName=&quot;CreateOrder&quot;
+  InterfaceType=&quot;EventSinkAndMethodInvoke2.IOrderService&quot;</b>&gt;
+  &lt;InvokeMethodActivity.ParameterBindings&gt;
+    &lt;wcm:ParameterBinding <b>ParameterName=&quot;customer&quot;</b> xmlns:wcm=&quot;ComponentModel&quot;&gt;
+      &lt;wcm:ParameterBinding.Value&gt;
+        &lt;?Mapping XmlNamespace=&quot;System&quot; ClrNamespace=&quot;System&quot; Assembly=&quot;mscorlib&quot; ?&gt;
+        &lt;ns0:String xmlns:ns0=&quot;System&quot;&gt;<b>Fabrikam</b>&lt;/ns0:String&gt;
+      &lt;/wcm:ParameterBinding.Value&gt;
+    &lt;/wcm:ParameterBinding&gt;
+    &lt;wcm:ParameterBinding <b>ParameterName=&quot;orderDescription&quot;</b> xmlns:wcm=&quot;ComponentModel&quot;&gt;
+      &lt;wcm:ParameterBinding.Value&gt;
+        &lt;?Mapping XmlNamespace=&quot;System&quot; ClrNamespace=&quot;System&quot; Assembly=&quot;mscorlib&quot; ?&gt;
+        &lt;ns0:String xmlns:ns0=&quot;System&quot;&gt;<b>42&quot; Plasma TV</b>&lt;/ns0:String&gt;
+      &lt;/wcm:ParameterBinding.Value&gt;
+    &lt;/wcm:ParameterBinding&gt;
+  &lt;/InvokeMethodActivity.ParameterBindings&gt;
+&lt;/InvokeMethodActivity&gt;</pre></div><p align="left">In this case, we're hard-coding the custom and order description fields, but in a real workflow, you'd take those as input parameters.</p><p align="left"><i><b>WF Question #2: How do you pass input parameters into a workflow?</b></i></p><p align="left"><i><b>WF Question #3: Is it legal XML to have a processing instruction in the middle of a file, e.g. &lt;?Mapping...?&gt;?</b></i></p><p align="left">After the workflow creates the order, it waits for a human to approve it via an event sink activity:</p><div align="left">
+<pre>&lt;<b>EventSinkActivity</b>
+ID=&quot;eventSinkActivity1&quot;
+<b>  EventName=&quot;OrderApproved&quot;
+  InterfaceType=&quot;EventSinkAndMethodInvoke2.IOrderService&quot;</b>&gt;
+  &lt;EventSinkActivity.ParameterBindings&gt;
+    &lt;wcm:ParameterBinding <b>ParameterName=&quot;Comment&quot;</b> xmlns:wcm=&quot;ComponentModel&quot;&gt;
+      ...
+    &lt;/wcm:ParameterBinding&gt;
+    &lt;wcm:ParameterBinding <b>ParameterName=&quot;Order&quot;</b> xmlns:wcm=&quot;ComponentModel&quot;&gt;
+      ...
+    &lt;/wcm:ParameterBinding&gt;
+  &lt;/EventSinkActivity.ParameterBindings&gt;
+&lt;/EventSinkActivity&gt;</pre></div><p align="left">The event sink waits for the host to fire an event, which has several interesting bits. The first interesting bit is the parameter names, which are bound to the public properties of the OrderEventArgs class passed to the OrderEvent event:</p><div align="left">
+<pre><b>[Serializable]
+</b>public class OrderEventArgs <b>: WorkflowMessageEventArgs</b> {
+  Order _order;
+  public Order <b>Order</b> { get { return _order; } }
+
+  string _comment;
+  public string <b>Comment</b> { get { return _comment; } }
+
+  public OrderEventArgs(<b>Guid workflowInstanceId, </b>Order order, string comment)
+<b>: base(workflowInstanceId)</b> {
+    _order = order;
+    _comment = comment;
+  }
+}</pre></div><div align="left"><p align="left">Notice that the custom OrderEventArgs class derives from the WorkflowMessageEventArgs class and passes in the workflow instance ID. This is required so that the event can be routed to the appropriate workflow. Without it, you'll get the following illuminating error in beta 1:</div><div align="left"><blockquote><p align="left"><i>&quot;An unhandled exception of type 'System.Workflow.Runtime.EventDeliveryFailedException' occurred System.Workflow.Runtime.dll&quot;</i></p></blockquote></div><div align="left"><p align="left"><i><b>WF Question #4: Can we get more descriptive exception messages?</b></i></div><div align="left"><p align="left">Luckily, this error only happens when you're running under the debugger; it's swallowed completely when your program runs normally.</div><div align="left"><p align="left"><i><b>WF Question #5: Can we get exceptions at runtime, too?</b></i></div><div align="left"><p align="left">Notice also that the OrderEventArgs class is marked with the Serializable attribute. This is required to cross the boundary into the workflow. Without it, you'll get the ever helpful EventDeliveryFailedException exception.</div><div align="left"><p align="left"><b><i>WF Question #6: What boundary are we crossing when fire an event into a workflow?</i></b></div><div align="left"><p align="left">Further, all objects sent into a workflow need to be serializable as well, like the Order class (also yielding EventDeliveryFailedException if you forget):</div><div align="left">
+<pre><b>[Serializable]
+</b>public class Order {
+  Guid _orderId = Guid.NewGuid();
+  public Guid OrderId { get { return _orderId; } }
+
+  string _customer;
+  public string Customer {
+    get { return _customer; }
+    set { _customer = value; }
+  }
+
+  string _desc;
+  public string Description {
+    get { return _desc; }
+    set { _desc = value; }
+  }
+
+  public Order(string customer, string desc) {
+    _customer = customer;
+    _desc = desc;
+  }
+}</pre></div><div align="left"><p align="left">Firing the event is as easy as calling our helper function from outside of our workflow to cross the boundary into the workflow:</div><div align="left"><div align="left">
+<pre>class OrderServiceImpl : <b>IOrderService</b> {
+  ...
+  public void ApproveOrder(WorkflowInstance wf, string comment) {
+    if (OrderApproved != null) {
+      Guid wfId = wf.InstanceId;
+<b>      OrderApproved(null, new OrderEventArgs(wfId, _workflowOrderMap[wfId], comment));
+</b>    }
+  }
+
+<b>  public event EventHandler&lt;OrderEventArgs&gt; OrderApproved;
+</b>}</pre></div><p align="left">Notice that we need the workflow instance ID, which we pass in via the WorkflowInstance we get when starting the workflow:</p><div align="left">
+<pre>static void Main() {
+  WorkflowRuntime workflowRuntime = new WorkflowRuntime();
+
+  // Add IOrderService implementation
+  OrderServiceImpl orderService = new OrderServiceImpl();
+  workflowRuntime.AddService(orderService);
+
+  workflowRuntime.StartRuntime();
+  workflowRuntime.WorkflowCompleted += OnWorkflowCompleted;
+
+  Type type = typeof(EventSinkAndMethodInvoke2.Workflow2);
+<b>  WorkflowInstance wf = workflowRuntime.StartWorkflow(type);
+</b>
+<b>  // Simulate human decision time and approve the order
+  System.Threading.Thread.Sleep(1000);
+  orderService.ApproveOrder(wf, &quot;this is a *fine* order!&quot;);
+</b>
+waitHandle.WaitOne();
+  workflowRuntime.StopRuntime();
+}</pre></div></div><div align="left"><p align="left">Once the event data is fired into the event, the event sink's parameter binding provide enough infrastructure to be able to access the data in subsequent activities, e.g. the code activity that comes right after the event activity:</div><div align="left">
+<pre>&lt;<b>Code ExecuteCode=&quot;code1_ExecuteCode&quot;</b> ID=&quot;code1&quot; /&gt;</pre></div><div align="left"><p align="left">In the code1_ExecuteCode method, my code can reach over to the event sink activity's parameter bindings and access the data that was fired into it:</div><div align="left">
+<pre>public partial class Workflow2 : SequentialWorkflow {
+  void code1_ExecuteCode(object sender, EventArgs e) {
+    Console.WriteLine(&quot;Order: approved w/ comment= {0}&quot;,<b>
+eventSinkActivity1.ParameterBindings[&quot;Comment&quot;].Value</b>);
+}</pre></div><div align="left"><p align="left">There are three reasons I really don't like this code. The first is that I have to cast to get something typed out of the Value property and I don't like casting. The second reason is that this technique only works through code; I can't bind to a parameter from an event sink to a property on another activity, e.g. the Error property on a Termination activity. The third, and most damning reason, is because this induces coupling from my code activity to my event sink activity. I don't want this coupling to be captured in code, which is another reason to really like the declarative data binding solution.</div><div align="left"><p align="left"><i><b>WF Question #7: Why can't I bind event sink parameters as input into other activities?</b></i></div><div align="left"><p align="left">Unfortunately, while I can't solve reasons #2 or #3 very well, I can solve them partially and I can solve #1 nicely by adding some fields to my workflow class:</div><div align="left">
+<pre>public partial class Workflow2 : SequentialWorkflow {
+<b>  Order _approvedOrder;
+  string _approvalComment;
+</b>
+void code1_ExecuteCode(object sender, EventArgs e) {
+    Console.WriteLine(&quot;Order: approved w/ comment= {0}&quot;, <b>_approvalComment</b>);
+  }
+}</pre></div><div align="left"><p align="left">The _approvedOrder and _approvalComment fields can be bound to the event sink parameters like so:</div><div align="left">
+<pre>&lt;<b>EventSinkActivity</b>
+ID=&quot;eventSinkActivity1&quot;
+  EventName=&quot;OrderApproved&quot;
+  InterfaceType=&quot;EventSinkAndMethodInvoke2.IOrderService&quot;&gt;
+  &lt;EventSinkActivity.ParameterBindings&gt;
+    &lt;wcm:ParameterBinding <b>ParameterName=&quot;Comment&quot;</b> xmlns:wcm=&quot;ComponentModel&quot;&gt;
+      &lt;wcm:ParameterBinding.Value&gt;
+        &lt;wcm:ActivityBind <b>Path=&quot;_approvalComment&quot; ID=&quot;{/Workflow}&quot;</b> /&gt;
+      &lt;/wcm:ParameterBinding.Value&gt;
+    &lt;/wcm:ParameterBinding&gt;
+    &lt;wcm:ParameterBinding <b>ParameterName=&quot;Order&quot;</b> xmlns:wcm=&quot;ComponentModel&quot;&gt;
+      &lt;wcm:ParameterBinding.Value&gt;
+        &lt;wcm:ActivityBind <b>Path=&quot;_approvedOrder&quot; ID=&quot;{/Workflow}&quot;</b> /&gt;
+      &lt;/wcm:ParameterBinding.Value&gt;
+    &lt;/wcm:ParameterBinding&gt;
+  &lt;/EventSinkActivity.ParameterBindings&gt;
+&lt;/EventSinkActivity&gt;</pre></div><p align="left">Now, when the event sink activity fires, these two workflow fields are populated so that by the time the code activity is executed, they're ready for use, all typed up and ready to go. However, while this reduces coupling to some degree, i.e. the code activity just hopes that somebody provides the data and not that is has to be a specific activity, this is not the same as failing to execute an activity until you have valid values to pass to a function. Instead, it's like setting global variables, hoping they're set properly when the code that accesses them needs them and having no idea what's affected if you have to remove them.</p><p align="left">Still, with the parameter binding in place between the event sink parameters and the workplace class fields, I can bind the input to an activity:</p><div align="left">
+<pre>&lt;Terminate
+<b>Error=&quot;*d2p1:ActivityBind(ID={/Workflow};Path=_approvalComment)&quot;</b> ID=&quot;terminate1&quot;
+  xmlns:d2p1=&quot;ComponentModel&quot; /&gt;</pre></div><p align="left">Clearly, this is binding syntax only a mother could love, but luckily the designer did it for me, it's going to change in the next beta and it does most of what I want, i.e. bind the input of the Error property on the Terminate activity to something produced by another activity. It's not the same as binding the event sink activity parameters directly, thereby allowing me to shed this dirty global variable feeling, but it's oh so close.</p><p align="left">The VS05b2, WF/WinFXb1 sample code is available <a href="/public/samples/WfEventSinkAndMethodInvoke2.zip">for your enjoyment</a>.</p><p align="left">Props to Dennis Pilarinos and Anandhi Somasekaran from the WF group for help figuring this out.</p>

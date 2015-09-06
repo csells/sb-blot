@@ -1,0 +1,89 @@
+<!--
+Date: 4/21/2001 12:00:00 AM  -08:00
+Permalink: 12611
+Disqus: 12611
+Tags: spout
+-->
+<h1>From COM to .NET</h1>
+<p>
+                    <i><span class="created">Saturday, 4/21/01</span></i>
+                </p>
+                <p>
+                    Enough people have asked me what I think about the transition from COM to .NET 
+                    that I thought I'd publish my thoughts instead of responding to each individual 
+                    email. This is the question that finally lead to me publishing this page in the 
+                    first place.
+                </p>
+                <p>
+                    In the early days of C, ASM was much more efficient, but C was much easier to 
+                    use and as machines got faster, and C compilers got better, ASM was relegated 
+                    to use by only a few. During the transition, ASM programmers were valuable and 
+                    continue to be so for very targeted tasks, but they grow increasingly 
+                    unnecessary. For example, in all the time that I've developed software (17 
+                    years), I've needed ASM exactly *once* (and then I just used Keith Brown : ). 
+                    To this day, I have to admit that I can neither write nor even read x86 
+                    assembly. I've always meant to learn and I admit to being embarrassed that I 
+                    can't, but I've never needed it. Each platform I programmed for, I started 
+                    after the platform had moved away from ASM being the dominant programming 
+                    environment.
+                </p>
+                <p>
+                    As Microsoft ships increasingly stable betas of .NET towards a final release, 
+                    we're nearing the end of a long and messy transition from processor-specific 
+                    low-level programming to programming at a higher level on the Windows platform. 
+                    To be honest, most Windows programmers are already there and have been for a 
+                    while. They're the forward-thinking Visual Basic programmers. They recognized 
+                    that they had no need to learn Win32 or COM. They could program at a 
+                    comfortable level and make their C++ programmer friends do the grunge work for 
+                    them. C++ programmers that haven't moved to VB yet had two reasons: the 
+                    programs run too slowly and VB doesn't let me do what I want. With each 
+                    successive release of VB, the efficiency argument has gotten weaker and weaker. 
+                    Now that VB6 uses the same intermediate language and backend compiler that VC6 
+                    does, speed's really no longer an issue. The 2nd reason, "VB doesn't let me do 
+                    what I want," is real and continues through VB6. The problem is really the 
+                    language. There is one feature that no C++ programmer can live without: 
+                    implementation inheritance. It's so useful for day-to-day programming chores 
+                    that we can't give it up.
+                </p>
+                <p>
+                    This one fatal flaw in VB6 was made very clear to me the other day when I was 
+                    doing .NET programming using C#. Before we go any further, let me make one 
+                    thing perfectly clear: VB.NET *is* C#. The only difference is the syntax. The 
+                    language features are all the same but one: you can write "unsafe" code in C#, 
+                    but not in VB.NET. Unsafe code in C# is the equivalent of&nbsp; inline ASM: 
+                    when you need it, you can't live without it, but you probably won't need it. 
+                    So, when I'm programming C#, I could as easily be programming VB.NET. And the 
+                    beauty of my experience of programming C# caused me to examine the difference 
+                    between my previous VB6 experience and my current C# experience. I had a 
+                    form-based drag-n-drop environment in both. I had IntelliSense in both. I had a 
+                    programming model that was much simpler than raw Win32 in both. In short, C# 
+                    and .NET gave me everything that VB6 gave me, but with one addition: 
+                    implementation inheritance. When I needed to model the data for my application, 
+                    it was so easy because I had inheritance but would've been so much harder 
+                    without it. That feature made all the difference to me and is the reason that 
+                    C++ programmers will finally feel free to move into the VB-like environment 
+                    that .NET provides.
+                </p>
+                <p>
+                    Will everyone abandon the Win32 API when .NET ships? No. Will everyone 
+                    eventually move their code over to .NET? No. Will most folks spend most of 
+                    their time programming .NET within 18-24 months of ship? Absolutely, yes. It's 
+                    too compelling a platform with too many real advantages to ignore.
+                </p>
+                <p>
+                    Does that mean you should stop all development and wait for .NET to ship? 
+                    Absolutely, no. Build you components in COM today and you'll be able to move 
+                    them over to .NET when the time is right (which may be never). The .NET 
+                    backwards compatibility story is a good one. You'll be able to continue to make 
+                    use of most of your COM components and DLLs in .NET, which means that the code 
+                    you're working on today will continue to be useful long after you've moved your 
+                    day-to-day programming activities to .NET. To ease the transition, I recommend 
+                    marking your COM interfaces with [oleautomation] if possible. This limits your 
+                    method parameters to types and attributes that .NET is particularly good at 
+                    marshaling.
+                </p>
+                <p>
+                    &nbsp;.NET via C# and VB.NET is the future of programming for Windows, leaving 
+                    Win32 and COM as the ASM of .NET.
+                </p>
+                

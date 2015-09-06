@@ -1,0 +1,15 @@
+<!--
+Date: 11/11/2005 12:01:43 PM  -08:00
+Permalink: 1905
+Disqus: 1905
+Tags: .net
+-->
+<h1>WPF: Handling Button.Click or defining a command?</h1>
+<P>If I've got an Avalon Button, e.g.</P>
+<P>&lt;Button Content="OK" /&gt;</P>
+<P>Should I give the button a name so I can handle the event (I would never put the event handler directly in the XAML) like this:</P>
+<P>&lt;Button Content="OK" x:Name="okButton" /&gt;</P>
+<P>Or, should I define a custom command and invoke it like this:</P>
+<P>&lt;Button Content="OK"&nbsp;Command="local:MyDialog.OkCommand" /&gt;</P>
+<P>Defining a command seems like overkill (you do some stuff in the static ctor and some other stuff in the instance ctor), but I like consistency, e.g. my main window's menu will use commands.</P>
+<P>Thoughts on the best practice here?</P>

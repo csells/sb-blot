@@ -1,0 +1,26 @@
+<!--
+Date: 7/11/2006 3:36:33 PM  -08:00
+Permalink: 2011
+Disqus: 2011
+Tags: tools
+-->
+<h1>Functional Language Summary</h1>
+<P>I've been hearing a lot about functional programming lately (and the circle of life continues); I found <A href="http://www.defmacro.org/ramblings/fp.html">Functional Programming For The Rest of Us</A> to be a nice summary. Here's what I got from it:</P>
+<P><STRONG>Atoms of FP:</STRONG></P>
+<UL>
+<LI>All "variables" are immutable, often called "symbols"</LI>
+<LI>Program state is kept in functions (specifically, arguments passed on the stack to functions), not variables</LI>
+<LI>Functions are first class citizens, i.e. functions can be passed as arguments</LI>
+<LI>"currying" is a convenience syntax for adapting a function to an alternate function signature</LI>
+<LI>"closures" are functions that are allowed mutable state and access to state outside their lexical scope to bridge functional and non-functional languages</LI></UL>
+<P><STRONG>Implications:</STRONG></P>
+<UL>
+<LI>Functions cannot cause side effects ("variables" are immutable)</LI>
+<LI>FP is great for unit testing (only have to test outputs against inputs -- don't have to test side effects)</LI>
+<LI>FP is great for debugging (no need to worry about external state affecting function results -- results are only based on the input)</LI>
+<LI>No need for multi-threaded locks, as state is immutable</LI>
+<UL>
+<LI>This makes functional programs automatically parallelizeable</LI></UL>
+<LI>Can hot swap new function definitions w/o effecting existing instances</LI>
+<LI>Don't need to evaluate a function 'til the results are needed</LI></UL>
+<P>FP sounds great! Why do we mess around w/ anything else?!?</P>

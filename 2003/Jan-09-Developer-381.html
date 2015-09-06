@@ -1,0 +1,14 @@
+<!--
+Date: 1/9/2003 6:38:51 AM  -08:00
+Permalink: 381
+Disqus: 381
+-->
+<h1>Developer</h1>
+From Jeff Richard: Hello:
+
+I am in the process of constructing an application using Microsoft's smart client architecture (no-touch deployment), leveraging dynamic assembly loading to prevent installation on the client PC.  I have run into a situation where I need a browser control to display content from an existing web site (help, reports).  The problem is that the IE COM control cannot be consumed from a smart client application due to a security violation.  I found a workaround, not he best solution since the path to IEXPLORE.EXE must be known, using the Win32 CreateProcess() API call to launch an instance of IE in a separate process.  Security is handled by granting the application the ability to execute unmanaged assemblies.
+
+Has anyone found a "pure" .NET browser control that supports similar rendering capabilities as the IE COM control?
+
+Jeff.
+jtrichard@sotasw.com

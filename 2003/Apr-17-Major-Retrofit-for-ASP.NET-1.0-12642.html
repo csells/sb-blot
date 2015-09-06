@@ -1,0 +1,28 @@
+<!--
+Date: 4/17/2003 4:21:00 PM  -08:00
+Permalink: 12642
+Disqus: 12642
+Tags: colophon
+-->
+<h1>Major Retrofit for ASP.NET 1.0</h1>
+    <P>This site, the logo, business cards and t-shirts were designed by <a href="http://www.guonan.com/">
+        guonan</a>. She's got an amazing style and she's very easy to work with.</P>
+    <P>The initial version of this site was implemented by 
+	<a href="http://staff.develop.com/jfland/">Jon Flanders</a>. The way he was able to make conflicting requirements work 
+      for this site was inspirational. Most of what I know about ASP.NET, I learned 
+      from this site and Jon.</P>
+    <P>Continuous grammar checking is provided by <a href="mailto:candera@alum.mit.edu">
+        Craig Andera</a> (whether I want it or not : ).</P>
+    <P>The site itself is hosted at <a href="http://www.securewebs.com">
+        SecureWebs</a>.</P>
+    <P>The implementation is a mixture of ASP.NET as the navigation and layout 
+      framework and HTML for the content. My goals for the site were simple: look 
+      nice, easy to maintain. I didn't want to give up FrontPage for my HTML editor 
+      ('cuz it has the Word key bindings that are hard-coded into my brain : ), but I 
+      wanted to be able to get the functionality of ASP.NET. So, the main content 
+      comes for an ascx file that reads in the index.htm and strips off the head 
+      section. Except for the home page, which is laid out specially, each 
+      default.aspx on my site just pulls in a single pageLayout.ascx file that does 
+      all of the layout using content from the target of the URL. By separating 
+      content from layout, I get the best of both FrontPage and ASP.NET, making both 
+      content and site maintenance easy.</P>

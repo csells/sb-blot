@@ -1,0 +1,86 @@
+<!--
+Date: 3/25/2004 12:00:00 AM  -08:00
+Permalink: 12502
+Disqus: 12502
+Tags: spout
+-->
+<h1>Checking Spec. Compliance at Build Time</h1>
+<p align="left"><i>Thursday, 
+<span class="created">March 25th, 2004</span></i></p><p align="left">Even though Ward Cunningham and I have 
+been living only 4 miles away from each other for some years, I really didn't 
+know that he lived in in the same state 'til he <strike>sold his soul</strike> 
+hired on at Microsoft. Since then, we've been meeting at a local Starbucks on a 
+regular basis to shoot the shit in a very DevelopMentor/Tektronix-like way, i.e. 
+ramble on about whatever 'til we hit on something fun to try. In one of those 
+meetings, we were talking about requirements for a web services API that I'm 
+working on and he took us off on what I thought was a tangent, but turn out to 
+be very cool.</p><p align="left">Before Ward set me straight, I thought that 
+Test-Driven Development (TDD) was when I built a little console app to test my 
+APIs. I routinely do this before I write an API so that I can imagine what I 
+wish I had to program against without being encumbered with an existing 
+implementation. Then, I run my console app(s) afterwards for testing and 
+regression testing, but only sporadically. I knew that NAnt let me run these 
+tests into my build process, but since I'm a VS.NET guy and I haven't done the 
+NAnt/VS.NET integration work that I know I should do, I haven't done as much 
+with this as I knew I should be. Plus, as it was only me, it didn't seem like 
+such a big deal.</p><p align="left">What makes TDD a big deal, however, is when 
+you've got a team of folks. Of course, every developer is expected to check in 
+tests for their stuff and those would be run as part of the nightly build. But 
+that's not the cool part. The cool part is when another developer adopts my API 
+and <i>puts <b>his</b> tests into <b>my</b> build process</i>. When someone 
+adopts an API that I build, then make certain assumptions about how it works and 
+what side effects they can expect. TDD lets Joe R. Programmer encode his 
+assumptions as unit test code so that <i>when I break <b>his</b> assumptions 
+during an iteration of my API, I see it as part of <b>my</b> compiler output</i>.</p><p align="left"><img border="0" src="/public/spout/tdd6.jpg" width="664" height="491"></p><p align="left">
+Until I get a build error, I don't need to know or care about Joe's test. But 
+when I do, I look at Joe's unit test code and decide whether he was right. If 
+Joe's unit test is valid, I need to either fix my breaking change or be prepared 
+to help everyone that uses my API to rewrite and redeploy their code. If Joe's 
+unit test isn't valid, I've got to help Joe fix his code and prepare to help 
+everyone else that made &quot;invalid&quot; use of my API to begin with. The very nicest 
+things about TDD is that &quot;fixing breaking changes&quot; becomes the least painful 
+thing to do!</p><p align="left">This is <b><i>huge</i></b>. In fact, it's so 
+huge, that MS should provide an end point for people to submit their own unit 
+tests against our Windows and .NET APIs so that when we make breaking changes, 
+we can either fix them or know the proportion of folks affected by this breaking 
+change.</p><p align="left">Anyway, when Ward told me this, my eyes were opened 
+and I was changed. But he was just getting warmed up. After showing me the power 
+of formal unit tests across a team, he then went on to describe the power of 
+putting the unit tests right into specifications themselves. For example, 
+imagine a table in a spec laying out a series of inputs and expected outputs:</p><p align="left"><img border="0" src="/public/spout/tdd1.jpg" width="494" height="421"></p><p align="left">
+Now imagine a parser that could read through this table and execute the code 
+being specified, checking expected output against actual output, lighting 
+matching output green and mismatched output red:</p><p align="left"><img border="0" src="/public/spout/tdd2.jpg" width="494" height="421"></p><p align="left">
+This scheme lets designers define the spec long before it's implemented and then 
+check it's progress as it's implemented. Likewise, a spec itself can be put into 
+the build process as another set of unit tests. Plus, the readability and 
+maintainability of specs in this format is much improved and very much more 
+accessible then unit test code.</p><p align="left">But wait, there's more. This 
+isn't some pipe dream. Ward has a .NET implementation of it called <a href="http://fit.c2.com/">
+the FIT Framework on the web</a> and yesterday he and I played around with it in 
+my kitchen. Our goal was to take Ward's .NET FIT implementation and add support 
+to it for SOAP endpoints. We started with the <a href="http://www.xmethods.org/ve2/ViewListing.po;jsessionid=dexwx5Xc9t2KPmivNhO5Gnr5(QhxieSRM)?key=uuid:50ABDF31-8769-457B-EFB8-4E990E1BC19E">
+ISBN Information web service</a> that we found on <a href="http://www.xmethods.org/">
+xmethods.org</a> and defined the following spec:</p><p align="left"><img border="0" src="/public/spout/tdd4.jpg" width="677" height="190"></p><p align="left">
+We specified the name of the FIT &quot;fixture&quot; (which is the class that implements 
+the tests in FIT), as well as the WSDL URL, the service type and method we'd 
+like to test, the arguments we'd like to test and the results we expected to 
+get. We mixed in some of <a href="http://www.gotdotnet.com/Community/UserSamples/Details.aspx?SampleGuid=35c47ebb-d806-4995-8797-a42251a8ace3">
+Christian Weyer's Dynamic Web Services Proxy</a> and we got this:</p><p align="left"><img border="0" src="/public/spout/tdd5.jpg" width="759" height="429"></p><p align="left">
+Notice that we're not quite done yet, i.e. nothing is green and we're not 
+reaching into the retrieved XML and pulling out the Author, Publisher, etc. 
+Still, while FIT requires a matching piece of code for every spec, we dropped a 
+bit more metadata into the tables for the SOAP version, leveraged WSDL and have 
+narrowed the project to a single piece of generic code for any WSDL-described 
+SOAP endpoint (so long as Christian's code can parse it).</p><p align="left">Our 
+plan is to finish up the extensions to FIT for SOAP and to put it into practice 
+on the SOAP API that I'm currently designing and even to push it into our build 
+process if I can. Further, I'd like to build another FIT fixture that, instead 
+of executing the tests, generates sample code to demonstrate example usage and 
+expected output (including expected errors). Rest assured, when we get it 
+working well enough for public consumption, Ward and I will publish the SOAP 
+extensions for your enjoyment.</p><p align="left">But don't wait for that! You 
+can do TDD with custom actions in VS.NET 2003 and with <a href="http://fit.c2.com/">
+the FIT Framework</a> today!</p><p align="left"><a href="/1227">
+Discuss</a></p>
+

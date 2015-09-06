@@ -1,0 +1,29 @@
+<!--
+Date: 12/29/2005 8:22:38 PM  -08:00
+Permalink: 1927
+Disqus: 1927
+-->
+<h1>"Conjure our spirits in a magical language called Lisp"</h1>
+<P>Even the first 10 minutes of the 1st lecture of <A href="http://swiss.csail.mit.edu/classes/6.001/abelson-sussman-lectures/">the MIT lectures on "Structure and Interpretation of Computer Programs"</A> is amazing.</P>
+<BLOCKQUOTE dir=ltr style="MARGIN-RIGHT: 0px">
+<P>"In Computer Science, we're in the business of&nbsp;formalizing&nbsp;'how to'&nbsp;imperative knowledge" aka "process."</P></BLOCKQUOTE>
+<p>In the first 5 minutes, I've already implemented my own square root function, which works surprisingly well:</p>
+<p><pre>class Program {
+  static double MySquareRoot(double x) {
+    double margin = 0.10;
+    double g = x / 2.0;
+    while( System.Math.Abs(g * g - x) > margin ) {
+      g = (g + x / g) / 2.0;
+    }
+    return g;
+  }
+
+  static void Main(string[] args) {
+    double x = 44523.0;
+    System.Console.WriteLine("sqrt({0})= {1}", x, System.Math.Sqrt(x));
+    System.Console.WriteLine("MySquareRoot({0})= {1}", x, MySquareRoot(x));
+  }
+}
+</pre>
+<P>I can't possibly believe that I would've understood the implications of the lecture as a freshman, but now, it's like Moses and the stone tablets. Priceless.</P>
+<P>[<A href="http://www.joelonsoftware.com/articles/ThePerilsofJavaSchools.html">via Joel Spolsky</A>]</P>

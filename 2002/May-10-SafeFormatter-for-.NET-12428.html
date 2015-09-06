@@ -1,0 +1,35 @@
+<!--
+Date: 5/10/2002 4:33:36 PM  -08:00
+Permalink: 12428
+Disqus: 12428
+Tags: tools
+-->
+<h1>SafeFormatter for .NET</h1>
+   <p align="left">Are you building and deploying .NET applications in a secure 
+    environment, e.g. over the intranet or the internet? If so, they you've 
+    probably mourned the loss of the binary and SOAP formatters that can 
+    automatically serialize a graph of objects that are marked as [Serializable] 
+    and that may also implement ISerializable and IDeserializationCallback. Both 
+    of these formatters are dependent on reflection, which will not be available 
+    in a more restrictive security environment. Likewise, even 
+    ISerialization.GetObjectData is verboten if you wanted to do this kind of 
+    thing yourself. As far as that goes, [Serializable] and ISerialization <i>
+    should</i> be forbidden in a secure environment, as it allows a client to 
+    get and set the private variables of an object, potentially causing harm.</p>
+    <p align="left">Still, security is the enemy of usability, to paraphrase 
+    Keith Brown. So, in the spirit of a balancing the design need for objects 
+    that can serialize themselves with the goal of complete disclosure in a 
+    secure world, I've built my own &quot;safe&quot; formatter. It only uses facilities of 
+    the runtime that work in the most secure environment of the default settings 
+    for the internet zone. So that objects can guard themselves against 
+    malicious data, I define a new interface called ISafelySerializeable that 
+    they need to implement to support this serialization facility. The protocol 
+    is exactly the same as ISerializable, so if that interface is already being 
+    implemented, the implementation of GetObjectData can be shared between both 
+    interfaces.</p>
+    <p align="left">Currently, the code is in alpha and is riddled with TODO 
+    statements, but its functional enough today for actual usage.
+    <a href="/public/tools/SafeFormatter.zip">My SafeFormatter and test harness are available 
+    for your feedback.</a> Enjoy.</p></div>
+ 
+

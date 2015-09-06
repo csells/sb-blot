@@ -1,0 +1,294 @@
+<!--
+Date: 4/17/1998 9:04:08 AM  -08:00
+Permalink: 12662
+Disqus: 12662
+-->
+<h1>Handling Name Collision Using Forwarding Shims</h1>
+        <p>
+            One of the problems with MI is that of name collisions. Imagine the following 
+            interfaces:
+        </p>
+        <blockquote>
+            <blockquote><font FACE="Lucida Console" SIZE="2">
+                    <p>
+                        interface ICowboy : IUnknown {
+                        <br>
+                        &nbsp;&nbsp;&nbsp; HRESULT Draw();
+                        <br>
+                        };
+                    </p>
+                    <p>
+                        interface IArtist : IUnknown {
+                        <br>
+                        &nbsp;&nbsp;&nbsp; HRESULT Draw();
+                        <br>
+                        };
+                    </p>
+            </blockquote>
+        </blockquote></font><font size="3">
+            <p>
+            Because both </font><font FACE="Lucida Console" COLOR="#0000ff" SIZE="2"><b>Draw</b></font><font size="3">
+            methods have the same signature, using straight MI requires a single shared 
+            implementation:</p>
+            <blockquote>
+                <blockquote></font><font FACE="Lucida Console" SIZE="2">
+            <p>
+                // Ace Powell was a cowboy/artist who lived in the
+                <br>
+                // western US from 1912 to his death in 1978. I'd
+                <br>
+                // like to thank Tim Ewald for this fabulous example,
+                <br>
+                // which I have used to death for years.
+            </p>
+            <p>
+                class CAcePowell :
+                <br>
+                &nbsp;&nbsp;&nbsp; public CComObjectRootEx&lt;CComSingleThreadModel&gt;,
+                <br>
+                &nbsp;&nbsp;&nbsp; <b>public ICowboy,
+                    <br>
+                </b>&nbsp;&nbsp;&nbsp; <b>public IArtist {</b>
+            </p>
+            <p>
+                public:
+            </p>
+            <p>
+                BEGIN_COM_MAP(CAcePowell)
+                <br>
+                &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(ICowboy)
+                <br>
+                &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(IArtist)
+                <br>
+                &nbsp;&nbsp;&nbsp; END_COM_MAP()
+            </p>
+            <p>
+                ...
+            </p>
+            <b>
+                <p>
+                    &nbsp;&nbsp;&nbsp; HRESULT Draw()
+                    <br>
+                    &nbsp;&nbsp;&nbsp; { /* Act as a cowboy or an artist? */ }
+                </p>
+            </b>
+            <p>
+                };
+            </p>
+            </blockquote> </blockquote> </font><font size="3">
+            <p>
+            Since the implied meaning of </font><font FACE="Lucida Console" COLOR="#0000ff" SIZE="2">
+            <b>Draw</b></font><font size="3"> is very different for an artist than it is 
+            for a cowboy, we&#146;d like to be able to provide two </font><font FACE="Lucida Console" COLOR="#0000ff" SIZE="2">
+            <b>Draw</b></font><font size="3"> implementations. For that, we a technique 
+            long known to the C++ community that I&#146;ll call &quot;forwarding 
+            shims.&quot;</p>
+            <p>
+                The problem is that C++ has no syntax to be able to distinguish methods with 
+                the same signature from different bases in the derived class. For example, the 
+                following is not legal C++:
+            </p>
+            <blockquote>
+                <blockquote></font><font FACE="Lucida Console" SIZE="2">
+            <p>
+                class CAcePowell :
+                <br>
+                &nbsp;&nbsp;&nbsp; public CComObjectRootEx&lt;CComSingleThreadModel&gt;,
+                <br>
+                &nbsp;&nbsp;&nbsp; <b>public ICowboy,
+                    <br>
+                </b>&nbsp;&nbsp;&nbsp; <b>public IArtist {</b>
+            </p>
+            <p>
+                public:
+            </p>
+            <p>
+                BEGIN_COM_MAP(CAcePowell)
+                <br>
+                &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(ICowboy)
+                <br>
+                &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(IArtist)
+                <br>
+                END_COM_MAP()
+            </p>
+            <p>
+                ...
+            </p>
+            <b>
+                <p>
+                    &nbsp;&nbsp;&nbsp; HRESULT IArtist::Draw(); // error
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT ICowboy::Draw(); // error
+                </p>
+            </b>
+            <p>
+                };
+            </p>
+            </blockquote> </blockquote> </font><font size="3">
+            <p>
+                However, we can certainly distinguish the methods in individual base classes, 
+                e.g.
+            </p>
+            <blockquote>
+                <blockquote></font><font FACE="Lucida Console" SIZE="2">
+            <p>
+                struct _IArtist : public IArtist {
+                <br>
+                &nbsp;&nbsp;&nbsp; STDMETHODIMP Draw() { return ArtistDraw(); }
+                <br>
+                &nbsp;&nbsp;&nbsp; STDMETHOD(ArtistDraw)() =0;
+                <br>
+                };
+            </p>
+            <p>
+                struct _ICowboy : public ICowboy {
+                <br>
+                &nbsp;&nbsp;&nbsp; STDMETHODIMP Draw() { return CowboyDraw(); }
+                <br>
+                &nbsp;&nbsp;&nbsp; STDMETHOD(CowboyDraw)() =0;
+                <br>
+                };
+            </p>
+            </blockquote> </blockquote> </font><font size="3">
+            <p>
+            Both </font><font FACE="Lucida Console" COLOR="#0000ff" SIZE="2"><b>_IArtist</b></font><font size="3">
+            and </font><font FACE="Lucida Console" COLOR="#0000ff" SIZE="2"><b>_ICowboy</b></font><font size="3">
+            are shim classes that implement the method with the conflicting name and 
+            forward to another pure virtual member function with a <i>unique name</i>. 
+            Since both shims derive from the interface in question, they interfaces </font>
+        <font FACE="Lucida Console" COLOR="#0000ff" SIZE="2"><b>IArtist</b></font><font size="3">
+            and </font><font FACE="Lucida Console" COLOR="#0000ff" SIZE="2"><b>ICowboy</b></font><font size="3">
+            can still appear in the interface map without difficulty:</p>
+            <blockquote>
+                <blockquote></font><font FACE="Lucida Console" SIZE="2">
+            <p>
+                class CAcePowell :
+                <br>
+                &nbsp;&nbsp;&nbsp; public CComObjectRootEx&lt;CComSingleThreadModel&gt;,
+                <br>
+                &nbsp;&nbsp;&nbsp; <b>public _ICowboy,
+                    <br>
+                </b>&nbsp;&nbsp;&nbsp; <b>public _IArtist </b>{
+            </p>
+            <p>
+                public:
+            </p>
+            <p>
+                BEGIN_COM_MAP(CAcePowell)
+                <br>
+                <b>&nbsp;&nbsp; COM_INTERFACE_ENTRY(ICowboy)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(IArtist)</b>
+                <br>
+                END_COM_MAP()
+            </p>
+            <p>
+                ...
+            </p>
+            <b>
+                <p>
+                    &nbsp;&nbsp;&nbsp; HRESULT ArtistDraw();
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT CowboyDraw();
+                </p>
+            </b>
+            <p>
+                };
+            </p>
+            </blockquote> </blockquote> </font><font size="3">
+            <p ALIGN="JUSTIFY">
+            This trick fills the vtables for </font><font FACE="Lucida Console" COLOR="#0000ff" SIZE="2">
+            <b>IArtist</b></font><font size="3"> and </font><font FACE="Lucida Console" COLOR="#0000ff" SIZE="2">
+            <b>ICowboy</b></font><font size="3"> with </font><font FACE="Lucida Console" COLOR="#0000ff" SIZE="2">
+            <b>_IArtist::Draw</b></font><font size="3"> and </font><font FACE="Lucida Console" COLOR="#0000ff" SIZE="2">
+            <b>_ICowboy::Draw</b>.</font><font COLOR="#0000ff" SIZE="2"> </font><font size="3">
+            These functions, in turn, forward to the more derived class&#146;s 
+            implementation of the </font><font FACE="Lucida Console" COLOR="#0000ff" SIZE="2">
+            <b>ArtistDraw</b></font><font size="3"> and </font><font FACE="Lucida Console" COLOR="#0000ff" SIZE="2">
+            <b>CowboyDraw</b>.</font><font size="3"> The forwarding shims remove our name 
+            conflict at the cost of an extra vtable per shim class, an extra entry per 
+            method per vtable and an extra virtual function invocation per call. If this 
+            extra cost bothers you, remove it using the standard ATL tricks:</p>
+            <blockquote>
+                <blockquote></font><font FACE="Lucida Console" SIZE="2"><b>
+                <p>
+                    template &lt;typename Deriving&gt;
+                    <br>
+                    struct ATL_NO_VTABLE _IArtist : public IArtist {
+                    <br>
+                    &nbsp; STDMETHODIMP Draw() {
+                    <br>
+                    &nbsp;&nbsp;&nbsp; return
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    static_cast&lt;Deriving*&gt;(this)-&gt;ArtistDraw();
+                    <br>
+                    &nbsp; }
+                    <br>
+                    };
+                </p>
+                <p>
+                    template &lt;typename Deriving&gt;
+                    <br>
+                    struct ATL_NO_VTABLE _ICowboy : public ICowboy {
+                    <br>
+                    &nbsp; STDMETHODIMP Draw() {
+                    <br>
+                    &nbsp;&nbsp;&nbsp; return
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    static_cast&lt;Deriving*&gt;(this)-&gt;CowboyDraw();
+                    <br>
+                    &nbsp; }
+                    <br>
+                    };
+                </p>
+            </b>
+            <p>
+                class ATL_NO_VTABLE CAcePowell :
+                <br>
+                &nbsp;&nbsp;&nbsp; public CComObjectRootEx&lt;CComSingleThreadModel&gt;,
+                <br>
+                &nbsp;&nbsp;&nbsp; <b>public _ICowboy&lt;CAcePowell&gt;,
+                    <br>
+                </b>&nbsp;&nbsp;&nbsp; <b>public _IArtist&lt;CAcePowell&gt; </b>{
+            </p>
+            <p>
+                public:
+            </p>
+            <p>
+                BEGIN_COM_MAP(CAcePowell)
+                <br>
+                &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(ICowboy)
+                <br>
+                &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(IArtist)
+                <br>
+                END_COM_MAP()
+            </p>
+            <p>
+                ...
+            </p>
+            <p>
+                &nbsp;&nbsp;&nbsp; HRESULT ArtistDraw();
+                <br>
+                &nbsp;&nbsp;&nbsp; HRESULT CowboyDraw();
+            </p>
+            <p>
+            };</font></p> </blockquote> </blockquote>
+        <h2>
+            Credit
+        </h2>
+        <p>
+            Tim Ewald showed me this trick years ago. Jim Springfield showed me how it 
+            could be used with ATL. Don Box recommended the ATL_NO_VTABLE optimization.
+        </p>
+        <h2>
+            Copyright
+        </h2>
+        <p>
+            <i>This web page is adapted from the book </i><a href="http://www.amazon.com/exec/obidos/ASIN/0201695898/qid=904226999/sr=1-1/002-6355594-2952658">
+                ATL Internals</a> <i>by</i> <a href="mailto:brent@wiseowl.com">Brent Rector</a>
+            and <a href="mailto:csells@sellsbrothers.com">Chris Sells</a>. <i>Copyright � 1998 
+                by Addison Wesley Longman, Inc. All rights reserved.</i></p>
+
+

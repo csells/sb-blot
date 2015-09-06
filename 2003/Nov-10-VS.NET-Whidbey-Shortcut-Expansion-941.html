@@ -1,0 +1,29 @@
+<!--
+Date: 11/10/2003 5:30:23 PM  -08:00
+Permalink: 941
+Disqus: 941
+Tags: .net
+-->
+<h1>VS.NET Whidbey Shortcut Expansion</h1>
+<a href="http://weblogs.asp.net/jkey/posts/36500.aspx">Here</a>. Jeff Key shows a sample custom shortcut for expansion, but he doesn't show what you get. Digging through C:\Program Files\Microsoft Visual Studio .NET Whidbey\VC#\ExStencil\expansions.xml shows all *kinds* of interesting pre-defined shortcuts to expand. For example, type the following:
+
+class Foo {
+  property[TAB]
+}
+
+And VS.NET Whidbey expands the text to the following:
+
+class Foo {
+  private int myVar;
+
+  public int MyProperty {
+    get { return myVar; }
+    set { myVar = value; }
+  }		
+}
+
+And not only that, but the "int", "myVar" and "MyProperty" are really fields in a little ad hoc dialog that VS.NET holds with the programmer to fill in these values one at a time separated by the Tab key. Explaining it is way harder than actually using it. It rocks.
+
+But wait, there's more. Adding custom shortcuts is merely a matter of adding a new XML file of the appropriate form (see the existing ones for examples) and restarting VS.NET, i.e. no need to edit out-of-the-box VS.NET files, just add your own.
+
+Enjoy.

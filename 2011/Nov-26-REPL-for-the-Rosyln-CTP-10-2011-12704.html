@@ -1,0 +1,194 @@
+<!--
+Date: 11/26/2011 11:16:00 AM  -08:00
+Permalink: 12704
+Disqus: 12704
+Tags: tools,.net
+-->
+<h1>REPL for the Rosyln CTP 10/2011</h1>
+<p><img style="margin: 0px 0px 0px 10px; display: inline; float: right" align="right" src="http://farm4.static.flickr.com/3050/2989067290_7167b9ded8_z.jpg" width="317" height="238" /></p>  <p>I don’t know what it is, but I’ve long been fascinated with using the C# syntax as a command line execution environment. It could be that PowerShell doesn’t do it for me (I’ve seriously tried half a dozen times or more). It could be that while <a href="/12691">LINQPad comes really close</a>, I still don’t have enough control over the parsing to really make it work for my day-to-day command line activities. Or it may be that my friend Tim Ewald has always challenged csells to sell <a href="http://en.wikipedia.org/wiki/C_shell">C shells</a> by the sea shore.</p>  <h2>Roslyn REPL</h2>  <p>Whatever it is, I decided to spend my holiday time futzing with <a href="http://blogs.msdn.com/b/visualstudio/archive/2011/10/19/introducing-the-microsoft-roslyn-ctp.aspx">the Roslyn 2011 CTP</a>, which is a set of technologies from Microsoft that gives you an API over your C# and VB.NET code.</p>  <p>Why do I care? Well, there are all kinds of cool code analysis and refactoring tools I could build with it and I know <a href="http://social.msdn.microsoft.com/forums/en-us/roslyn">some folks are doing just that</a>. In fact, at <a href="http://www.buildwindows.com/">the BUILD conference</a>, Anders showed off <a href="http://channel9.msdn.com/events/BUILD/BUILD2011/TOOL-816T">a “Paste as VB” command</a> built with Roslyn that would translate C# to VB slick as you please.</p>  <p>For me, however, the first thing I wanted was a C# <a href="http://en.wikipedia.org/wiki/REPL">REPL</a> environment (Read-Evaluate-Print-Loop). Of course, Roslyn ships out of the box with a REPL tool that you can get to with the View | Other Windows | C# Interactive Window inside Visual Studio 2010. In that code, you can evaluate code like the following:</p>  <blockquote>   <pre><p>&gt; 1+1
+2
+<br />&gt; void SayHi() { Console.WriteLine(&quot;hi&quot;); }
+<br />&gt; SayHi();
+<br />hi</p></pre>
+</blockquote>
+
+<p>Just like modern dynamic languages, as you type your C# and press Enter, it’s executed immediately, even allowing you to drop things like semi-colons or even calls to WriteLine to get output (notice the first “1+1” expression). This is a wonderful environment in which to experiment with C# interactively, but just like LINQPad, it was a closed environment; the source was not provided!</p>
+
+<p>The Roslyn team does provide a great number of wonderful samples (check the “Microsoft Codename Roslyn CTP - October 2011” folder in your Documents folder after installation). One in particular, called BadPainting, provides a text box for inputting C# that’s executed to add elements to a painting.</p>
+
+<p>But that wasn’t enough for me; I wanted at least a Console-based command line REPL like the cool Python, JavaScript and Ruby kids have. And so, with the help of the Roslyn team (it pays to have friends in low places), I built one:</p>
+
+<p><a href="/public/samples/RoslynRepl.zip">RoslynRepl Sample Download</a></p>
+
+<p>Building it (after installing Visual Studio 2010, <a href="http://www.microsoft.com/download/en/details.aspx?id=23691">Visual Studio 2010 SP1</a>, the <a href="http://www.microsoft.com/download/en/details.aspx?displaylang=en&amp;id=2680">Visual Studio 2010 SDK</a> and <a href="http://www.microsoft.com/download/en/details.aspx?id=27746">the Roslyn CTP</a>) and running it lets you do the same things that the VS REPL gives you:</p>
+
+<p><a href="/public/post-images/12704-51.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="RoslynRepl" border="0" alt="RoslynRepl" src="/public/post-images/12704-52.png" width="644" height="193" /></a></p>
+
+<p>In implementing my little RoslynRepl tool, I tried to stay as faithful to the VS REPL as possible, including the help implementation:</p>
+
+<p><a href="/public/post-images/12704-53.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="replhelp" border="0" alt="replhelp" src="/public/post-images/12704-54.png" width="644" height="284" /></a></p>
+
+<p>If you’re familiar with the VS REPL commands, you’ll notice that I’ve trimmed the Console version a little as appropriate, most notably the #prompt command, which only has “inline” mode (there is no “margin” in a Console window). Other than that, I’ve built the Console version of REPL for Roslyn such that it works just exactly like the one documented in the Roslyn Walkthrough: <a href="http://msdn.microsoft.com/en-us/hh543923">Executing Code in the Interactive Window</a>.</p>
+
+<p>Building a REPL for any language is, at you might imagine, a 4-step process:</p>
+
+<ol>
+  <li>Read input from the user </li>
+
+  <li>Evaluate the input </li>
+
+  <li>Print the results </li>
+
+  <li>Loop around to do it again until told otherwise </li>
+</ol>
+
+<h2></h2>
+
+<h2>Read</h2>
+
+<p>Step 1 is a simple Console.ReadLine. Further, the wonder and beauty of a Windows Console application is that you get complete Up/Down Arrow history, line editing and even obscure commands like F7, which brings up a list of commands in the history:</p>
+
+<p><a href="/public/post-images/12704-55.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="replbeauty" border="0" alt="replbeauty" src="/public/post-images/12704-56.png" width="644" height="284" /></a></p>
+
+<p>The reading part of our REPL is easy and has nothing to do with Roslyn. It’s evaluation where things get interesting.</p>
+
+<h2>Eval</h2>
+
+<p>Before we can start evaluating commands, we have to initialize the scripting engine and set up a session so that as we build up context over time, e.g. defining variables and functions, that context is available to future lines of script:</p>
+
+<pre class="code"><span style="color: blue">using </span>Roslyn.Compilers;
+<span style="color: blue">using </span>Roslyn.Compilers.CSharp;
+<span style="color: blue">using </span>Roslyn.Compilers.Common;
+<span style="color: blue">using </span>Roslyn.Scripting;
+<span style="color: blue">using </span>Roslyn.Scripting.CSharp;</pre>
+
+<pre class="code">...</pre>
+
+<pre class="code"><span style="color: green">// Initialize the engine<br /></span><span style="color: blue">string</span>[] defaultReferences = <span style="color: blue">new string</span>[] { <span style="color: #a31515">&quot;System&quot;</span>, <span style="color: #a31515">...</span><span style="color: #a31515"> </span>};
+<span style="color: blue">string</span>[] defaultNamespaces = <span style="color: blue">new string</span>[] { <span style="color: #a31515">&quot;System&quot;</span>, <span style="color: #a31515">...</span><span style="color: #a31515"> </span>};
+<strong><span style="color: #2b91af">CommonScriptEngine </span>engine = <span style="color: blue">new </span><span style="color: #2b91af">ScriptEngine</span>(defaultReferences, defaultNamespaces);</strong></pre>
+
+<pre class="code"><pre class="code"><span style="color: green">// HACK: work around a known issue where namespaces aren't visible inside functions
+</span><span style="color: blue">foreach </span>(<span style="color: blue">string </span>nm <span style="color: blue">in </span>defaultNamespaces) {
+  engine.Execute(<span style="color: #a31515">&quot;using &quot; </span>+ nm + <span style="color: #a31515">&quot;;&quot;</span>, session);
+}
+
+<strong><span style="color: #2b91af">Session </span>session = <span style="color: #2b91af">Session</span>.Create();</strong></pre></pre>
+
+<p>Here we’re creating a ScriptEngine object from the Roslyn.Scripting.CSharp namespace, although I’m assigning it to the base CommonScriptEngine class which can hold a script engine of any language. As part of construction, I pass in the same set of assembly references and namespaces that a default Console application has out of the box and that the VS REPL uses as well. There’s also a small hack to fix a known issue where namespaces aren’t visible during function definitions, but I expect that will be unnecessary in future drops of Roslyn.</p>
+
+<p>Once I’ve got the engine to do the parsing and executing, I creating a Session object to keep context. Now we’re all set to read a line of input and evaluate it:</p>
+
+<pre class="code"><span style="color: blue"><pre class="code"><span style="color: #2b91af"><pre class="code"><strong><span style="color: #2b91af">ParseOptions </span>interactiveOptions =<br />  <span style="color: blue">new </span><span style="color: #2b91af">ParseOptions</span>(kind: <span style="color: #2b91af">SourceCodeKind</span>.Interactive,<br />                   languageVersion: <span style="color: #2b91af">LanguageVersion</span>.CSharp6);
+</strong></span>...
+while </span>(<span style="color: blue">true</span>) {
+  <span style="color: #2b91af">Console</span>.Write(&quot;&gt; &quot;);
+  <span style="color: blue">var </span>input = <span style="color: blue">new </span><span style="color: #2b91af">StringBuilder</span>();
+
+  <span style="color: blue">while </span>(<span style="color: blue">true</span>) {
+    <span style="color: blue">string </span>line = <span style="color: #2b91af">Console</span>.ReadLine();
+    <span style="color: blue">if </span>(<span style="color: blue">string</span>.IsNullOrWhiteSpace(line)) { <span style="color: blue">continue</span>; }
+
+    <span style="color: green">// Handle #commands
+    </span><span style="color: blue">...</span>
+
+    <span style="color: green">// Handle C# (include #define and other directives)
+    </span>input.AppendLine(line);
+
+<strong>    </strong><strong><span style="color: green">// Check for complete submission
+    </span><span style="color: blue">if </span>(<span style="color: #2b91af">Syntax</span>.IsCompleteSubmission(<br />          <span style="color: #2b91af">SyntaxTree</span>.ParseCompilationUnit(<br />            input.ToString(), options: interactiveOptions))) {<br />      <span style="color: blue">break</span>;<br />    }</strong><span style="color: green">
+    </span><span style="color: #2b91af">Console</span>.Write(&quot;. &quot;);
+  }
+
+  Execute(input.ToString());
+}</pre></pre></pre>
+
+<p>The only thing we’re doing that’s at all fancy here is collecting input over multiple lines. This allows you to enter commands over multiple lines:</p>
+
+<p><a href="/public/post-images/12704-57.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="replmultiline" border="0" alt="replmultiline" src="/public/post-images/12704-58.png" width="644" height="147" /></a></p>
+
+<p>The IsCompleteSubmission function is the thing that checks whether the script engine will have enough to figure out what the user meant or whether you need to collect more. We do this with a ParseOptions object optimized for “interactive” mode, as opposed to “script” mode (reading scripts from files) or “regular” mode (reading fully formed source code from files). The “interactive” mode lets us do things like “1+1” or “x” where “x” is some known identifier without requiring a call to Console.WriteLine or even a trailing semi-colon, which seems like the right thing to do in a REPL program.</p>
+
+<p>Once we have a complete command, single or multi-line, we can execute it:</p>
+<span style="color: blue">
+  <pre class="code"><span style="color: blue">public void </span>Execute(<span style="color: blue">string </span>s) {
+  <span style="color: blue">try </span>{
+<strong>    <span style="color: #2b91af">Submission</span>&lt;<span style="color: blue">object</span>&gt; submission = engine.CompileSubmission&lt;<span style="color: blue">object</span>&gt;(s, session);
+    <span style="color: blue">object </span>result = submission.Execute();
+    <span style="color: blue">bool </span>hasValue;
+    <span style="color: #2b91af">ITypeSymbol </span>resultType = submission.Compilation.GetSubmissionResultType(<span style="color: blue">out </span>hasValue);
+</strong>
+    <span style="color: green">// Print the results
+    </span><span style="color: blue">...</span>
+  }
+  <span style="color: blue">catch </span>(<span style="color: #2b91af">CompilationErrorException </span>e) {
+    Error(e.Diagnostics.Select(d =&gt; d.ToString()).ToArray());
+  }
+  <span style="color: blue">catch </span>(<span style="color: #2b91af">Exception </span>e) {
+    Error(e.ToString());
+  }
+}</pre>
+</span>
+
+<p>Execution is a matter of creating a “submission,” which is a unit of work done by the engine against the session. There are helper methods that make this easier, but we care about the output details so that we can implement our REPL session.</p>
+
+<h2>Print</h2>
+
+<p>Printing the output depends on the type of a result we get back:</p>
+
+<pre class="code"><span style="color: #2b91af"><pre class="code"><strong><span style="color: #2b91af">ObjectFormatter </span>formatter =<br />  <span style="color: blue">new </span><span style="color: #2b91af">ObjectFormatter</span>(maxLineLength: <span style="color: #2b91af">Console</span>.BufferWidth, memberIndentation: <span style="color: #a31515">&quot;  &quot;</span>);</strong></pre>...<br />Submission</span>&lt;<span style="color: blue">object</span>&gt; submission = engine.CompileSubmission&lt;<span style="color: blue">object</span>&gt;(s, session);
+<span style="color: blue">object </span>result = submission.Execute();
+<span style="color: blue">bool </span>hasValue;
+<span style="color: #2b91af">ITypeSymbol </span>resultType =<br />  submission.Compilation.GetSubmissionResultType(<span style="color: blue">out </span>hasValue);
+
+<strong><span style="color: green">// Print the results
+</span><span style="color: blue">if </span>(hasValue) {
+  <span style="color: blue">if </span>(resultType != <span style="color: blue">null </span>&amp;&amp; resultType.SpecialType == <span style="color: #2b91af">SpecialType</span>.System_Void) {
+    <span style="color: #2b91af">Console</span>.WriteLine(formatter.VoidDisplayString);
+  }
+  <span style="color: blue">else </span>{
+    <span style="color: #2b91af">Console</span>.WriteLine(formatter.FormatObject(result));
+  }
+</strong>}</pre>
+
+<p>As part of the result output, we’re leaning on an instance of an “object formatter” which can trim things for us to the appropriate length and, if necessary, indent multi-line object output.</p>
+
+<p>In the case that there’s an error, we grab the exception information and turn it red:</p>
+
+<pre class="code"><span style="color: blue">void </span>Error(<span style="color: blue">params string</span>[] errors) {
+<strong>  <span style="color: blue">var </span>oldColor = <span style="color: #2b91af">Console</span>.ForegroundColor;
+  <span style="color: #2b91af">Console</span>.ForegroundColor = <span style="color: #2b91af">ConsoleColor</span>.Red;
+  WriteLine(errors);
+  <span style="color: #2b91af">Console</span>.ForegroundColor = oldColor;
+</strong>}</pre>
+
+<pre class="code"><pre class="code"><span style="color: blue">public void </span>Write(<span style="color: blue">params object</span>[] objects) {
+  <span style="color: blue">foreach </span>(<span style="color: blue">var </span>o <span style="color: blue">in </span>objects) { <span style="color: #2b91af">Console</span>.Write(o.ToString()); }
+}
+
+<span style="color: blue">void </span>WriteLine(<span style="color: blue">params object</span>[] objects) {
+  Write(objects);
+  Write(<span style="color: #a31515">&quot;\r\n&quot;</span>);
+}
+
+<a href="/public/post-images/12704-59.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="replerror" border="0" alt="replerror" src="/public/post-images/12704-60.png" width="644" height="87" /></a></pre></pre>
+
+<h2>Loop</h2>
+
+<p>And then we do it all over again until the program is stopped with the #exit command (Ctrl+Z, Enter works, too).</p>
+
+<h2></h2>
+
+<h2>Where Are We?</h2>
+
+<p>Executing lines of C# code, the hardest part of building a C# REPL, has become incredibly easy with Roslyn. The engine does the parsing, the session keeps the context and the submission gives you extra information about the results. To learn more about scripting in Roslyn, I recommend the following resources:</p>
+
+<ul>
+  <li><a href="http://msdn.com/roslyn">Roslyn on MSDN</a> </li>
+
+  <li><a href="http://social.msdn.microsoft.com/Forums/en-US/roslyn/thread/06e3582e-386d-4a1c-964b-29529e497e72">The REPL forum for Roslyn</a> </li>
+
+  <li><a href="http://www.codeproject.com/KB/cs/csharpforscripting.aspx">C# as a Scripting Language in Your .NET Applications Using Roslyn</a>, Anoop Madhusudanan, codeproject.com, 10/24/2011 </li>
+</ul>
+
+<p>Now I’m off to add Intellisense support. Wish me luck!</p>  

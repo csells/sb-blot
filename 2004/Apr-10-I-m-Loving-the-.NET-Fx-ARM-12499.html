@@ -1,0 +1,58 @@
+<!--
+Date: 4/10/2004 12:00:00 AM  -08:00
+Permalink: 12499
+Disqus: 12499
+Tags: spout
+-->
+<h1>I'm Loving the .NET Fx ARM</h1>
+<p align="left"><i><span class="created">Saturday, April 10, 2004</span></i></p><p>
+I enjoyed the annotations in <a href="http://www.amazon.com/exec/obidos/tg/detail/-/0321154894/chrissells">
+The .NET Framework Standard Library Annotated Reference</a> so much that I read 
+them all in one sitting (in the bathtub, if you must know...). The annotations 
+are where the authors put in their 2 cents about a particular class, method or 
+property and it was very interesting. Here's what I learned just from that part 
+of the book:</p><ul><li>You shouldn't use ApplicationException for custom 
+	exceptions. Derive from Exception instead.<br>&nbsp;</li><li>Because 
+	ICloneable.Clone doesn't define whether it returns a deep or a shallow copy, 
+	it's practically worthless.<br>&nbsp;</li><li>Prefer UTF-8 because it takes 
+	up the same amount of space to represent ASCII characters as ASCII, but can 
+	also represent all Unicode characters (I knew that UTF-8 took up the same 
+	amount of space but hadn't yet jumped to &quot;prefer&quot;).<br>&nbsp;</li><li>I was 
+	reminded of the System.Convert class, which does all of the same conversions 
+	that the various type-specific ToXxx and Parse methods do, but puts them all 
+	in one place.<br>&nbsp;</li><li>There's another use for the private 
+	interface method implementation syntax in C#:<br><pre>class Enum : IEnumerator {
+  object <b>IEnumerator.Current</b> { get { return this.foo; } }
+  ...
+}<br></pre>This syntax hides an interface method from general use unless you 
+	cast to the interface base class:<br><pre>Enum enum = new Enum();<br><b>object obj1 = enum.Current(); // compile-time error<br>object obj2 = (IEnumerator)enum.Current(); // this works	</b><br></pre>
+	The thing I never thought of that this enables is that it lets you override 
+	based on return type, which isn't normally allowed in C#:<pre>class Enum : IEnumerator {
+  object IEnumerator.Current { get { return this.foo; }<br><b>  Foo Current { get { return this.foo; } }
+</b>  ...
+}<br></pre><p>This private method implementation syntax lets you return the 
+	generic type as part of the interface implementation so that you can plug 
+	into standard idioms, e.g. foreach, but a more specific type for users of 
+	the type directly, saving the cast:<br></p>
+<pre>Enum enum2 = new Enum();<br><b>Foo foo1 = (Foo)((IEnumerator)enum.Current());<br>Foo foo2 = enum.Current(); // no cast required</b></pre>
+	This will be less interesting as generics take over, but still, it's a 
+	useful trick.<br>&nbsp;</li><li>DateTime is always assumed to represent 
+	local time, so if you convert to Universal time twice, you'll change the 
+	value each time.<br>&nbsp;</li><li>Since it's possible to cast any number to 
+	an enum value, e.g. TrueFalseEnum tfe = (TrueFalseEnum)42, make sure to 
+	always check that an enum is a legal value. Theoretically this is a pain, 
+	but in practice, I tend to check enum values with switch statements, making 
+	the default case the error case, so it's good to know that my code does the 
+	right thing.<br>&nbsp;</li><li>The Threading.Interlocked class.<br>&nbsp;</li><li>
+	Jim Miller has <i>way</i> more birthdays than we do. : )<br>&nbsp;</li><li>
+	Jeff Richter agrees with me that the ThreadStart delegate needs an object 
+	parameter.<br>&nbsp;</li><li>I should be using CompareInfo instead of 
+	ToLower for case-insensitive comparisons (although they don't show how):<b><pre>using System.Globalization;
+using System.Threading;
+</b>...<br><b>CompareInfo compare = Thread.CurrentThread.CurrentCulture.CompareInfo;<br>
+</b>if( <b>compare.Compare(&quot;foo&quot;, &quot;FOO&quot;, CompareOptions.IgnoreCase)</b> == 0 ) {<br>  Console.WriteLine(&quot;the same&quot;);
+}</pre></li></ul><p>If I can get that much out of just the annotations, imagine 
+what I could learn if I <a href="http://www.amazon.com/exec/obidos/tg/detail/-/0321154894/chrissells">
+read the whole thing</a>. : )</p><p><a href="/1274">
+Discuss</a></p>
+

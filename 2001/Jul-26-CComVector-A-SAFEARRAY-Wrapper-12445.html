@@ -1,0 +1,17 @@
+<!--
+Date: 7/26/2001 12:00:00 AM  -08:00
+Permalink: 12445
+Disqus: 12445
+Tags: tools
+-->
+<h1>CComVector: A SAFEARRAY Wrapper</h1>
+<span class="created">July 26, 2001</span>
+    <p>
+        I got tired of not having a smart type for SAFEARRAYs, so I built one. It's 
+        limited to one dimension (does anyone use multi-dimentional SAFEARRAYs?) and 
+        provides one class for the SAFEARRAY and another for the data itself (the lock 
+        is a resource, too), but the usage is pretty nifty. See <a href="/public/tools/comvector.h">comvector.h</a>
+    for the what and the how.
+    <p>
+        Also, Ron Jacobs sent me an ATL port of COleSafeArray called CComSafeArray that 
+        I've made <a href="/public/tools/CComSafeArray.zip">available here</a>.

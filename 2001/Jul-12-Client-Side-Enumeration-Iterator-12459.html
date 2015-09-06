@@ -1,0 +1,22 @@
+<!--
+Date: 7/12/2001 12:00:00 AM  -08:00
+Permalink: 12459
+Disqus: 12459
+Tags: tools
+-->
+<h1>Client-Side Enumeration Iterator</h1>
+<span class="created">July 12, 2001</span>
+        
+    <p>
+        Have you ever been jealous of the VB programmer who could write this:
+    </p>
+    <pre>sub EnumVariants(col as Collection)
+    dim v as variant for each v in col
+        ' Do something with v
+    next v
+end sub</pre>
+    <p>
+        If so, you may be interested in the <a href="/12653">STL-style IEnumXxx 
+            iterator</a> I've built. You'll also need a supporting file, <a href="/public/tools/atlcopies.h">
+            atlcopies.h</a>.
+    </p>

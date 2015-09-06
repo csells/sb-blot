@@ -1,0 +1,9 @@
+<!--
+Date: 2/6/2004 3:59:10 PM  -08:00
+Permalink: 1097
+Disqus: 1097
+Tags: .net
+-->
+<h1>IanG on Rubber Band Selection Outlines in Avalon</h1>
+<P>Ian and I are writing an Avalon book for O'Reilly and Associates together, but he's way out in front of me, writing cool stuff like <A href="http://www.interact-sw.co.uk/iangblog/2004/02/06/rubberband">how to get rubber band selection outlines in Avalon</A>. He also starts with a wonderful history of the XOR technique we used to use in Windows and why we no longer need it. In fact, <A href="http://www.interact-sw.co.uk/graphics/xorconsideredharmful/">we don't even need XOR in Windows Forms and GDI+ today</A>, although lots of folks don't know that.</P>
+<P>The key trick in Ian's implementation is putting a hidden &lt;Rectangle&gt; element into your XAML document so that when it's time to do the rubber hand outline, you can show it, move it and resize it based on where the mouse is, hiding the Rectangle again when the mouse button is released. This lets Avalon take care of the drawing, making this technique a thing of beauty.</P>

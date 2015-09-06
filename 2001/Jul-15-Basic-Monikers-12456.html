@@ -1,0 +1,18 @@
+<!--
+Date: 7/15/2001 12:00:00 AM  -08:00
+Permalink: 12456
+Disqus: 12456
+Tags: tools
+-->
+<h1>Basic Monikers</h1>
+    <p>
+        Wish there was a moniker that did CoCreateInstance just like the Class Moniker 
+        calls CoGetClassObject? Wish you were able to compose the Class Moniker with a 
+        host name? Then you'll want the <a href="/public/tools/monikers/BasicMonikers.zip">BasicMonikers 
+            project</a>, which bundles together the New moniker and the Host moniker. 
+        Sample syntax follows:
+    </p>
+    <pre>dm.newmk.1:Excel.Application
+dm.newmk.1:00024500-0000-0000-C000-000000000046:
+dm.hostmk.1:frodo:!dm.newmk.1:00024500-0000-0000-C000-000000000046:
+dm.hostmk.1:frodo:!clsid:00024500-0000-0000-C000-000000000046:</pre>

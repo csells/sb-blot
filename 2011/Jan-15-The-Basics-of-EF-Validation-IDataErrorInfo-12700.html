@@ -1,0 +1,330 @@
+<!--
+Date: 1/15/2011 11:00:47 PM  -08:00
+Permalink: 12700
+Disqus: 12700
+-->
+<h1>The Basics of EF Validation: IDataErrorInfo</h1>
+<p>When you’re adding or updating data in your database, you really want to make sure that the data being sent to the database is good and true. Often, that’s something that can be checked in the database itself. The first thing you’ll want to do is make sure that the database has validation constraints set on the columns, like nullability or max data sizes. If you’re going EF model-first, you can set these properties on the properties of your entities. If you’re not, you can set these properties in the database or get even fancier and write triggers that check the validity of the data. Finally, you can disable insert, update and delete altogether in favor of stored procedures, changing your EF mapping to generate calls to those instead. The nice thing about checks in the database is that no matter how the data gets there, whether it’s via your EF-based app or not, the checks happen.</p>  <p>However, if you’d like to <i>also</i> put checks into your EF code, perhaps because you’d like to avoid a round-trip to the database for bad data, you can do so in your EF-enabled language of choice, e.g. C#.</p>  <p>Imagine a very simple EDM to describes web advertisements: </p>  <p><a href="/public/post-images/12700-43.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="image_thumb4" border="0" alt="image_thumb4" src="/public/post-images/12700-44.png" width="486" height="661" /></a> </p>  <p>All properties on our entity type get a generated On&lt;&lt;PropertyName&gt;&gt;Changing and On&lt;&lt;PropertyName&gt;&gt;Changed method. If you want to check one property in isolation, it’s easy to provide an implementation of your partial method of choice, e.g.</p>    <pre class="csharpcode"><span class="kwrd">namespace</span> EdmTest {
+  <span class="kwrd">partial</span> <span class="kwrd">class</span> Ad {
+<strong>    <span class="kwrd">partial</span> <span class="kwrd">void</span> OnLinkChanging(<span class="kwrd">string</span> <span class="kwrd">value</span>) {
+      <span class="kwrd">if</span> (!<span class="kwrd">value</span>.StartsWith(<span class="str">&quot;http://&quot;</span>,<br />                   StringComparison.InvariantCultureIgnoreCase)) {
+        <span class="kwrd">throw</span> <span class="kwrd">new</span> ArgumentOutOfRangeException(<span class="str">&quot;Link must start with 'http://'&quot;</span>);
+      }
+    }
+</strong>  }
+}</pre>
+<style type="text/css">
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>Here we’ve made sure that whenever we set the Link property, it must be of a certain format. If we were to violate that restriction, things go boom:
+
+
+
+<p><a href="/public/post-images/12700-45.jpeg"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="clip_image002" border="0" alt="clip_image002" src="/public/post-images/12700-46.jpeg" width="682" height="674" /></a></p>
+
+<p>As MVC translates the form fields into values on the Ad object that is passed to the controller’s Create method, setting the Link property with a bad value triggers the exception:</p>
+
+<pre class="csharpcode"><span class="rem">// POST: /Ad/Create</span>
+[HttpPost]
+<span class="kwrd">public</span> ActionResult Create(Ad ad) {...}</pre>
+<style type="text/css">
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>MVC catches the exception before the Create method is even called and the view shows the error message. Notice that the error message is not what we provided, however.</p>
+
+<p>Further, sometimes there are problems on an object’s state that span more than one property. Unfortunately, because such a constraint can’t be checked on any single property change, we need to at least check it at the object level, not just at the property level.</p>
+
+<p>For both of these issues, we have IDataErrorInfo.</p>
+
+<h2>IDataErrorInfo</h2>
+
+<p>The IDataErrorInfo interface was introduced back in the mists of time with .NET 1.x for use specifically with data binding in Windows Forms. I wouldn’t recommend that anyone invest in anything but maintenance on their WinForms apps, but ASP.NET, the Windows Presentation Foundation (WPF) and Silverlight all support IDataErrorInfo . Data binding is involved enough and GUI-framework-specific enough that you’ll need to read up on it in your favorite GUI-framework-specific book, but the IDataErrorInfo interface is exactly what we need even without data binding:</p>
+
+<pre class="csharpcode"><span class="kwrd">namespace</span> System.ComponentModel {
+  <span class="kwrd">public</span> <span class="kwrd">interface</span> IDataErrorInfo {
+    <span class="kwrd">string</span> Error { get; }
+    <span class="kwrd">string</span> <span class="kwrd">this</span>[<span class="kwrd">string</span> columnName] { get; }
+  }
+}</pre>
+<style type="text/css">
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>Notice that IDataErrorInfo exposes error descriptions at both the object and the property/column level. It’s easy to implement this standard interface on our example Ad class:</p>
+
+<pre class="csharpcode"><span class="kwrd">partial</span> <span class="kwrd">class</span> Ad : IDataErrorInfo {
+<strong>  <span class="kwrd">public</span> <span class="kwrd">string</span> Error {
+</strong>    get {
+      <span class="rem">// Check the ad for errors</span>
+      <span class="kwrd">if</span> (<span class="kwrd">string</span>.IsNullOrEmpty(Title) &amp;&amp; <span class="kwrd">string</span>.IsNullOrEmpty(ImagePath)) {
+        <span class="kwrd">return</span> <span class="str">&quot;Must set Title or ImagePath&quot;</span>;
+      }
+      <span class="kwrd">return</span> <span class="kwrd">null</span>;
+    }
+<strong>  }<br />
+<br /><br /><br /><br />  <span class="kwrd">public</span> <span class="kwrd">string</span> <span class="kwrd">this</span>[<span class="kwrd">string</span> columnName] {
+</strong>    get {
+      <span class="rem">// Check any specific property for errors</span>
+      <span class="kwrd">switch</span> (columnName) {
+        <span class="kwrd">case</span> <span class="str">&quot;Link&quot;</span>:
+          <span class="kwrd">if</span> (Link != <span class="kwrd">null</span> &amp;&amp;
+              !Link.StartsWith(<span class="str">&quot;http://&quot;</span>,<br />                      StringComparison.InvariantCultureIgnoreCase)) {
+            <span class="kwrd">return</span> <span class="str">&quot;Link must start with 'http://'&quot;</span>;
+          }
+          <span class="kwrd">break</span>;
+      }
+      <span class="kwrd">return</span> <span class="kwrd">null</span>;
+    }
+<strong>  }
+</strong>}</pre>
+<style type="text/css">
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>Because each of the generated entity classes is partial, you can provide your own implementation to be merged with the generated implementation, in our case the IDataErrorInfo interface implementation. Now, when MVC hydrates an object that implements IDataErrorInfo, it’ll check to see if there are problems. To check, our controller provides the ModelState property, which itself provides the IsValid flag:</p>
+
+<pre class="csharpcode"><span class="rem">// POST: /Ad/Create</span>
+[HttpPost]
+<span class="kwrd">public</span> ActionResult Create(Ad ad) {
+  <span class="kwrd">try</span> {
+<strong>    <span class="kwrd">if</span> (!ModelState.IsValid) { <span class="kwrd">return</span> View(); }
+</strong>    <span class="rem">...</span>
+  }
+  <span class="kwrd">catch</span> {
+    <span class="kwrd">return</span> View();
+  }
+}<br />
+<span class="rem"><br />// POST: /Ad/Edit/</span>
+[HttpPost]
+<span class="kwrd">public</span> ActionResult Edit(Ad ad) {
+  <span class="kwrd">try</span> {
+<strong>    <span class="kwrd">if</span> (!ModelState.IsValid) { <span class="kwrd">return</span> View(); }
+</strong>    <span class="rem">...</span>
+  }
+  <span class="kwrd">catch</span> {
+    <span class="kwrd">return</span> View();
+  }
+}</pre>
+<style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>In addition to the IsValid flag, the ModelState provides a list of property name/error message pairs that show in the code that the view generator spits out when it’s creating forms, e.g.</p>
+
+<pre class="csharpcode">...
+<span class="asp">&lt;%</span> <span class="kwrd">using</span> (Html.BeginForm()) {<span class="asp">%&gt;</span>
+<strong><span class="asp">&lt;%</span>: Html.ValidationSummary(<span class="kwrd">true</span>) <span class="asp">%&gt;</span>
+</strong>...
+<span class="asp">&lt;%</span>: Html.TextBoxFor(model =&gt; model.Link) <span class="asp">%&gt;</span>
+<strong><span class="asp">&lt;%</span>: Html.ValidationMessageFor(model =&gt; model.Link) <span class="asp">%&gt;</span>
+</strong>...</pre>
+<style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>It’s in the ValidationSummary helper that shows object-level errors and the ValidationMessageFor helper that shows property-level errors:</p>
+
+<p><a href="/public/post-images/12700-47.jpeg"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="clip_image004" border="0" alt="clip_image004" src="/public/post-images/12700-48.jpeg" width="663" height="292" /></a></p>
+
+<p><a href="/public/post-images/12700-49.jpeg"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="clip_image006" border="0" alt="clip_image006" src="/public/post-images/12700-50.jpeg" width="668" height="588" /></a></p>
+
+<p>There are other means of validation that you will want to investigate, like <a href="http://weblogs.asp.net/scottgu/archive/2010/01/15/asp-net-mvc-2-model-validation.aspx">the validation attributes supported by MVC and SilverLight</a>, but IDataErrorInfo is the one with the broadest reach. It’s also the one that’s simplest for you to check yourself if you’re not getting the automatic support you want from your GUI framework. For example, because the SaveChanges method on the context base class is virtual and because we’ve got the Object State Manager, we can check ourselves for object errors using IDataErrorInfo:</p>
+
+<pre class="csharpcode"><span class="kwrd">using</span> System.Data.Objects;
+
+<span class="kwrd">namespace</span> AdMan.Models {
+  <span class="kwrd">partial</span> <span class="kwrd">class</span> sbdbEntities {
+    <span class="kwrd">public</span> <span class="kwrd">override</span> <span class="kwrd">int</span> SaveChanges(SaveOptions options) {
+      <span class="rem">// Make sure we're detecting all changes. base.SaveChanges</span>
+      <span class="rem">// does this, but that may be too late.</span>
+      DetectChanges();<br />
+      <span class="rem">// Get all the new and updated objects</span>
+      var objectsToValidate =
+      ObjectStateManager.
+      GetObjectStateEntries(EntityState.Added | EntityState.Modified).
+      Select(e =&gt; e.Entity).OfType&lt;IDataErrorInfo&gt;();<br />
+      <span class="rem">// Check each object for errors</span>
+      <span class="kwrd">foreach</span> (var obj <span class="kwrd">in</span> objectsToValidate) {
+        <span class="rem">// Check each property</span>
+        <span class="kwrd">foreach</span> (var property <span class="kwrd">in</span> obj.GetType().GetProperties()) {
+          var columnError = obj[property.Name];
+          <span class="kwrd">if</span> (columnError != <span class="kwrd">null</span>) { <span class="kwrd">throw</span> <span class="kwrd">new</span> Exception(columnError); }
+        }<br />
+        <span class="rem">// Check each object</span>
+        var objectError = obj.Error;
+        <span class="kwrd">if</span> (objectError != <span class="kwrd">null</span>) { <span class="kwrd">throw</span> <span class="kwrd">new</span> Exception(objectError); }
+      }<br />
+      <span class="rem">// All clear</span>
+      <span class="kwrd">return</span> <span class="kwrd">base</span>.SaveChanges(options);
+    }
+  }
+}</pre>
+<style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>Here we’re overriding the SaveChanges method we’ve been calling all this time to take advantage of the IDataErrorInfo interface. The first call to DetectChanges is to make sure we’ve gotten all the changes into the Object State Manager (<a href="http://blogs.msdn.com/b/adonet/archive/2009/06/10/poco-in-the-entity-framework-part-3-change-tracking-with-poco.aspx">only necessary if you’re using EF POCO classes</a>). The call to the GetObjectStateEntries method on the ObjectStateManager class produces all of the added and modified objects, their state, what the old and new values are, etc. We pull off each one of the entities that implement IDataErrorInfo and call the methods to check for property and object-level errors. If we find one, we throw an exception, otherwise we let the call to SaveChanges through.</p>
+
+<p><a></a><a>This code isn’t needed if you’re already using a GUI framework that supports IDataErrorInfo, but it’s still handy to know you can roll your own code into SaveChanges if you need to.</a></p>
+
+<h2>Where Are We?</h2>
+
+<p>IDataErrorInfo is the core of data validation support in GUI libraries since .NET 1.x and while there are simpler ways to do it for individual libraries, IDataErrorInfo works just fine with MVC and EF, two of the most popular GUI libraries we’ve got just now.</p>  

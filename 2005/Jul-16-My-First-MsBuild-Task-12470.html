@@ -1,0 +1,68 @@
+<!--
+Date: 7/16/2005 12:00:00 AM  -08:00
+Permalink: 12470
+Disqus: 12470
+Tags: spout
+-->
+<h1>My First MsBuild Task</h1>
+<p align="left">I wrote my first custom msbuild task this morning. I used the the <a href="http://channel9.msdn.com/wiki/default.aspx/MSBuild.ExtendMSBuildWithANewTask">Extend the MSBuild with a New Task</a> topic from the msbuild wiki and it worked well to get me started. I started with the simplest thing that used at least an input property:</p><div align="left"><blockquote>
+<pre>// HelloTask.cs
+using System;
+using Microsoft.Build.Utilities; // reference assembly of same name
+using Microsoft.Build.Framework; // ditto
+
+namespace MyFirstTask {
+  public class HelloTask : Task {
+    string _who;
+
+<b>    [Required]
+    public string Who {
+</b>      get { return _who; }
+      set { _who = value; }
+<b>    }
+</b>
+<b>    public override bool Execute() {
+      Log.LogMessage(string.Format(&quot;hello, {0}!&quot;, _who));
+      return true;
+    }
+</b>  }
+}</pre></blockquote></div><div align="left"><p align="left">My task implements the msbuild ITask interface by deriving from the Task helper base class, which provides the Log object, among other things. The only thing I have to do is implement the Execute method, which needs to return true on success. To prove that my task is called, I use the Log object to log a message (I could also log an error or a warning). The public Who property is set from the use of the task in an msbuild file. By marking the property with the Required attribute, I ensure that msbuild itself makes sure that a Who is provided.</div><div align="left"><p align="left">Once I've compiled my task, I can use it directly from a .proj (or .csproj or .vbproj) file:</div><div align="left"><blockquote>
+<pre>&lt;!-- fun.proj --&gt;
+&lt;Project xmlns=&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;&gt;
+  &lt;Target Name=&quot;HelloTarget&quot;&gt;
+<b>    &lt;HelloTask Who=&quot;Joe&quot; /&gt;
+</b>  &lt;/Target&gt;
+<b>  &lt;UsingTask
+    TaskName=&quot;MyFirstTask.HelloTask&quot;
+    AssemblyFile=&quot;C:\MyFirstTask\bin\Release\MyFirstTask.dll&quot; /&gt;
+</b>&lt;/Project&gt;</pre></blockquote></div><div align="left"><p align="left">Notice the HelloTask element, which creates an instance of my HelloTask class and sets the Who property. The mapping between the HelloTask and the MyFirstTask.HelloTask class in the MyFirstTask.dll assembly is in the UsingTask element. Running msbuild against fun.proj yields the following output:</div><div align="left"><blockquote>
+<pre>C:\taskfun&gt;<b>msbuild fun.proj</b>
+Microsoft (R) Build Engine Version 2.0.50215.44
+[Microsoft .NET Framework, Version 2.0.50215.44]
+Copyright (C) Microsoft Corporation 2005. All rights reserved.
+
+Build started 7/16/2005 7:04:09 PM.
+__________________________________________________
+Project &quot;C:\taskfun\fun.proj&quot; (default targets):
+
+<b>Target HelloTarget:
+hello, Joe!
+</b>
+Build succeeded.
+0 Warning(s)
+0 Error(s)
+
+Time Elapsed 00:00:00.04</pre></blockquote></div><div align="left"><p align="left">Notice the &quot;hello, Joe!&quot; output by the task as its Execute method is called. Notice also that while the task is in its folder, the .proj file can be anywhere, so long as it has a UsingTask that maps appropriately. By convention, the UsingTask elements are kept in .targets files and put into shared folders to be used between multiple project files, e.g. Microsoft.common.targets, etc. Refactoring the UsingTask out of the .proj file and into a .targets file looks like this:</div><blockquote><div align="left">
+<pre>&lt;!-- My.Fun.targets --&gt;
+&lt;Project xmlns=&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;&gt;
+<b>  &lt;UsingTask
+    TaskName=&quot;MyFirstTask.HelloTask&quot;
+    AssemblyFile=&quot;C:\MyFirstTask\bin\Release\MyFirstTask.dll&quot; /&gt;
+</b>&lt;/Project&gt;</pre></div><div align="left">
+<pre>&lt;!-- fun.proj --&gt;
+&lt;Project xmlns=&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;&gt;
+  &lt;Target Name=&quot;HelloTarget&quot;&gt;
+<b>    &lt;HelloTask Who=&quot;Joe&quot; /&gt;
+</b>  &lt;/Target&gt;
+<b>  &lt;Import Project=&quot;c:\My.Fun.targets&quot; /&gt;
+</b>&lt;/Project&gt;</pre></div></blockquote><div align="left"><p align="left">Of course, a real task does far more than this one, but it was hella easy to get started.</div>

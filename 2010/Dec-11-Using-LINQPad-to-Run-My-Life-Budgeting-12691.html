@@ -1,0 +1,148 @@
+<!--
+Date: 12/11/2010 3:52:29 PM  -08:00
+Permalink: 12691
+Disqus: 12691
+Tags: tools
+-->
+<h1>Using LINQPad to Run My Life: Budgeting</h1>
+<p>I use LINQPad all the time for a bunch of stuff, but most recently and most relevant, I’ve been using it for a personal chore that isn’t developer-related: I’ve been using it to do budgeting.</p>  <h2>What is LINQPad?</h2>  <p>LINQPad is an interactive execution environment for LINQ queries, statements or programs. The typical usage model is that you point LINQPad at a SQL database or an OData endpoint via a dialog box and then start writing queries against the tables/collections exposed by that connection, e.g.</p>  <p><a href="/public/post-images/12691-11.jpeg"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="clip_image002" border="0" alt="clip_image002" src="/public/post-images/12691-12.jpeg" width="663" height="396" /></a></p>  <p>Here, you can see that I’ve added a connection on the left to the Northwind database, typed a query into the text box (I paid the $25 for the auto-completion module), executed the query and got the table of results below. If I want to operator over multiple results, including dumping them for inspection, I can do so by switch from C# Expression to C# Statements:</p>  <p><a href="/public/post-images/12691-13.jpeg"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="clip_image004" border="0" alt="clip_image004" src="/public/post-images/12691-14.jpeg" width="661" height="439" /></a></p>  <p>Notice the use of “Dump” to see results along the way. If I want to, I can switch to C# Program, which gives me a main and allows me to create my own types and methods, all of which can be executed dynamically.</p>  <p>To save queries, notice the “My Queries” tab in the lower left. I use this for things I run periodically, like the ads on my web site that are going to expire, some data cleanup I want to get back to and, the subject of today: budgeting.</p>  <h2>Budgeting with Mint.com and LINQPad</h2>  <p>For the uninitiated, <a href="http://mint.com">mint.com</a> is a free online personal financial management site. At its core, it uses financial account, loan and asset information that lets it log into various financial sites and grab my data for me, e.g. 1sttech.com, usbank.com, wcb.com, etc. It uses this to let me categorize transactions so that it can do budgeting for me. However, it doesn’t give me the control I want, so I write programs against this unified transaction information. Essentially, I re-categorize each transaction to my own set using a map I maintain in an Excel file, then compare the amount I spend each month against what my budget amount is, maintained in another sheet in that same Excel file. Because mint.com doesn’t provide a programmatic API (<a href="http://odata.org">OData</a> would be a godsend!), I pull down my transaction history as a CSV file that the web site provides for me, which I then translate to an Excel file.</p>  <p>Once I have these three Excel sheets, the translation history, the category map and the category budget amounts, I bring these pieces of data into my LINQPad script:</p>  <pre class="csharpcode"><span class="kwrd">void</span> Main() {
+    var mintExcel = ExcelProvider.Create(<span class="str">@&quot;D:\data\finances\2010-08-25 mint transactions.xlsx&quot;</span>);
+    var minDate = <span class="kwrd">new</span> DateTime(2010, 8, 1);
+    var txs = mintExcel.GetSheet&lt;Tx&gt;().Where(t=&gt;t.Date&gt;=minDate);
+    var debits = txs.Where(tx =&gt; tx.Type == <span class="str">&quot;debit&quot;</span>);
+
+    var classExcel = ExcelProvider.Create(<span class="str">@&quot;d:\data\finances\2010-08-03 mint category map.xlsx&quot;</span>);
+    var map = classExcel.GetSheet&lt;CategoryClass&gt;().ToList();
+    var classBudget = classExcel.GetSheet&lt;ClassBudget&gt;().ToList();
+    var unclassified = <span class="kwrd">new</span> ClassBudget() { Class = <span class="str">&quot;UNCLASSIFIED&quot;</span> };
+    classBudget.Add(unclassified);
+    var classifiedDebits = debits.
+      Select(d =&gt; <span class="kwrd">new</span> { d.Date, d.Description, Amount = d.Amount, d.Category, Class = GetClass(map, d) }).
+      Where(d =&gt; d.Class != <span class="kwrd">null</span>);
+    
+    <span class="rem">// TODO: break this down by month</span>
+    <span class="rem">// TODO: sum this by ytd</span>
+    var classifiedTotals =
+        from d <span class="kwrd">in</span> classifiedDebits
+        group d by d.Class into g
+        let b = classBudget.FirstOrDefault(b=&gt;b.Class == g.Key) ?? unclassified
+        let total = g.Sum(d=&gt;d.Amount)
+        select <span class="kwrd">new</span> {
+            Class = b.Class,
+            BudgetAmount = b.Amount,
+            ActualAmount = total,
+            AmountLeft = b.Amount - total,
+            TxCount = g.Count(),
+            Transactions = from tx <span class="kwrd">in</span> g.OrderBy(tx=&gt;tx.Date)
+                select <span class="kwrd">new</span> { Date = tx.Date.ToString(<span class="str">&quot;M/d/yy&quot;</span>), tx.Description, tx.Category, tx.Amount }
+        };
+    classifiedTotals.OrderBy(d=&gt;d.Class).Dump(2);
+    <span class="rem">//classifiedTotals.OrderBy(d=&gt;d.Class).Dump();</span>
+}
+
+<span class="kwrd">static</span> <span class="kwrd">string</span> GetClass(List&lt;CategoryClass&gt; map, Tx tx) {
+  CategoryClass cc = map.FirstOrDefault(m =&gt; m.Category == tx.Category);
+  <span class="kwrd">if</span>( cc != <span class="kwrd">null</span> ) { <span class="kwrd">return</span> cc.Class; }
+  tx.Category.Dump(<span class="str">&quot;UNCLASSIFIED MINT CATEGORY&quot;</span>);
+  <span class="kwrd">return</span> <span class="kwrd">null</span>;
+}
+
+[ExcelSheet(Name = <span class="str">&quot;transactions(1)&quot;</span>)]
+<span class="kwrd">public</span> <span class="kwrd">class</span> Tx {
+    [ExcelColumn()] <span class="kwrd">public</span> DateTime Date { get; set; }
+    [ExcelColumn()] <span class="kwrd">public</span> <span class="kwrd">string</span> Description { get; set; }
+    [ExcelColumn()] <span class="kwrd">public</span> <span class="kwrd">decimal</span> Amount { get; set; }
+    [ExcelColumn(Name = <span class="str">&quot;Transaction Type&quot;</span>)] <span class="kwrd">public</span> <span class="kwrd">string</span> Type { get; set; }
+    [ExcelColumn()] <span class="kwrd">public</span> <span class="kwrd">string</span> Category { get; set; }
+    [ExcelColumn(Name = <span class="str">&quot;Account Name&quot;</span>)] <span class="kwrd">public</span> <span class="kwrd">string</span> AccountName { get; set; }
+}
+
+[ExcelSheet(Name = <span class="str">&quot;Sheet1&quot;</span>)]
+<span class="kwrd">public</span> <span class="kwrd">class</span> CategoryClass {
+    [ExcelColumn()] <span class="kwrd">public</span> <span class="kwrd">string</span> Category { get; set; }
+    [ExcelColumn(Name=<span class="str">&quot;Classification&quot;</span>)] <span class="kwrd">public</span> <span class="kwrd">string</span> Class { get; set; }
+}
+
+[ExcelSheet(Name = <span class="str">&quot;Sheet2&quot;</span>)]
+<span class="kwrd">public</span> <span class="kwrd">class</span> ClassBudget {
+    [ExcelColumn(Name=<span class="str">&quot;Classification&quot;</span>)] <span class="kwrd">public</span> <span class="kwrd">string</span> Class { get; set; }
+    [ExcelColumn()] <span class="kwrd">public</span> <span class="kwrd">decimal</span> Amount { get; set; }
+    <span class="kwrd">public</span> <span class="kwrd">int</span> Transactions { get; set; }
+}</pre>
+<style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>There are some interesting things to notice about this script:</p>
+
+<ul>
+  <li>I needed to make it a full-fledged program so that I could define the shape of my data in Excel. LINQPad has no native support for Excel data, so I had modify <a href="http://solidcoding.blogspot.com/2008/01/linq-to-excel-provider-25.html">an Excel LINQ provider</a> I found on the interwebtubes. The types are needed to map the Excel columns to C# types so that I can query against them.</li>
+
+  <li>This script isn’t pretty; it’s been built up over time and it works. I’ve been using it for a month and this month my task is to split it work across multiple months.</li>
+
+  <li>I’ve built up error output over time to make sure I’m not dropping data in my queries. I spent an hour a coupla weeks ago tracking down 3 transactions.</li>
+
+  <li>I’m doing slow look-ups cuz at the time I wrote this script, I wasn’t sure how to write joins in LINQ. It’s more than fast enough for my needs, so I’ve only dug into LINQ for accuracy, not efficiency.</li>
+</ul>
+
+<h2>LINQPad Output</h2>
+
+<p>By default, the output from my budgeting program looks like this (w/ my personal financial details blacked out):</p>
+
+<p><a href="/public/post-images/12691-15.jpeg"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="clip_image006" border="0" alt="clip_image006" src="/public/post-images/12691-16.jpeg" width="695" height="373" /></a></p>
+
+<p>Some things to notice:</p>
+
+<ul>
+  <li>The output is spit into a table w/o me having to do anything except dump the data.</li>
+
+  <li>The number columns have an automatic bar graph glyph on them that shows proportions when clicked.</li>
+
+  <li>The number columns are automatically totally.</li>
+
+  <li>The Transactions column is turned off because I said “Dump(2)”, which only dumps to the 2<sup>nd</sup> level. By default it would drill down further, e.g.</li>
+</ul>
+
+<p><a href="/public/post-images/12691-17.jpeg"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="clip_image008" border="0" alt="clip_image008" src="/public/post-images/12691-18.jpeg" width="707" height="83" /></a></p>
+
+<h2>Bringing in Excel</h2>
+
+<p>To bring my Excel data into LINQPad, which supports LINQ to SQL, EF and OData natively but not Excel, I have to right-click on the design surface, choose query properties and tell it about where the source code and namespace is that defines the Excel LINQ Query Provider:</p>
+
+<p><a href="/public/post-images/12691-19.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="image" border="0" alt="image" src="/public/post-images/12691-20.png" width="716" height="262" /></a></p>
+
+<p><a href="/public/post-images/12691-21.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="image" border="0" alt="image" src="/public/post-images/12691-22.png" width="723" height="235" /></a></p>
+
+<h2>Impressions</h2>
+
+<p>The thing that makes this app really work for me is the REPL nature. It’s very immediate and I can see where my money is going with very little ceremony. It’s really the intelligence of the Dump command that keeps me from moving this app to WPF. Dump gives me the view I need to understand where my money goes and it gives me the programming surface to slice/dice the data the way I want to. I have no control out of the box in WPF that’s even close to as useful.</p>
+
+<p>However, Even though I could extend LINQPad myself, there is no integrated support for Excel or CSV files. Further, for some stupid reason, I have to load the files into a running instance of Excel for them to load in LINQPad, which pisses me off because the error messages are ridiculous. Also, there is no intrinsic support for multiple data sources; instead I need to build that myself.</p>
+
+<p>Further, I had one case where I couldn’t figure out an error (it was that I forgot to load the data into Excel) and had to have a real debugger, which LINQPad didn’t have. The good news was that I was able to copy/paste my code into a console application and debug it, but the bad news was that I really missed the Dump command when I was running inside Visual Studio.</p>
+
+<h2>Where Are We?</h2>
+
+<p>I really love LINQPad. In fact, I find myself wanting the same functionality for other uses, e.g. SQL (real SQL), JavaScript and as a shell. It’s the interactive data access that makes it for me – munge some data, look at it, repeat. It doesn’t quite do everything I want, though – where’s the full-featured, all-data, Swiss army knife for data?</p>  

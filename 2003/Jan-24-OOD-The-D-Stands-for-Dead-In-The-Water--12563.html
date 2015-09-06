@@ -1,0 +1,40 @@
+<!--
+Date: 1/24/2003 12:00:00 AM  -08:00
+Permalink: 12563
+Disqus: 12563
+Tags: spout
+-->
+<h1>OOD (The D Stands for "Dead In The Water")</h1>
+<p>Reading a very 
+interesting book which I'll discuss in a future post, I came to a startling 
+conclusion. As much as I love OO thinking and programming, OO databases are 
+never going to fly. I realize that this may not be so startling considering how 
+long OOD products have existed and how unsuccessful they've been so far, but the 
+conclusion I came to was *why* they'll never fly. The reason is simple: the data 
+itself is more valuable than the programs that use it.</p><p>For an OO guy, 
+taught that behavior was everything and data was an implementation technique, 
+that's a startling conclusion. However, the beauty of a database is that it's 
+devoid of behavior, or, if there is behavior, it's layered in on top of the 
+data. Programming languages come and go along with the ideas that underlie them 
+and the applications that are built with them. Relational data, on the other 
+hand, is a model that's simple enough, but complete enough, to move forward from 
+application to application, accumulating value as you go in the data itself. 
+And, since the relational model is so entrenched, no technology for the last 10 
+years or the next 1000 would be complete without support for it. Even Microsoft, 
+IBM, GM and AT&amp;T will prove to be less enduring than relational data, the tools 
+to program against it and the tools to slice and dice it w/o programming 
+anything (the latter are amazing strong already and continue to grow).</p><p>
+Data in OO databases, on the other hand, are bound to behavior and worthless for 
+anything but the limited set of applications for whom the behavior was paramount 
+and the data an implementation detail. When things change, as they always do, 
+how are you going to get the data out so you can do things different? You're 
+going to dump it to the simplest, most complete, most firmly entrenched data 
+format that the world has every known -- relational data.</p><p>OO persistence 
+formats are, by their natural, tied to a specific object model and therefore 
+hopelessly proprietary. And with the emergence of XML, OO persistence formats 
+are going the way of the dodo, even for applications running on machines without 
+a database server. Why would I persist data to a closed format when I can choose 
+relational data for the big stuff and XML for the small stuff? Both provide 
+endless tools for slicing and dicing and bringing forward when the application 
+dies. With OO persistence, when the app goes, so goes the data. The problem with 
+OOD is that things are *too* seamlessly integrated. Ironic, no?</p>

@@ -1,0 +1,12 @@
+<!--
+Date: 2/22/2004 9:51:38 PM  -08:00
+Permalink: 1141
+Disqus: 1141
+Tags: spout,writing
+-->
+<h1>Adding Ref-Counting to Rotor</h1>
+<a href="/public/writing/refcount_rotor.doc">Here</a>. <P><A HREF="/public/writing/refcount_rotor.doc">Well, I can't put it off any longer.</A> I wanted to wait 'til Chris Tavares and I were able to figure out what the problem was, but after months of help from the Compuware guys using a complementary hunk of their latest and greatest profiling software, we're no closer to finding out what causes the massive slow-down in compiling Rotor when we add our ref-counting implementation to it. The problem, of course, is that if we can't figure out what the problem is, we can't optimize our implementation to fix it.</P>
+<P>The good news is that once we wait for the compilation to complete, the hybrid ref-counting (for deterministic resource management) + ref-tracking (for memory management) programming model is a thing of beauty. No longer do you have to write Dispose methods or even call Dispose methods, because our updated JITter takes care of it for you.</P>
+<P>However, because compilation of Rotor makes such nice use as a managed test of our implementation and because it currently sucks butt perf-wise, we're stuck.&nbsp;If you're into the low-level guts and you've got the time (that's what Chris and I ran out of), we'd love your feedback on our perf problems. Who knows, if we can make it efficient, MS might stick it into the next version of the CLR... (but I don't work for that team, so don't hold me to that : ).</P>
+<P>BTW, I'd like to really thank Chris Tavares for his implementation work. It was my idea and my funding, but he did all the work up to and including several drafts of the paper. All I did was complain. Thanks, Chris, and I hope you're enjoying your child, which is a far better way to spend your free time than implementing my cockamamie ideas in Rotor.</P>
+<P>BTW2, I'd like to take this opportunity to publicly apologize to Brian Harry. It is definitely the case that <A href="http://discuss.develop.com/archives/wa.exe?A2=ind0007&amp;L=DOTNET&amp;P=R24819&amp;I=3">ref-counting *can* be added to .NET</A> but <A href="http://discuss.develop.com/archives/wa.exe?A2=ind0010A&amp;L=DOTNET&amp;P=R28572&amp;I=3">I have in no way shown that it *should* be done</A>. Thanks for letting me try, though. : )</P>

@@ -1,0 +1,30 @@
+<!--
+Date: 8/3/2001 12:00:00 AM  -08:00
+Permalink: 12437
+Disqus: 12437
+Tags: tools
+-->
+<h1>Command Line Parsing</h1>
+<span class="created">Aug 3, 2001</span>
+    <p align="left">
+        I got tired of not having getopt under Win32 and the best version to port 
+        doesn't handle slashes (as per the Windows standard) or @files for arguments 
+        and it requires you to give away the source for every app that uses it, so, 
+        inspired by my friend Josh Gray,&nbsp; <a href="/public/tools/CommandLineParser.zip">I built my 
+            own</a>. It supports typed flags and params, @file support and building 
+        full usages on the fly.
+    </p>
+    <p align="left">
+        Plus, the latest version has support for parsing ANSI or Unicode argfiles, as 
+        provided by <a href="mailto:johan.nilsson@esrange.ssc.se">Johan Nilsson</a>. 
+        Thanks, Johan! Also, I've added a contribution by <a href="mailto:Paul.Westcott@IGT.com">
+            Paul Westcott</a> to support arguments with restricted values. Thanks, 
+        Paul! And, as if that weren't enough, <a href="mailto:adis.delalic@vianova.no">Adis 
+            Delalic</a> contributed <a href="/public/tools/clp.pdf">a UML diagram to describe how the CLP 
+            is built</a>. Wow.
+    </p>
+    <p align="left">
+        And as if that weren't enough,
+        <a href="http://www.develop.com/kbrown">Keith Brown</a>
+        <a href="/public/tools/CommandLineParser7.h">ported the command line parser to VS.NET</a>. 
+        Thanks, Keith!</p>

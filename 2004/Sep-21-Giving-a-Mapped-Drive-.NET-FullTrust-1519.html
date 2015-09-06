@@ -1,0 +1,11 @@
+<!--
+Date: 9/21/2004 12:40:15 PM  -08:00
+Permalink: 1519
+Disqus: 1519
+Tags: tools
+-->
+<h1>Giving a Mapped Drive .NET FullTrust</h1>
+<P>Lately, I've been running Virtual PC a lot to test various versions of WinFX on various platforms. To save me for locking any valuable code into a VPC HD, I use VPC shares, mapping Z to the D HD on my VPC host PC. That's all well and good 'til I try to load a project from Z which, according to the OS, is a mapped network drive (in spite of the fact that it's just the other partition on the very same PC), and Visual Studio complains that since I don't have FullTrust on that drive, things may not work out the way I'd hoped (and for whoever decided to write the code and put up that message box, thank you!):</P><PRE>The project location is not trusted.</PRE><PRE>Running the application may result in security exceptions when it<BR>attempts to perform actions which require full trust.</PRE>
+<P>What's happening is that VS is detecting that the project on the network drive is getting Intranet permissions according to the good and true workings of .NET Code Access Security (CAS). However, since I'm just trying to pretend that Z is on my PC (and, in fact, it is), I want it to have FullTrust permissions. To accomplish this, you need to add a new Code Group with an URL membership permission specifying the folder (in URL form) to which you'd like to grant full trust. You can do with the .NET Framework Configuration tool or you can do it from the command line like so:</P><PRE>c:\&gt;caspol -q -machine -addgroup&nbsp;1 -url file://z:/* FullTrust -name "Z Drive"</PRE>
+<P>Once this new code group is in place, any new .NET processes you start will give any assemblies on the Z drive full trust (make sure to cycle the devenv.exe process if you want these new permissions and that message box to go away).</P>
+<P>Since awarding new permissions, full trust or not, to any chunk of code is something that can cause a security hole, be careful. In this case, I'm awarding full trust so that Z acts just like a normal HD which has full trust by default, so I'm OK. Please make sure that you're OK before adding permission via code groups willy nilly.</P>

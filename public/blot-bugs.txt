@@ -1,0 +1,82 @@
+images:
+-check out http://csells.blot.im/public/post-images. Some of them show directly in the browser (good). Some of them download (not good). At least one of them shows as text (bad).
+  e.g. http://csells.blot.im/public/post-images/13740-258.png
+
+
+404s:
+-need to provide URL pattern rewriting, e.g. /posts/details/<peramlink> => /<permalink>
+ the following URLs need to be forwarded:
+  /askthewonk => /writing/#qanda
+  /colophon => /tagged/colophon
+  /conference => /public/conference/index.htm
+  /fun => /tagged/fun
+  /interview => /tagged/interview
+  /money => /tagged/money
+  /tools => /tagged/tools
+  /wahoo => /tagged/wahoo
+  /tinysells/{code} => various (depends on the code)
+
+-need to be able to see 404 errors and provide redirects to improve site over time
+-would like to be able to provide a custom 404 page
++need to be able to optionally turn off auto-404 page and expose the 404 errors for tools to track (no need)
+
+
+sorting:
++the sorting on the tagged pages is wrong (seemingly random), e.g. http://csells.blot.im/tagged/spout
+
+pages:
++writing.html has "Page: yes" set, but is showing up as a blog post
+
+
+Feature Requests:
+-Google AdSense App: easily enabled for sidewall ads
+-Twitter integration: integrate the blog posts and tweets into a single, unified feed
+
+
+Markup processing on HTML files:
++1995\Jan-01-Initial-Launch-12641.html (and everything else):
+  article title doesn't line up along the top with the date of the article for default template (it's wrapping the initial HTML comment in a <p>)
+  need to be able to put Blot metadata into comments for HTML files so that it remains valid HTML
+
++1997\Jun-27-Welcome-to-MeowMoniker--12656.html:
+  the embedded line endings are reflected in the output instead of being ignore as per HTML rules
+
++2000\Aug-08-DM-in-the-Wall-Street--12628.html:
+  random formatting because of the intermitten blank lines that I don't begin to understand
+
++2001\Feb-16-Genghis-12427.html:
+  the indents on the HTML is causing the HTML to be set as code like Markup instead of interpretted as HTML
+
+
+metadata:
++Jun-27-Welcome-to-MeowMoniker--12656.html:
+  I’ve specified the Date, Tags and Permalink metadata, but only the Date is used – the Tags and Permalink are ignored.
+
+
+Apps:
++need to be able to provide custom disqus_url format to pull in existing Disqus comments
++turning off the automatic caption from the image alt text doesn't actually stop the captions from showing
+
+
+Templates:
++Essay template home page shows 31 (?) of the most recent posts, but provides no paging UI to get to previous posts
+
+
+chris TODO:
+-fix double "llowed me to do" on end of http://csells.blot.im/13740
+-full site scan from Xenu Link Sleuth
+-get a good template together
+  -make sure lines of code don't wrap on http://csells.blot.im/13739
+-make tinysells.com continue to work!
+  -perhaps client side scripting?
+-check into github
+
+-make Google AdSense work
+-move videos to youtube (p2)
+-move tools to github (p2)
++move atompub images to pubic
++check for hardcoded sellsbrothers.com in the content
++add a "Writing and Speaking" page
++404: http://csells.blot.im/public/conference/atldevcon/index.htm
++404: http://csells.blot.im/public/writing/askthewonk/index.htm
++public/writing/askthewonk/* not showing up (problem with original content)

@@ -1,0 +1,60 @@
+<!--
+Date: 5/21/2004 12:00:00 AM  -08:00
+Permalink: 12494
+Disqus: 12494
+Tags: spout
+-->
+<h1>Another Killer App for Web Services</h1>
+<p align="left"><i>Friday, <span class="created">May 21, 
+2004</span></i></p><p align="left">At the last <a href="/conference">Applied XML 
+Dev.Conf.</a>, I went ga-ga over Amazon's use of web services in their business 
+and called it <a href="/12540">the &quot;killer app for web 
+services.&quot;</a> Now I'd like to revise my statement: it think that it's one of 
+the killer apps for web services.</p><p align="left">Here's another one: 
+exposing the functionality of all of those internal corporate services apps that 
+are now exposed as web <i>sites</i> as web <i>services</i> instead.</p><p align="left">
+Now that I've been back inside of a giant corp. adrift in a sea of sites to 
+&quot;help&quot; me with the various &quot;business processes&quot; that I have to execute, I yearn 
+for them all to be exposed as web services. There are several problems with the 
+internal business-processes-as-web-apps morass that we're stuck in:</p><ol><li><p align="left">
+	The web apps are generic for all uses across all companies, which means that 
+	there are tons of options for other uses then mine, but I still have to deal 
+	with the UI for all of the options</li><li><p align="left">To get my 
+	business tasks accomplished, I have to string together several of these web 
+	apps in series, manually moving the data from one to the other</li><li><p align="left">
+	Just going from one page of a web app to another, even in a corp. intranet, 
+	is so slow when you are always going to pick the same options and your 
+	fingers want to be far ahead of what the server can handle when generating 
+	the UI a page at a time</li></ol><p align="left">For example, here at MSDN, 
+we have package source code sent to us by authors into an MSI with a EULA, code 
+sign it with the Microsoft key and submit it for download to <a href="http://www.microsoft.com/downloads/">
+the MS download site</a>. A year ago, it took me an hour of instruction to 
+understand the process and it involved using VS.NET to build the MSI and two 
+separate web sites, both with several pages and tons of fields to get a folder 
+of files available for download by our good readers. This took me 30-60 minutes 
+to do each time I had to do it, which made me cranky, so I built this:</p><p align="left"><img border="0" src="/public/spout/img.10.jpg" width="480" height="400"></p><p align="left">
+This tool takes the minimum number of fields necessary to turn the source files 
+provided by the author into a signed MSI. Plus, it's a smart client, so the UI 
+is snappy and I can make it smart about what specifically it should remember 
+between sessions for our own uses. And, I can provide a single UI for multiple 
+back-end services, duplicating the data between them as necessary w/o requiring 
+the user to duplicate the data for me.</p><p align="left">The way I was able to 
+minimize the number of fields was to build all kinds of assumptions into the app 
+based on how MSDN does things, aka the business rules, and build my own app that 
+programmatically generates when I need. In other words, my app combines business 
+rules with programmatic interfaces to save me and my friends all kinds of time 
+(the process is now about 10x faster than it used to be and 100x less tedious 
+and less error prone).</p><p align="left">And that's the beauty of allowing 
+programmatic access to internal business processes: it allows each group in the 
+company to build specific apps that meet their needs more specifically, letting 
+them consolidate the processes into their own group-specific tasks. Not only 
+does this speed things up and increase consistency for our customers, but it 
+also removes the tedium and lowers the possibility of human error. If you could 
+gain all those benefits, would you do it? That's the promise of web services and 
+SOA when applied internally, because it allows the groups that provide the 
+services to be general-purpose, meeting the needs of all groups, but lets each 
+group be specific when they apply it, instead of forcing a web interface that 
+requires everyone to be general.</p><p align="left">Am I alone in getting 
+aroused when thinking about this kind of thing? : )</p><p align="left"><a href="/1354">
+Discuss</a></li></p>
+

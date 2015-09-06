@@ -1,0 +1,148 @@
+<!--
+Date: 7/19/2001 12:00:00 AM  -08:00
+Permalink: 12654
+Disqus: 12654
+Tags: tools
+-->
+<h1>SmartEnumVARIANT</h1>
+    <h2>
+        The Problem
+    </h2>
+    VB/VBScript provides the implementation of For-Each using an implementation of 
+    IEnumVARIANT exposed from a collection via the _NewEnum method. Unfortunately, 
+    VB uses 1 for the argument to Next, making round-trip time terrible.
+    <h2>
+        A Solution:
+        <br>
+        If you don't own the collection implementation code...
+    </h2>
+    If you don't own the collection implementation code, you can still wrap the 
+    collection in a custom object called the CollectionBuffer, which implements the 
+    following interface:
+    <pre>[
+	object,
+	uuid(B6175081-83D4-11D2-987D-00600823CFFB),
+	dual,
+	helpstring("ICollectionBuffer Interface"),
+	pointer_default(unique)
+]
+interface ICollectionBuffer : IDispatch
+{
+    [propget, helpstring("property Collection")] HRESULT Collection([out, retval] IDispatch** pVal);
+    [propput, helpstring("property Collection")] HRESULT Collection([in] IDispatch* newVal);
+    [propget, helpstring("property BufferSize")] HRESULT BufferSize([out, retval] long *pVal);
+    [propput, helpstring("property BufferSize")] HRESULT BufferSize([in] long newVal);
+    [propget, id(DISPID_NEWENUM)] HRESULT _NewEnum([out, retval] IUnknown** ppunkEnum);
+};
+</pre>
+    The Collection property is used to pass in the collection object to which you'd 
+    like buffered access. The BufferSize property is used to control how many 
+    VARIANTs you'd like to have returned on each call to Next. The implementation 
+    of _NewEnum gets the IEnumVARIANT interface from the collection and wraps it in 
+    a buffered implementation of IEnumVARIANT called SmartEnumVARIANT.
+    <p>
+        The SmartEnumVARIANT object manages buffered access to the underlying 
+        IEnumVARIANT. VB can still ask for one item at a time, but the items will come 
+        out of the buffer. Depending on the buffer size, this can improve performance 
+        by many order of magnitude.
+        <h2>
+            Usage
+        </h2>
+        The following VB code uses an unbuffered collection and is slow:
+        <pre>Dim coll As Object
+Set coll = CreateObject("DumbEnumSvr.CollectionOfNumbers")
+coll.CountOfNumbers = 10000
+
+Dim v As Variant
+Dim c As Long
+For Each v In coll
+    c = c + 1
+Next v
+MsgBox "Counted " & c
+</pre>
+        This VB code wraps the unbuffered collection in the CollectionBuffer object:
+        <pre>Dim collBuffer As Object
+Set collBuffer = CreateObject("SmartEnumSvr.CollectionBuffer")
+collBuffer.Collection = coll
+collBuffer.BufferSize = 1024
+
+c = 0
+For Each v In collBuffer
+    c = c + 1
+Next v
+MsgBox "Counted " & c
+</pre>
+        <h2>
+            Another Solution:
+            <br>
+            If you <i>do</i> own the collection implementation code...
+        </h2>
+    If you do have the source to the collection, there's no reason that VB clients 
+    have to do anything. Instead, your implementation of IEnumVARIANT can use a 
+    manual form of handler marshaling (invented, as far as I know, by Don Box -- 
+    the manual form, MS invented handler marshaling...).
+    <p>
+        The handler marshaling works like this:
+        <ol>
+            <li>
+            The server-side implementation of IEnumVARIANT implements IMarshal.
+            <li>
+            Server-side enumerator returns CLSID_SmartEnumVARIANT when GetUnmarshalClass is 
+            called.
+            <li>
+            Server-side enumerator marshals the interface of it's own stub (obtained by 
+            calling CoGetStandardMarshal) into the stream provided during the call to 
+            GetMarshalSizeMax and MarshalInterface.
+            <li>
+            On the client-side, the Proxy Manager used the CLSID provided by the 
+            server-side enumerator to create an instance of SmartEnumVARIANT.
+            <li>
+            The SmartEnumVARIANT object also implements IMarshal and it will pull the 
+            marshaled stub to the real implementation of IEnumVARIANT out of the marshal 
+            packet.
+            <li>
+            The SmartEnumVARIANT becomes a "smart proxy," forwarding calls to the 
+            server-side implementation of IEnumVARIANT. However, instead of forwarding 
+            _Next calls directly, the calls are buffered for efficiency.
+        </ol>
+    This solution is nice because the VB client doesn't have to do anything 
+    special. When the server-side implementation of IEnumVARIANT is marshaled to 
+    the client, the SmartEnumVARIANT automatically becomes the smart proxy, making 
+    buffered calls on the server.
+    <p>
+        For the handler marshaling to work, the server-side enumerator must implement 
+        IMarshal appropriately. In UseSmartEnum.h, I've provided an implementation of 
+        IMarshal for this purpose:
+        <pre>template &lt;typename Deriving, ULONG celtBuffer = 1024&gt;
+class IMarshalForSmartEnumImpl : public IMarshal {...};
+</pre>
+        For example, the CollectionOfNumbers2 example class uses 
+        IMarshalForSmartEnumImpl to add IMarshal to CComEnum like so:
+        <pre>typedef CComEnum&lt; IEnumVARIANT, &IID_IEnumVARIANT, VARIANT, _Copy&lt;VARIANT&gt; &gt; CComEnumVariant;
+
+class CSmartProxiedEnumVARIANT :
+    public CComEnumVariant,
+    public IMarshalForSmartEnumImpl&lt;CSmartProxiedEnumVARIANT, 1024&gt;
+{
+public:
+BEGIN_COM_MAP(CSmartProxiedEnumVARIANT)
+    COM_INTERFACE_ENTRY(IMarshal)
+    COM_INTERFACE_ENTRY_CHAIN(CComEnumVariant)
+END_COM_MAP()
+};
+</pre>
+        <h2>
+            The Source
+        </h2>
+        CollectionBuffer, SmartEnumVARIANT, IMarshalForSmartEnumVARIANT and two 
+        samples, CollectionOfNumbers (which doesn't use handler marshaling) and 
+        CollectionOfNumbers2 (which does use handler marshaling) are available <a href="/public/tools/smartenum.zip">
+            here</a>.
+        <h2>
+            Copyright
+        </h2>
+        This source is copyright (c) 1998, Chris Sells.
+        <br>
+        All rights reserved. No warrenties extended. Use at your own risk.
+        <br>
+        Comments to <a href="mailto:csells@sellsbrothers.com?subject=Smart Enumeration">csells@sellsbrothers.com</a>

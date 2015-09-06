@@ -1,0 +1,24 @@
+<!--
+Date: 1/4/2015 4:39:09 AM  -08:00
+Permalink: 13740
+Disqus: 13740
+Tags: .net,spout
+-->
+<h1>Handling Orientation Changes in Xamarin.Forms Apps</h1>
+<p>By default, Xamarin.Forms handles orientation changes for you automatically, e.g.</p> <a href="/public/post-images/13740-258.png"><img title="ss1[5]" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; padding-top: 0px; padding-left: 0px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="ss1[5]" src="/public/post-images/13740-259.png" width="292" height="484" /></a>  <p><a href="/public/post-images/13740-260.png"><img title="ss4" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; padding-top: 0px; padding-left: 0px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="ss4" src="/public/post-images/13740-261.png" width="644" height="388" /></a></p>  <p><em>Xamarin.Forms handles orientation changes automatically</em></p>  <p>In this example, the labels are above the text entries in both the portrait and the landscape orientation, which Xamarin.Forms can do without any help from me. However, what if I want to put the labels to the left of the text entries in landscape mode to take better advantage of the space? Further, in the general case, you may want to have different layouts for each orientation. To be able to do that, you need to be able to detect the device’s current orientation and get a notification when it changes. Unfortunately, Xamarin.Forms provides neither, but luckily it’s not hard for you to do it yourself.</p>  <h2>Finding the Current Orientation</h2>  <p>To determine whether you’re in portrait or landscape mode is pretty easy:</p>  <pre class="code"><span style="background: white; color: blue">static bool </span><span style="background: white; color: black">IsPortrait(</span><span style="background: white; color: #2b91af">Page </span><span style="background: white; color: black">p) { </span><span style="background: white; color: blue">return </span><span style="background: white; color: black">p.Width &lt; p.Height; }</span></pre>
+
+<p>This function makes the assumption that portrait mode has a smaller width. This doesn’t work for all future imaginable devices, of course, but in the case of a square device, you’ll just have to take your changes I guess.</p>
+
+<h2>Orientation Change Notifications</h2>
+
+<p>Likewise, Xamarin.Forms doesn’t have any kind of a OrientationChanged event, but I find that handling SizeChanged does the trick just as well:</p>
+
+<pre class="code"><span style="background: white; color: black">SizeChanged += (sender, e) =&gt; Content = IsPortrait(</span><span style="background: white; color: blue">this</span><span style="background: white; color: black">) ? portraitView : landscapeView;</span></pre>
+
+<p>The SizeChanged event seems to get called exactly once as the user goes from portrait to landscape mode (at least in my debugging, that was true). The different layouts can be whatever you want them to be. I was able to use this technique and get myself a little extra vertical space in my landscape layout:</p>
+
+<p><a href="/public/post-images/13740-262.png"><img title="ss2" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; padding-top: 0px; padding-left: 0px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="ss2" src="/public/post-images/13740-263.png" width="644" height="388" /></a></p>
+
+<p><em>Using a custom layout to put the labels on the left of the text entries instead of on top</em>&#160;</p>
+
+<p>Of course, I could use this technique to do something completely differently in each orientation, but I was hoping that the two layouts made sense to the user and didn’t even register as special, which Xamarin.Forms allowed me to do.</p>  

@@ -1,0 +1,28 @@
+<!--
+Date: 8/7/2001 12:00:00 AM  -08:00
+Permalink: 12433
+Disqus: 12433
+Tags: tools
+-->
+<h1>Setting the Completion Character</h1>
+<p>
+        <i><span class="created">Aug 7, 2001</span></i>
+    </p>
+    <p>
+        Whenever I set up a new machine (which happens a lot as WinXP and .NET go 
+        through their beta &amp; RC cycles), I always need to manually set up the 
+        completion character (to TAB, of course) in the Registry. <a href="mailto:shawnv@comguru.com">
+            Shawn VanNess</a> <a href="http://discuss.microsoft.com/SCRIPTS/WA-MSD.EXE?A2=ind0001B&amp;L=ATL&amp;P=R3986">
+            posted a .rgs file</a> that would set this up without the lengthy search 
+        through the Registry. Inspired by Shawn, here's my own <a href="/public/tools/completionChar.reg">
+            completionChar.reg</a> that doesn't require a program to parse .rgs files 
+        (which doesn't come with Windows).
+    </p>
+    <p>
+        BTW, if you don't know about the command shell's Completion Character, stop 
+        right now, run the <a href="/public/tools/completionChar.reg">completionChar.reg</a> file, 
+        start up a WinNT/Win2K/WinXP command shell, type "cd c:\p[TAB]" and watch while 
+        the shell expands it to "cd C:\Program Files\" for you. If you have other 
+        directories that start with "c:\p", continue to hit [TAB] to cycle through 
+        them. This works for any directory or file name and it boosts my productivity 
+        by about 100% on the command line. I can't live without it!</p>

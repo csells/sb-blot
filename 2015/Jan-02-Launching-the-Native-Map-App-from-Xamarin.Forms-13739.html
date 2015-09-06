@@ -1,0 +1,34 @@
+<!--
+Date: 1/2/2015 7:36:45 PM  -08:00
+Permalink: 13739
+Disqus: 13739
+Tags: .net,spout,.net,spout
+-->
+<h1>Launching the Native Map App from Xamarin.Forms</h1>
+<p>My goal was to take the name and address of a place and show it on the native map app regardless of what mobile platform on which my app was running. While Xamarin.Forms provides a cross-platform API to launch the URL that starts the map app, the URL format is different depending on whether you’re using <a href="http://msdn.microsoft.com/en-us/library/windows/apps/jj635237.aspx">the Windows Phone 8 URI scheme for Bing maps</a>, <a href="http://developer.android.com/guide/components/intents-common.html#Maps">the Android Data URI scheme for the map intent</a> or <a href="https://developer.apple.com/library/ios/featuredarticles/iPhoneURLScheme_Reference/MailLinks/MailLinks.html#//apple_ref/doc/uid/TP40007899-CH4-SW1">the Apple URL scheme for maps</a>.</p>  <p>This is what I came up with:</p>  <pre class="code"><span style="background: white; color: blue"><pre class="code"><span style="background: white; color: blue">public class </span><span style="background: white; color: #2b91af">Place </span><span style="background: white; color: black">{
+  </span><span style="background: white; color: blue">public string </span><span style="background: white; color: black">Name { </span><span style="background: white; color: blue">get</span><span style="background: white; color: black">; </span><span style="background: white; color: blue">set</span><span style="background: white; color: black">; }
+  </span><span style="background: white; color: blue">public string </span><span style="background: white; color: black">Vicinity { </span><span style="background: white; color: blue">get</span><span style="background: white; color: black">; </span><span style="background: white; color: blue">set</span><span style="background: white; color: black">; }
+  </span><span style="background: white; color: blue">public </span><span style="background: white; color: #2b91af">Geocode </span><span style="background: white; color: black">Location { </span><span style="background: white; color: blue">get</span><span style="background: white; color: black">; </span><span style="background: white; color: blue">set</span><span style="background: white; color: black">; }
+  </span><span style="background: white; color: blue">public </span><span style="background: white; color: #2b91af">Uri </span><span style="background: white; color: black">Icon { </span><span style="background: white; color: blue">get</span><span style="background: white; color: black">; </span><span style="background: white; color: blue">set</span><span style="background: white; color: black">; }
+}</span><span style="background: white; color: black">
+</span></pre>public void </span><span style="background: white; color: black">LaunchMapApp(</span><span style="background: white; color: #2b91af">Place </span><span style="background: white; color: black">place) {
+  </span><span style="background: white; color: green">// Windows Phone doesn't like ampersands in the names and the normal URI escaping doesn't help
+  </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">name = place.Name.Replace(</span><span style="background: white; color: #a31515">&quot;&amp;&quot;</span><span style="background: white; color: black">, </span><span style="background: white; color: #a31515">&quot;and&quot;</span><span style="background: white; color: black">); </span><span style="background: white; color: green">// var name = Uri.EscapeUriString(place.Name);
+  </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">loc = </span><span style="background: white; color: blue">string</span><span style="background: white; color: black">.Format(</span><span style="background: white; color: #a31515">&quot;{0},{1}&quot;</span><span style="background: white; color: black">, place.Location.Latitude, place.Location.Longitude);
+  </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">addr = </span><span style="background: white; color: #2b91af">Uri</span><span style="background: white; color: black">.EscapeUriString(place.Vicinity);
+
+  </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">request = </span><span style="background: white; color: #2b91af">Device</span><span style="background: white; color: black">.OnPlatform(
+    </span><span style="background: white; color: green">// iOS doesn't like %s or spaces in their URLs, so manually replace spaces with +s
+    </span><span style="background: white; color: blue">string</span><span style="background: white; color: black">.Format(</span><span style="background: white; color: #a31515">&quot;http://maps.apple.com/maps?q={0}&amp;sll={1}&quot;</span><span style="background: white; color: black">, name.Replace(</span><span style="background: white; color: #a31515">' '</span><span style="background: white; color: black">, </span><span style="background: white; color: #a31515">'+'</span><span style="background: white; color: black">), loc),
+
+    </span><span style="background: white; color: green">// pass the address to Android if we have it
+    </span><span style="background: white; color: blue">string</span><span style="background: white; color: black">.Format(</span><span style="background: white; color: #a31515">&quot;geo:0,0?q={0}({1})&quot;</span><span style="background: white; color: black">, </span><span style="background: white; color: blue">string</span><span style="background: white; color: black">.IsNullOrWhiteSpace(addr) ? loc : addr, name),
+
+    </span><span style="background: white; color: green">// WinPhone
+    </span><span style="background: white; color: blue">string</span><span style="background: white; color: black">.Format(</span><span style="background: white; color: #a31515">&quot;bingmaps:?cp={0}&amp;q={1}&quot;</span><span style="background: white; color: black">, loc, name)
+  );
+
+  </span><span style="background: white; color: #2b91af">Device</span><span style="background: white; color: black">.OpenUri(</span><span style="background: white; color: blue">new </span><span style="background: white; color: #2b91af">Uri</span><span style="background: white; color: black">(request));
+}</span></pre>
+
+<p>This code was testing on several phone and tablet emulators and on 5 actual devices: an iPad running iOS 8, an iPad Touch running iOS 8, a Nokia Lumia 920 running Windows Phone 8.1, an LG G3 running Android 4.4 and an XO tablet running Android 4.1. As you can tell, each platform has not only it’s own URI format for launching the map app, but quirks as well. However, this code works well across platforms. Enjoy.</p>  

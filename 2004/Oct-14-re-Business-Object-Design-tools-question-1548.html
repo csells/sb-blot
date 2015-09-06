@@ -1,0 +1,16 @@
+<!--
+Date: 10/14/2004 2:38:34 PM  -08:00
+Permalink: 1548
+Disqus: 1548
+Tags: tools
+-->
+<h1>re: Business Object Design tools question</h1>
+<P>Today Ralph Loizzo asked me what tool I use to outline my objects, to which I replied:</P>
+<P>The tool I use most often to design my systems is a text editor. I write my client code first against the objects I wish I had to obtain the first order of functionality I'm after, then implement those classes and refactor 'til I've reached a state of happiness between the clients and the object model.</P>
+<P>In this age of development methodology du jour, I assume my methodology already has a name, but today I dubbed it CDD (Client-Driven Development). Also, I don't distinguish between client UI code and lower-level code, i.e. just as often as I write lower-level code against an imaginary OM, I design my UIs first, then implement an OM to enable the UI.</P>
+<P>Over the years, I've become less and less of a fan of the idea of componentizing the functionality you think the higher levels are going to need, as it often results in over-engineering. Instead, I prefer just-in-time engineering, refactoring my design as I need new or different functionality, whether&nbsp;in the client during the initial development stage or during the maintenance stage.</P>
+<P>Test Driven Development is very similar to Client-Driven Development:</P>
+<UL>
+<LI>TDD: writing the tests first and writing your code &#8216;til the test pass</LI>
+<LI>CDD: writing the client first and writing your code &#8216;til the client has the functionality it needs</LI></UL>
+<P>It may even be that CDD is a degenerate case of TDD where the "test" is "the client seems to work."</P>

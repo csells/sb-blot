@@ -1,0 +1,31 @@
+<!--
+Date: 12/30/2004 9:52:28 AM  -08:00
+Permalink: 1639
+Disqus: 1639
+Tags: .net
+-->
+<h1>Fix for VS05b1 Avalon compilation perf problems </h1>
+<P>Rob has posted <A href="http://www.longhornblogs.com/rrelyea/archive/2004/12/29/12121.aspx">a description and a couple of work-arounds to a problem some folks are having w/ 100% CPU utilization after an Avalon project is compiled in Visual Studio 2005 beta 1 + the Nov. '04 Avalon CTP + C#</A>.</P>
+<P>If his solution doesn't work for you (it didn't for me, but I think I have a weird build), under HKEY_CURRENT_USER\Software\Microsoft\VisualStudio\8.0\CSharp\Options\Editor, try setting the UpdateRegisterDesignViewOnIdle value to 0 instead of 1. I don't know what this turns off, but it makes the problem go away. If you trust me, I've put together <A HREF="/public/tools/SetUpdateRegisterDesignViewOnIdle0.reg">a reg file that sets this value for you here</A>.</P>
+<p>BTW, if you're wondering what happens when you turn the UpdateRegisterDesignViewOnIdle option off, it's the feature that notices if you take a random code file and add a System.Windows.Forms.Form as a base class so that when you open the file, it's opened in the Windows Forms Designer by default. Without this flag, VS will never notice a new Form in a code file and they'll be no way to edit the Form in the Windows Forms Designer (not even Open With [even though every other editor is in the list...]). If you add a new Form by choosing to Add->Windows Form to the project (as most folks do), all works as expected.</p>
+<p>However, if you absolutely <i>need</i> to turn a code file into a file that 
+will open in the Windows Forms Designer, you can close the project in VS, open 
+it in notepad and change the following:<br>
+<br>
+&lt;Compile Include=”Foo.cs”&gt;<br>
+<br>
+or the following:<br>
+<br>
+&lt;Compile Include=”Foo.cs”&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;SubType&gt;Code&lt;/SubType&gt;<br>
+&lt;/Compile&gt;<br>
+<br>
+to the following:<br>
+<br>
+&lt;Compile Include=”Foo.cs”&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;SubType&gt;Form&lt;/SubType&gt;<br>
+&lt;/Compile&gt;<br>
+<br>
+Thanks to Cyrus Najmabadi and Izzy Gryko -- hard-working MS employees answering 
+my emails on New Year's Eve even when they're officially Out Of Office -- for 
+this tips!</p>

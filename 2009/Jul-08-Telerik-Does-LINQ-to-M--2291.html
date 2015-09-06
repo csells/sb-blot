@@ -1,0 +1,11 @@
+<!--
+Date: 7/8/2009 5:13:04 PM  -08:00
+Permalink: 2291
+Disqus: 2291
+Tags: oslofeaturedcontent
+-->
+<h1>Telerik Does LINQ to "M"</h1>
+<P><A href="http://www.stephenforte.net/default.aspx">Stephen Forte</A> and <A href="http://weblogs.asp.net/mehfuzh/default.aspx">Mehfuz</A> (who, like Prince and Cher, needs no last name), have built <A href="http://www.stephenforte.net/PermaLink,guid,bd174995-58d0-4713-8ce0-b4ce452c5951.aspx">LINQ to "M"</A>, which means that if you've got "M" source code like this (shown in a C# string variable for loading convenience):</P><PRE>string MGraphCode =<BR>  @"<STRONG>{{Name=""Stephen Forte"", Age=37}, ... }</STRONG>";</PRE>
+<P>and a C# type like this:</P><PRE>public class Person {<BR>&nbsp; public string Name { get; set; }<BR>&nbsp; public int Age { get; set; }<BR>}</PRE>
+<P>then you can load the "M" source and run LINQ queries against it:</P><PRE>var persons =<BR>  <STRONG>QueryContext.Instance.Load&lt;Person&gt;(MGraphCode)</STRONG>;<BR>var result =<BR>  from person in persons<BR>&nbsp;&nbsp;where person.Age == 37 &amp;&amp;<BR>    person.Name == "Stephen Forte"<BR>&nbsp;&nbsp;orderby person.Name ascending<BR>&nbsp; select person;</PRE>
+<P>Enjoy!</P>

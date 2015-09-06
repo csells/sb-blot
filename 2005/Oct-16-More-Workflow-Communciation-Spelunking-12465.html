@@ -1,0 +1,44 @@
+<!--
+Date: 10/16/2005 12:00:00 AM  -08:00
+Permalink: 12465
+Disqus: 12465
+Tags: spout
+-->
+<h1>More Workflow Communciation Spelunking</h1>
+<p align="left">After <a href="#Workflow_Communication_Spelunking">complaining about the inability to bind directly to event inputs</a>, Dennis suggested I try the Workflow Communications Activity generator utility (wca.exe). If you point it at an assembly that contains interfaces decorated with the DataExchangeService attribute, it will generate typed invoke method and event sink activities for each method and event in the interface. To support this, I moved the communication interface, IOrderService, and types the interface depends on, i.e. Order and OrderEventArgs, to a separate library project and added the following post-build step:</p><div align="left">
+<pre>&quot;C:\Program Files\Microsoft SDks\Windows Workflow Foundation\wca.exe&quot;
+  &quot;$(TargetPath)&quot; /o:&quot;$(SolutionDir)\EventSinkAndMethodInvoke2&quot;</pre></div><p align="left">The reason I added this as a post-build step in the library project instead of as a pre-build stuff in the actual wf app, is because I want to have the types to program against whenever the library changes. However, either way, to get the new activities to show up on the toolbar, you have to build the application. Once I'd done that, I updated my workflow using the typed activities:</p><p align="left"><img border="0" src="/public/spout/wf2.jpg" width="203" height="440"></p><p align="left">Unfortunately, just as I was capturing that screenshot, the Workflow Designer couldn't find the activities, so it dropped them from my workflow without so much as a &quot;by your leave,&quot; reminding me where much of the early WinForms Designer.</p><p align="left">However, two nice things result from these generated types. The first is that my design-time experience, either in the designer or in the XOML, is improved because I don't have to do a bunch of parameter binding:</p><div align="left">
+<pre>&lt;SequentialWorkflow
+  x:Class=&quot;EventSinkAndMethodInvoke2.Workflow2&quot;
+  x:CompileWith=&quot;Workflow2.xoml.cs&quot;
+  ID=&quot;Workflow2&quot;
+  xmlns:x=&quot;Definition&quot;
+  xmlns=&quot;Activities&quot;&gt;
+
+  &lt;ns0:<b>CreateOrder</b>
+customer=&quot;Fabrikam&quot;
+    orderDescription=&quot;42&amp;quot; Plasma TV&quot;
+    ID=&quot;createOrder1&quot;
+    MethodName=&quot;CreateOrder&quot;
+    InterfaceType=&quot;EventSinkAndMethodInvoke2.IOrderService&quot;
+    xmlns:ns0=&quot;IOrderService_Operations&quot; /&gt;
+
+  &lt;ns1:<b>OrderApproved</b>
+ID=&quot;orderApproved1&quot;
+    EventName=&quot;OrderApproved&quot;
+    InterfaceType=&quot;EventSinkAndMethodInvoke2.IOrderService&quot;
+    xmlns:ns1=&quot;IOrderService_Events&quot; /&gt;
+
+  &lt;<b>Code</b> ExecuteCode=&quot;code1_ExecuteCode&quot; ID=&quot;code1&quot; /&gt;
+
+  &lt;<b>Terminate</b>
+<b>Error=&quot;*d2p1:ActivityBind(ID={orderApproved1};Path=Comment)&quot;</b>
+ID=&quot;terminate1&quot;
+    xmlns:d2p1=&quot;ComponentModel&quot; /&gt;
+
+&lt;/SequentialWorkflow&gt;</pre></div><p align="left">The other nice thing is that, because the typed event sink has properties that directly expose the event arguments, i.e. Comment and Order, instead of just via parameter bindings, I can bind to them in the b1 build of WF. This reduces my coupling, because the terminate activity doesn't know where it's getting it's input, and it takes away that &quot;global variable&quot; feel I had when I was binding parameters in and out of fields on the workflow itself. If I want to access the event sink's typed properties directly, I can do so, as shown in the code activity's handler:</p><div align="left">
+<pre>public partial class Workflow2 : SequentialWorkflow {
+  void code1_ExecuteCode(object sender, EventArgs e) {
+    Console.WriteLine(&quot;Order: approved w/ comment= {0}&quot;, <b>orderApproved1.Comment</b>);
+  }
+}</pre></div><p align="left">I really like that typed activities are generated for me based on my data exchange service interfaces, but it's still a manual, multi-stage process today. I'd prefer that it happened automatically, like typed resources and settings in VS05. If that can't happen, I'd prefer to be able to bind directly to the parameter binding list that the generic event sink activity already knows about. At least that way, if there's a problem, my workflow doesn't get destroyed because of it.</p><p align="left">The updated VS05b2, WF/WinFXb1 sample code is available <a href="/public/samples/WfEventSinkAndMethodInvoke2typed.zip">for your enjoyment</a>.</p>

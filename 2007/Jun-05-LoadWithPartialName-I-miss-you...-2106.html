@@ -1,0 +1,9 @@
+<!--
+Date: 6/5/2007 4:31:37 PM  -08:00
+Permalink: 2106
+Disqus: 2106
+-->
+<h1>LoadWithPartialName, I miss you...</h1>
+<P>When you make a call to LoadWithPartialName in .NET 2.0, you get the standard compiler error that you're using an obsolete function:</P><PRE>foo.cs(5,24): warning CS0618:<BR>  'System.Reflection.Assembly.LoadWithPartialName(string)' is obsolete:<BR>  'This method has been deprecated. Please use Assembly.Load() instead.<BR>  <A href="http://go.microsoft.com/fwlink/?linkid=14202">http://go.microsoft.com/fwlink/?linkid=14202</A> '</PRE>
+<P>The problem is, unlike more obsolete function warnings, there's no good way I know of to reform the arguments from the obsolete function to the recommended replacement, i.e. Assembly.Load doesn't work if you give it a partial assembly name. Because of this, instead of code filled with Assembly.Load calls, I see this all over the place in production .NET 2.0 code:</P><PRE>#pragma warning disable 618<BR>Assembly.LoadWithPartialName("foo");<BR>#pragma warning restore 618</PRE>
+<P>Maybe in .NET 3.5, we can get a helper function that wraps the #pragmas for us... : )</P>

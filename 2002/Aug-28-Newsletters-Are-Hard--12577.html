@@ -1,0 +1,131 @@
+<!--
+Date: 8/28/2002 12:00:00 AM  -08:00
+Permalink: 12577
+Disqus: 12577
+Tags: spout
+-->
+<h1>Newsletters Are Hard!</h1>
+
+        <p>As I write this, several thousand emails are being sent to the 
+        initial list of SellsBrothers News newsletter subscribers. My motive (to 
+        let folks know what was happening on the site without having to visit 
+        every day) was pure, but if I would have know how hard it was going to 
+        be to set the thing up, I don't that I would have started.</p>
+        <p>It began with a simple form on the web site to take people's email 
+        addresses, which were in turn emailed to me and sorted into a Outlook 
+        folder. When that reached a couple thousand without yet having sent out 
+        a single issue, I figured it was time to put it into a real database. 
+        So, which a bit of data cleaning through VS.NET and Excel to get the 
+        dates right, I plunked it into an Access that would serve as the 
+        repository on my ISP-managed site. That was all fine and dandy but for 
+        one problem: I had to send emails using the data from my own machine, 
+        not the machine with my live site (and therefore the latest subscriber 
+        data). Did I really want to download an Access database from my ISP 
+        every time I needed to send a newsletter? It won't be often, I admit, 
+        but that still seems wrong, doesn't it?</p>
+        <p>So, I paid the extra $10/month to get SQL Server support on my site 
+        and worked with a friend of mine (<a href="http://www.crutchers.com/" style="color: blue; text-decoration: underline; text-underline: single">Paul 
+        Crutcher</a>) to build the form to take name, email address and HTML vs. 
+        Text settings. Except it's not just one form. To make sure that folks 
+        aren't subscribing other folks, we send out a confirmation email with an 
+        URL in it that updates the database and shows another form indicating 
+        whether that worked or not. Then, in case anyone changed their mind, we 
+        needed another form to change subscription settings along with another 
+        form letting them know that their changes were made. Of course, before 
+        we could let them change their settings, we needed to let them log in, 
+        which was another form. And, if they forgot their password, they need 
+        another form so that they can enter their email address and we can send 
+        it to them. Further, if the worst happens and they tire of my musings, 
+        they need to be able to unsubscribe themselves.</p>
+        <p>Not only did Paul build all of these forms, but he built them in two 
+        parts, a form part and a control part, so that I could update the form 
+        part to have the sellsbrothers.com look 'n' feel, while leaving the real 
+        logic in the control part untouched (and potentially reusable). All in 
+        all, just letting folks manage their newsletter subscriptions was 46 
+        hunks of HTML packaged as .htm, .aspx and .ascx files. 46! I would have 
+        downloaded something and integrated it, but I never found anything to do 
+        the job (and this is where I get a hundred emails showing me the error 
+        of my ways... : ).</p>
+        <p>Of course, all that user-managed subscription work was to avoid one 
+        thing: angry emails. I didn't want folks who'd forgotten they subscribed 
+        many months ago or, worse, folks that were subscribed implicitly from 
+        other activities like the <a href="/conference">DevCon</a>, to find 
+        themselves on a list with no way to get off of it except for sending me 
+        angry emails. That's just how insecure I am. : )</p>
+        <p>So, after a few weeks of Paul and I working on the pages to do the 
+        administration for me, I thought that the hard part was over. I was 
+        wrong. While I did have an SQL database on my site, it was still nearly 
+        empty. There were some folks who were newly subscribed after the new 
+        code went live, but all of the folks who'd subscribed before then were 
+        stuck in an Access database. &quot;That's OK,&quot; I thought. &quot;SQL Server and 
+        Access were made by the same folks. I'm sure I won't have any problems 
+        moving the data.&quot; That was two weeks ago. It took tons of advice from my 
+        database friends (thanks
+        <a href="http://staff.develop.com/bobb/" style="color: blue; text-decoration: underline; text-underline: single">
+        BobB</a> and
+        <a href="http://www.adoguy.com/" style="color: blue; text-decoration: underline; text-underline: single">
+        ShawnW</a> and
+        <a href="http://www.mcwtech.com/" style="color: blue; text-decoration: underline; text-underline: single">
+        BrianR</a>!), along with a final push from my brethren on the
+        <a href="http://groups.yahoo.com/group/win_tech_off_topic/" style="color: blue; text-decoration: underline; text-underline: single">
+        Off Topic Mailing List</a> to get the data moved to the right place. The 
+        good news is that I got to polish my T-SQL skills a bit and I got to 
+        play with DTS and the Enterprise Manager (both very nice pieces of 
+        software).</p>
+        <p>But that's not all. Once I had the subscribers in the database, I 
+        then had to send several thousand emails, sorted into folks that want 
+        HTML and folks that want Text, keeping track of bad email addresses. 
+        This time, I went looking for a commercial product to do the job. I 
+        figured that since my inbox was full of spam (<a href="http://www.cloudmark.com">SpamNet 
+        is my new best friend!</a>), that there must be really great tools for 
+        sending emails by the boatload. And again, my friends on the Off Topic 
+        mailing list were there to help with a recommendation of the
+        <a href="http://www.mailutilities.com/adr" style="color: blue; text-decoration: underline; text-underline: single">
+        Advanced Direct Remailer</a>. ADR is also a nice piece of software that 
+        comes out of the box configured <i>almost </i>right, but not quite and 
+        the documentation has to be read very carefully. ADR is an SMTP server 
+        that takes mail from your mail client and forwards it to a list of folks 
+        based on who you sent it to. For example, you can send it to foo@localhost 
+        where &quot;foo&quot; is a mailbox that resolves to a list of email addresses in a 
+        text file or you can send it to bar@localhost where &quot;bar&quot; is a mailbox 
+        that resolves to a select statement from a database. That all works 
+        great, except if you get any of the settings at all wrong, ADR starts 
+        acting like a real email server and just tries to send the email to foo@localhost. 
+        Well, actually, it can't be foo@localhost for me, since I'm using 
+        Outlook XP, a marvel of software engineering that in it's infinite 
+        wisdom prohibits me from sending an email to a server without a &quot;.&quot; in 
+        it. So, I send an email to foo@127.0.0.1, which ends up in ADR, but the 
+        default settings only resolve requests sent to &quot;localhost&quot;, so ADR won't 
+        do the queries. However, it is talking to the built-in SMTP server on my 
+        machine (which I need for testing my web site before publishing it), so 
+        it looks like it's doing something, making it even harder to figure out 
+        what's going on, since I've never seen what ADR does when it works 
+        correctly.</p>
+        <p>When I finally do get everything right and the emails are queued in 
+        ADR properly, I can tell it's going to take hours of 100% CPU 
+        utilization for the newsletter to get out, so I go on to something else. 
+        But I can't stay away for very long, so I'm constantly logging into the 
+        machine doing the sending via Terminal Services to check on the 
+        progress. With the CPU fully utilized, all the failed TS connections (I 
+        have to keep trying!) eventually crash the ADR machine, causing a panic 
+        as I reboot. I needed have worried. ADR has kept everything logged and 
+        picks up right where it left off before the crash. Truly an amazing 
+        piece of software.</p>
+        <p>Why do I feel like <a href="http://www.byte.com/">
+        Jerry Pournelle</a> all of a sudden?</p>
+        <p>Now, as I'm drawing this missive to a close, I'm getting half a dozen 
+        emails from subscribers that wish to unsubscribe but can't because of 
+        the peculiarities of the imported data vs. what I tested against. So, 
+        the angry emails have started. Here's a particularly angry one:</p>
+        <blockquote>
+          <p><font face="Courier">Subject: Get me off your spam list</font></p>
+          <p><font face="Courier">You are too much of a hassle to remove, you 
+          lie about where you got my address, I do not trust you at all.<br>
+          <br>
+          I will prosecute you my every means possible if you do not remove my 
+          address from your database.<br>
+          <br>
+          If I find out you spread my address, I will go after you for that.</font></p>
+        </blockquote>
+        <p>Oh, well. I tried...</p>
+        

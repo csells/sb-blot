@@ -1,0 +1,76 @@
+<!--
+Date: 3/30/2005 12:00:00 AM  -08:00
+Permalink: 12475
+Disqus: 12475
+Tags: spout
+-->
+<h1>I can feel Avalon changing me...</h1>
+<p align="left">I'm writing a tiny little application for my writing on ClickOnce in Avalon. In fact, to demonstrate ClickOnce, the app hardly matters, so I picked something really simple: an excuse generator. I didn't even have to make up the excuses, as I stole them from an office gag gift two years ago and wrapped them in <a href="/public/samples/excuses-asmx.zip">an excuse web service</a> (which is a whole other story : ).</p><h2 align="left">Binding to Data Defined in Code</h2><p align="left">The idea was to have an array of excuse strings like so:</p><div align="left">
+<pre>public partial class Window1 : Window {
+<b>  static string[] excuses = {
+    &quot;Jury Duty&quot;,
+    ...
+    &quot;It's Not My Job&quot;,
+  };
+</b>
+public Window1() {
+    InitializeComponent();
+<b>    this.DataContext = Window1.excuses;
+</b>  }
+  ...
+}</pre></div><p align="left">Once I had the collection of strings, I make them available for binding by setting them to the DataContext of the main window and the rest of the code would simply be a matter of binding a TextBlock to the current excuse like so:</p><div align="left">
+<pre>&lt;Window ...&gt;
+  ...
+<b>  &lt;TextBlock TextContent=&quot;{Bind Path=/}&quot; /&gt;
+  &lt;Button x:ID=&quot;newExcuseButton&quot;&gt;New Excuse&lt;/Button&gt;
+</b>  ...
+&lt;/Window&gt;</pre></div><div align="left"><p align="left">By binding the TextContent property of the TextBlock to a Path of &quot;/&quot;, I'm explicitly saying &quot;don't try to dig into each object in the collection looking for sub-properties, but binding to the item itself.&quot; Initially, the TextBlock will show the first item in the list:</div><div align="left"><p align="left"><img border="0" src="/public/spout/excuse1.jpg" width="583" height="480"></div><div align="left"><p align="left">When the button is pressed, I change the output by selecting a random item from the collection and setting it as the &quot;current&quot; item in the collection:</div><div align="left">
+<pre>Random rnd = new Random();
+void newExcuseButton_Click(object sender, RoutedEventArgs e) {
+<b>  ListCollectionView view =
+    (ListCollectionView)Binding.GetDefaultView((IEnumerable)Window1.excuses);
+  view.MoveCurrentToPosition(rnd.Next(view.Count - 1));
+</b>}</pre></div><div align="left"><p align="left">By grabbing the view for the excuses collection, I can do a number of things with it, including move the current item in the view to some specific position. When I do that, the data bound TextContent property of the TextBlock will be updated to show whatever is current:</div><div align="left"><p align="left"><img border="0" src="/public/spout/excuse2.jpg" width="583" height="480"></div><div align="left"><p align="left">So here's the first thing that I'm notice that I really approach differently in Avalon: the data binding hammer is almost always the first tool I reach for in the programming box. In the old days, to write this app, I'd set the TextContent property directly in code. Now, I don't even <i>think </i>to do that. Instead, I've got data and a property to set, so that's data binding.</div><div align="left"><h2 align="left">Binding to Objects Defined in XAML</h2></div><div align="left"><p align="left">&quot;But wait!&quot; I hear you howl. &quot;What about internationalization?!?&quot; I know. Hard-coded data in the source code is a bad idea. So where does it go? Into the XAML itself, of course, so that anyone working on the UI, whether for an English-speaking country or not, can add new items, port them to another language, etc. How to do it? Well, since XAML is an XML dialect for describing object hierarchies, I could define a new type (roughly):</div><div align="left">
+<pre>class Excuse {
+  string value;
+  public string Value { get { ... } set { ... } }
+}
+
+class ExcuseData : List&lt;Excuse&gt; {
+}</pre></div><div align="left"><p align="left">Then I could write my excuse data as a hydration of objects using the ObjectDataSource (roughly):</div><div align="left">
+<pre>...
+&lt;Window.Resources&gt;
+<b>  &lt;ObjectDataSource x:Key=&quot;ExcuseData&quot;&gt;
+    &lt;l:ExcuseData&gt;
+      &lt;l:Excuse Value=&quot;Jury Duty&quot; /&gt;
+      ...
+      &lt;l:Excuse Value=&quot;It's Not My Job&quot; /&gt;
+    &lt;/l:ExcuseData&gt;
+  &lt;/ObjectDataSource&gt;
+</b>&lt;/Window.Resources&gt;
+...</pre></div><div align="left"><p align="left">The XAML inside the ObjectDataSource will create an instance of the ExcuseData type, adding an object of type Excuse for each &lt;Excuse&gt; element, setting the Value property of the object using the Value attribute from the XAML. With the object data source, I can create a little &quot;data island&quot; in the middle of my app where the list of excuses can be poked and prodded without touching the code.</div><div align="left"><h2 align="left">Binding to Data Defined in XAML</h2></div><div align="left"><p align="left">Still, why go to the trouble of defining my own custom data type, which doesn't have any behavior to speak of, when I've got the universal behavior-less data type -- XML? I can use the XmlDataSource without any custom type at all:</div><div align="left"><p align="left">&lt;Window.Resources&gt;<br><b>&nbsp; &lt;XmlDataSource x:Key=&quot;ExcuseData&quot; XPath=&quot;/Excuses/Excuse&quot;&gt;<br>&nbsp;&nbsp;&nbsp; &lt;Excuses xmlns=&quot;&quot;&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Excuse&gt;Jury Duty&lt;/Excuse&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Excuse&gt;It's Not My Job&lt;/Excuse&gt;<br>&nbsp;&nbsp;&nbsp; &lt;/Excuses&gt;<br>&nbsp; &lt;/XmlDataSource&gt;<br></b>&lt;/Window.Resources&gt;</div><div align="left"><p align="left">You'll notice that the XML looks almost exactly like the object data source, except that instead of using an attribute to keep the juicy bits, I use the content area itself to store the data, very like the initial array example (I could have used XML attributes, but it seemed overkill in this case). One other interesting bit is that XPath of the XML data source itself. It defines the bit of the data island from which I'm pulling the data. If I had used /Excuses, the data collection would have had a single item with a bunch of children. But using /Excuses/Excuse, I'm exposing the children directly.</div><div align="left"><p align="left">To use the XML data source, I need to set it as somebody's data context in the hierarchy of controls and bind to it:</div><div align="left">
+<pre>&lt;Window ...&gt;
+  &lt;Window.Resources&gt;
+<b>    &lt;XmlDataSource x:Key=&quot;ExcuseData&quot; XPath=&quot;/Excuses/Excuse&quot;&gt;...&lt;/XmlDataSource&gt;
+</b>  &lt;/Window.Resources&gt;
+  &lt;Grid ... <b>DataContext=&quot;{Bind DataSource={StaticResource ExcuseData}}&quot;</b>&gt;
+    ...
+    &lt;TextBlock ... <b>TextContent=&quot;{Bind XPath=.}&quot;</b> /&gt;
+    &lt;Button ... x:ID=&quot;newExcuseButton&quot;&gt;New Excuse&lt;/Button&gt;
+  &lt;/Grid&gt;
+&lt;/Window&gt;</pre></div><div align="left"><p align="left"><i>I should note that in future bits, I'll be able to set the grid's data context to {StaticResource ExcuseData} directly, but in the March 2005 CTP Avalon bits, I have to actually bind the data source to the data context in a double bind that blows my mind.</i></div><div align="left"><p align="left">More importantly, notice that instead of using a Path to get to the data I want, I use an XPath. This allows me to further refine the XPath statement provided as part of the XML data source itself. However, since I don't want to refine it any further, I use the XPath statement that says &quot;just use the content of each of the elements.&quot; You'll notice that I used &quot;.&quot; in the XPath statement to provide this meaning instead of &quot;/&quot; as I did in the case where I was using an object Path. The two syntaxi look the same, but are very different and you'll want to watch yourself switching between the two.</div><div align="left"><p align="left">Anyway, with the data moved to the XAML along with the UI and the binding logic, my actual code boils down to only the following:</div><div align="left">
+<pre>public partial class Window1 : Window {
+  Random rnd = new Random();
+
+  public Window1() {
+    InitializeComponent();
+<b>    this.newExcuseButton.Click += newExcuseButton_Click;
+</b>  }
+
+  void newExcuseButton_Click(object sender, RoutedEventArgs e) {
+<b>    IDataSource dataSource = (IDataSource)this.FindResource(&quot;ExcuseData&quot;);
+    ListCollectionView view =
+      (ListCollectionView)Binding.GetDefaultView((IEnumerable)dataSource.Data);
+    view.MoveCurrentToPosition(rnd.Next(view.Count - 1));
+</b>  }
+}</pre></div><div align="left"><p align="left">So, this is really only a few lines of code, one to hook up the button event handler, one to find the excuse data from the window resources, one to get the view on the excuse data and one to move the currency pointer to some other random spot. The actual display of the data is left to the data binding code (which somebody else gets to maintain).</div><div align="left"><p align="left">One other thing worth noting is that I had defining event handlers in the XAML. Even when it's me writing both the XAML and the code, I don't like the XAML making demands on the code. If the XAML handles an event, e.g. with an event trigger, than that's fine, but don't make requirements of the code form the XAML. Instead, provide hooks for the code to do its work, e.g. the x:ID on the ExcuseData and the TextBlock are both used in the code, but neither <i>requires</i> anything of the code. If you're going to separate the presentation from the logic, this is the kind of thing you'll want to think about.</div><div align="left"><h2 align="left">Where Are We?</h2></div><div align="left"><p align="left">Two things I'm finding that Avalon has changed about my thinking. The first is that data binding makes itself into even trivial Avalon applications and its presence is appreciated. The second is that I want to push as much stuff into XAML as I can. Keeping the data separate from the code makes a bunch of sense and, for my trivial application, keeping the data inline with the rest of the UI was very useful. It allows for easy maintenance and localization while pushing as much of my application into declarations and out of imperative statements. The more I can tell the computer <i>what</i> I want instead of <i>how</i> I want to accomplish it, the better off I am.</div>

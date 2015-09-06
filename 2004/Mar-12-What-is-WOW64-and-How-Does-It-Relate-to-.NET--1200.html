@@ -1,0 +1,13 @@
+<!--
+Date: 3/12/2004 6:35:29 AM  -08:00
+Permalink: 1200
+Disqus: 1200
+Tags: .net
+-->
+<h1>What is WOW64 and How Does It Relate to .NET?</h1>
+<a href="http://blogs.msdn.com/joshwil/archive/2004/03/11/88280.aspx">Here</a>. <P>Josh Williams, an SDE on the CLR team, kicks off his 64-bit blog with an introduction to WOW64 and what it means for .NET programmers. Here's the summary:</P>
+<UL>
+<LI>WOW64 isn&#8217;t the OS per se, but a subset of the Win64 OS which enables a 32bit application to run inside of a 32bit process on a 64bit OS while using 32bit system dlls and such.</LI>
+<LI>Whidbey CLR will include both 32bit and 64bit versions, both of which will be installed on 64bit machines. This allows both 32bit and 64bit managed applications to run in bitness correct native process depending on how the assemblies are tagged at compile time.</LI>
+<LI>Once a process is started up as either 32bit or 64bit all of the dlls/assemblies that are loaded into that process have to be compatible with that bitness.</LI>
+<LI>If you have a 32bit managed app which has dependencies on 32bit unmanaged code then you&#8217;ll need to either find a 64bit version of the unmanaged code or tag your managed app as x86 at compile time to make sure that you don&#8217;t float up to a native 64bit process. This will result in you having to live with your process running under the WOW64.</LI></UL>

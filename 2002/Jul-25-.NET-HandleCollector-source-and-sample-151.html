@@ -1,0 +1,10 @@
+<!--
+Date: 7/25/2002 2:49:57 PM  -08:00
+Permalink: 151
+Disqus: 151
+Tags: .net
+-->
+<h1>.NET HandleCollector source and sample</h1>
+<a href="http://discuss.develop.com/archives/wa.exe?A2=ind0107B&L=DOTNET&P=R28803&D=0&I=-3">Here</a>. "Basically the class keeps track of the list of outstanding handles, and when it reaches a certain threshold it can force a GC. Basically the goal here is to do a cheap and easy extension to the GC to try and teach it about the relative expensive of unmanaged objects."
+
+This is the way that GDI+ deals with unmanaged resource reclamation and can be used for your own non-memory resources.

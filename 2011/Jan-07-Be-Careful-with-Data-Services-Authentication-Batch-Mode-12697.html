@@ -1,0 +1,187 @@
+<!--
+Date: 1/7/2011 2:32:00 PM  -08:00
+Permalink: 12697
+Disqus: 12697
+-->
+<h1>Be Careful with Data Services Authentication + Batch Mode</h1>
+<p>I was doing something quite innocent the other day: I was trying to provide authentication on top of the .NET 4.0 WCF Data Services (DS) on a per method basis, e.g. let folks read all they want but stop them from writing unless they’re an authorized user. In the absence of an authorized user, I threw a DataServicesException with a 401 and the right header set to stop execution of my server-side method and communicate to the client that it should ask for a login.</p>  <p>In addition, on the DS client, also written in .NET 4.0, I was attempting to use batch mode to reduce the number of round trips between the client and the server.</p>  <p>Once I’d cleared away the other bugs in my program, it was these three things in combination that caused the trouble.</p>  <h2>The Problem: DataServicesException + HTTP 401 + SaveChanges(Batch)</h2>  <h2></h2>  <p>Reproducing the problem starts by turning off forms authentication in the web.config of a plain vanilla ASP.NET MVC 2 project in Visual Studio 2010, as we’re going to be building our own Basic authentication:</p>  <p><a href="/public/post-images/12697-25.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="/public/post-images/12697-26.png" width="667" height="488" /></a></p>  <p>Next, bring in the Categories table from Northwind into a ADO.NET Entity Data Model:</p>  <p><a href="/public/post-images/12697-27.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="/public/post-images/12697-28.png" width="247" height="302" /></a></p>  <p>The model itself doesn’t matter – we just need something to allow read-write. Now, to expose the model, add a WCF Data Service called “NorthwindService” and expose the NorthwindEntities we get from the EDMX:</p>  <pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">class</span> NorthwindService : DataService&lt;NorthwindEntities&gt; {
+
+  <span class="kwrd">public</span> <span class="kwrd">static</span> <span class="kwrd">void</span> InitializeService(DataServiceConfiguration config) {
+<strong>    config.SetEntitySetAccessRule(<span class="str">&quot;Categories&quot;</span>, EntitySetRights.All);
+</strong>    config.DataServiceBehavior.MaxProtocolVersion =
+      DataServiceProtocolVersion.V2;
+  }
+  ...
+}</pre>
+
+<p>Notice that we’re allowing complete read/write access to categories on our service, but what we really want is to let everyone read and only allow authenticated users to write. We can do that with a change interceptor:</p>
+
+<pre class="csharpcode">[ChangeInterceptor(<span class="str">&quot;Categories&quot;</span>)]
+<span class="kwrd">public</span> <span class="kwrd">void</span> OnChangeCategory(Category category, UpdateOperations operation) {
+  <span class="rem">// Authenticate</span>
+  <span class="kwrd">string</span>[] userpw = GetCurrentUserPassword();
+  <span class="kwrd">if</span> (userpw == <span class="kwrd">null</span> ||
+    !userpw[0].Equals(<span class="str">&quot;admin&quot;</span>, StringComparison.CurrentCultureIgnoreCase) ||
+    !userpw[1].Equals(<span class="str">&quot;pw&quot;</span>)) {
+
+<strong>    HttpContext.Current.Response.<br />      AddHeader(<span class="str">&quot;WWW-Authenticate&quot;</span>, <span class="str">&quot;Basic realm=\&quot;Northwind\&quot;&quot;</span>);
+    <span class="kwrd">throw</span> <span class="kwrd">new</span> DataServiceException(401, <span class="str">&quot;Unauthorized&quot;</span>);
+</strong>  }
+}
+
+<span class="rem">// Use HTTP Basic authentication</span>
+<span class="kwrd">string</span>[] GetCurrentUserPassword() {
+  <span class="kwrd">string</span> authorization = HttpContext.Current.Request.Headers[<span class="str">&quot;Authorization&quot;</span>];
+  <span class="kwrd">if</span> (<span class="kwrd">string</span>.IsNullOrEmpty(authorization)) { <span class="kwrd">return</span> <span class="kwrd">null</span>; }
+  <span class="kwrd">if</span> (!authorization.StartsWith(<span class="str">&quot;Basic&quot;</span>)) { <span class="kwrd">return</span> <span class="kwrd">null</span>; }
+  <span class="kwrd">byte</span>[] base64 = Convert.FromBase64String(authorization.Substring(6));
+  <span class="kwrd">string</span>[] userpw = Encoding.ASCII.GetString(base64).Split(<span class="str">':'</span>);
+  <span class="kwrd">if</span> (userpw.Length != 2) { <span class="kwrd">return</span> <span class="kwrd">null</span>; }
+  <span class="kwrd">return</span> userpw;
+}</pre>
+<style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>The change interceptor checks whether the client program provided a standard HTTP Basic authentication header and, if so, pulls out the admin user name/password pair. If it isn’t found, we set the “WWW-Authenticate” header and throw a DataServicesException, which will turn into an HTTP error response, letting the client know “I need some credentials, please.”</p>
+
+<p>The code itself is very simplistic and if you want better code, I recommend <a href="http://blogs.msdn.com/b/astoriateam/archive/tags/authentication/">Alex James’s most excellent blog series on Data Services and Authentication</a>. However, it’s good enough to return a 401 Authorized HTTP error back to the client. If it’s the browser, it’ll prompt the user like so:</p>
+
+<p><a href="/public/post-images/12697-29.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="/public/post-images/12697-30.png" width="667" height="581" /></a></p>
+
+<p>The browser isn’t a very interesting program, however, which is why I added a service reference for my new service to my plain vanilla console application and wrote this little program:</p>
+
+<pre class="csharpcode"><span class="kwrd">class</span> Program {
+  <span class="kwrd">static</span> <span class="kwrd">void</span> Main(<span class="kwrd">string</span>[] args) {
+    var service =<br />      <span class="kwrd">new</span> NorthwindEntities(<span class="kwrd">new</span> Uri(<span class="str">@&quot;http://localhost:14738/NorthwindService.svc</span>&quot;));<br />
+<br /><br /><strong>    service.Credentials = <span class="kwrd">new</span> NetworkCredential(<span class="str">&quot;admin&quot;</span>, <span class="str">&quot;pw&quot;</span>);<br /></strong>
+    var category = <span class="kwrd">new</span> Category() { CategoryName = <span class="str">&quot;My Category&quot;</span> };
+    service.AddToCategories(category);
+<strong>    <span class="rem">//service.SaveChanges(); // works</span>
+    service.SaveChanges(SaveChangesOptions.Batch); <span class="rem">// #fail<br /></span>
+</strong><br />    Console.WriteLine(category.CategoryID);
+  }
+}</pre>
+<style type="text/css">
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>Here we’re setting up the credentials for when the service asks, adding a new Category and calling SaveChanges. And this is where the trouble started. Actually, this is where the trouble ended after three days of banging my head and 4 hours with the WCF Data Services team (thanks Alex, Pablo and Phani!). Anyway, we’ve got three things interacting here:</p>
+
+<ol>
+  <li>The batch mode SaveChanges on the DS client which bundles your changes into a send OData round-trip for efficiency. You should use this when you can. </li>
+
+  <li>The DataServicesException which bundles extra information about your server-side troubles into the payload of the response so that a knowledgeable client, like the .NET DS client, can pull it out for you. You should use this when you can. </li>
+
+  <li>The HTTP authentication scheme which doesn’t fail when it doesn’t get the authentication it needs, but rather asks for the client to provide it. You should use this when you can. </li>
+</ol>
+
+<p>Unfortunately, as of .NET 4.0 SP0, you can’t use all of these together.</p>
+
+<p>What happens is that non-batch mode works just fine when our server sends back a 401 asking for login credentials, pulling the credentials out of the server reference’s Credentials property. And so does batch mode.</p>
+
+<p>However, where batch mode falls down is with the extra payload data that the DataServicesExpection packs into the HTTP error resposne, which confuses it enough so that the exception isn’t handled as a request for credentials, but rather reflected back up to the client code. It’s the interaction between all three of these that causes the problem, which means that until there’s a fix in your version of .NET, you need a work-around. Luckily, you’ve got three to choose from.</p>
+
+<h2></h2>
+
+<h2>Work-Around #1: Don’t Use DataServiceException</h2>
+
+<p>If you like, you can turn off the extra information your service endpoint is providing with the DataServiceException and just set the HTTP status, e.g.</p>
+
+<pre class="csharpcode">HttpContext.Current.Response.AddHeader(<span class="str">&quot;WWW-Authenticate&quot;</span>, <span class="str">&quot;Basic realm=\&quot;Northwind\&quot;&quot;</span>);
+<strong><span class="rem">//throw new DataServiceException(401, &quot;Unauthorized&quot;);</span>
+HttpContext.Current.Response.StatusCode = 401;
+HttpContext.Current.Response.StatusDescription = <span class="str">&quot;Unauthorized&quot;</span>;
+HttpContext.Current.Response.End();</strong></pre>
+
+<p>This fix only doesn’t work with <a href="http://en.wikipedia.org/wiki/Cassini_Web_Server">Cassini</a>, but Cassini doesn’t work well in the face of HTTP authentication anyway, so moving to <a href="http://en.wikipedia.org/wiki/IIS7#Version_7.0">IIS7</a> should be one of the first things you do when facing an authentication problem.</p>
+
+<p>Personally, I don’t like this work-around as it puts the onus on the service to fix a client problem and it throws away all kinds of useful information the service can provide when you’re trying to test it.</p>
+
+<h2>Work-Around #2: Don’t Use Batch-Mode</h2>
+
+<p>If you use “SaveChanges(SaveChangesOptions.None)” or “SaveChanges()” (None is the default), then you won’t be running into the batch-mode problem. I don’t like this answer, however, since batch-mode can significantly reduce network round-trips and therefore not using it decreases performance.</p>
+
+<h2>Work-Around #3: Pre-Populate the Authentication Header</h2>
+
+<p>Instead of doing the “call an endpoint,” “oops I need credentials,” “here you go” dance, if you know you’re going to need credentials (which I argue is most often the case when you’re writing OData clients), why not provide the credentials when you make the call?</p>
+
+<pre class="csharpcode">var service =<br />  <span class="kwrd">new</span> NorthwindEntities(<span class="kwrd">new</span> Uri(<span class="str">@<a href="http://localhost/BatchModeBug/NorthwindService.svc">http://localhost/BatchModeBug/NorthwindService.svc</a></span>));<br />
+<font color="#008000"><br /><br /></font><strong>service.SendingRequest += <span class="kwrd">delegate</span>(<span class="kwrd">object</span> sender, SendingRequestEventArgs e) {
+  var userpw = <span class="str">&quot;admin&quot;</span> + <span class="str">&quot;:&quot;</span> + <span class="str">&quot;pw&quot;</span>;
+  var base64 = Convert.ToBase64String(Encoding.ASCII.GetBytes(userpw));
+  e.Request.Headers.Add(<span class="str">&quot;Authorization&quot;</span>, <span class="str">&quot;Basic &quot;</span> + base64);
+};</strong></pre>
+
+<p>Notice that we’re watching for the SendingRequest event on the client-side so that we can pre-populate the HTTP Authentication header so the service endpoint doesn’t have to even ask. Not only does this work around the problem but it reduces round-trips, which is a good idea even if/when batch-mode is fixed to respond properly to HTTP 401 errors.</p>
+<style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>  

@@ -1,0 +1,8 @@
+<!--
+Date: 8/13/2002 4:43:13 PM  -08:00
+Permalink: 183
+Disqus: 183
+Tags: .net
+-->
+<h1>Wahoo! reinstated for .NET SP1!</h1>
+SP1, as far as I can tell, introduced a bug wherein applications that had specific code groups granting them permissions with a membership determined by a strong key could not run when launched via the href-exe/moble code technique. Keith Brown did some spelunking and determined that ieexec.exe (the hosting process for such an app) would (mistakenly?) require that code from the site as a whole had at least Execution permissions before taking any of the other permissions for the specific assembly into account. The upshot is that to let wahoo.exe run on a .NET SP1+ box, you had to have two code groups, one that gave Internet permissions or greater to assemblies w/ a strong name and one that awarded at least Execution permission to all assemblies from sellsbrothers.com. I've updated the <a href="/12661">Wahoo! site</a> w/ an MSI that creates both of these code groups along with the full source so that you can do the same for your own assemblies. Enjoy!

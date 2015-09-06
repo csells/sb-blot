@@ -1,0 +1,14 @@
+<!--
+Date: 1/21/2004 8:21:49 PM  -08:00
+Permalink: 1060
+Disqus: 1060
+Tags: .net
+-->
+<h1>Setting DataGrid Styles for Custom Types</h1>
+<P>I was data binding an ArrayList of objects of a custom type, e.g. class Person { public string Name; public DateTime BirthDate; public int Teeth; }, to a DataGrid today and everything working great 'til I wanted to filter one of the columns out (who cares how many Teeth a person has?). I was all set with table styles and grid styles like so:</P><PRE>void Form1_Load(object sender, EventArgs e) {<BR>  DataGridTableStyle tableStyle = new DataGridTableStyle();<BR>  tableStyle.DataGrid = this.dataGrid1;<BR><STRONG><EM><FONT color=#ff0000>  tableStyle.MappingName = "Something???";<BR></FONT></EM></STRONG>  this.dataGrid1.TableStyles.Add(tableStyle);</PRE><PRE>  string[] columns = { "Name", "BirthDate" }; // Skip Teeth<BR>  foreach( string column in columns ) {<BR>    DataGridTextBoxColumn columnStyle = new DataGridTextBoxColumn();<BR>    columnStyle.HeaderText = column;<BR>    columnStyle.MappingName = column;<BR>    tableStyle.GridColumnStyles.Add(columnStyle);<BR>  }</PRE><PRE>  // Create ArrayList of Person objects...</PRE><PRE>  this.dataGrid1.DataSource = personList;<BR>}</PRE>
+<P>The problem was the table style's MappingName.&nbsp;When DataBinding to a DataTable, it's just the table name, but what is it when I've got a collection of objects of a custom type? Daniel Herling, a Software Design Engineer at Microsoft and the "man" of the DataGrid, came to my rescue:</P>
+<BLOCKQUOTE>
+<P><EM>If you bind to an ITypedList (say, System.Data.DataTable) then the mapping name should be ITypedList::GetListName(). For a System.Data.DataTable this would be the name of the data table.</EM></P>
+<P><EM>If you don&#8217;t bind to an IList that is not ITypedList then the mapping name should be list.GetType().Name where list is the list the data grid is bound to.</EM></P></BLOCKQUOTE>
+<P>So, all I had to do was set the table style mapping name to the type of my custom class:</P><PRE>&nbsp; tableStyle.MappingName = <STRONG><FONT color=#ff0000><EM>typeof(ArrayList).Name</EM></FONT></STRONG>;</PRE>
+<P>This wasn't bad at all to bind a DataGrid to exactly the properties of my Person objects that I want w/o having to hack another custom shim type or changing the Person type itself to accommodate the data binding. Thanks, Daniel!</P>

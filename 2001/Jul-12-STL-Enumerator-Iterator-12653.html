@@ -1,0 +1,93 @@
+<!--
+Date: 7/12/2001 12:00:00 AM  -08:00
+Permalink: 12653
+Disqus: 12653
+Tags: tools
+-->
+<h1>STL Enumerator Iterator</h1>
+        <p>
+            Have you ever been jealous of the VB programmer who could write this:
+        </p>
+        <pre>sub EnumVariants(col as Collection)
+    dim v as variant for each v in col
+        ' Do something with v
+    next v
+end sub</pre>
+        <p>
+            when we poor C++ programmers have to write this:
+        </p>
+        <pre>void EnumVariants(IEnumVARIANT* pevar)
+{
+    HRESULT hr;
+    enum { CHUNKSIZE = 100 };
+    VARIANT rgvar[CHUNKSIZE] = { 0 };
+    do {
+        ULONG cFetched;
+
+        hr = pevar-&gt;Next(CHUNKSIZE, rgvar, &amp;cFetched)
+        if( SUCCEEDED(hr) ) {
+            if( hr == S_OK ) cFetched = CHUNKSIZE;
+            for( ULONG i = 0; i &lt; cFetched; i++ )
+            {
+                // Do something with rgvar[i]
+                VariantClear(&amp;rgvar[i]);
+            }
+        }
+    }
+    while (hr == S_OK);
+}</pre>
+        <p>
+            Well no more! I've built an enumeration iterator class that holds IEnumXxx and 
+            exposes an STL-compatible iterator:
+        </p>
+        <pre>template &lt;typename EnumItf, const IID* pIIDEnumItf,
+          typename EnumType, typename CopyClass = _Copy&lt;EnumType&gt; &gt;
+class enum_iterator;</pre>
+        <p>
+            It uses the same copy policy classes as ATL for convenience. Now you can write:
+        </p>
+        <pre>void EnumVariants(IEnumVARIANT* pevar)
+{
+    typedef enum_iterator&lt;IEnumVARIANT, &amp;IID_IEnumVARIANT, VARIANT&gt; EVI;
+    for( EVI i = EVI(pevar); i != EVI(); ++i )
+    {
+        VARIANT&amp;    v = *i;
+        // Do something with v
+    }
+}</pre>
+        <p>
+            or you can use the typedefs for the standard enumerators:
+        </p>
+        <pre>void EnumVariants(IEnumVARIANT* pevar)
+{
+    for( variant_iterator i = variant_iterator(pevar);
+         i != variant_iterator();
+         ++i )
+    {
+        VARIANT&amp;    v = *i;
+        // Do something with v
+    }
+}</pre>
+        <p>
+            or you can use STL algorithms (this is my personal favorite):
+        </p>
+        <pre>struct DoSomethingWithVariant
+{
+    void operator()(const VARIANT&amp; v)
+    {
+        // Do something with v
+    }
+};
+
+void EnumVariants(IEnumVARIANT* pevar)
+{
+    for_each(enum_variant(pevar),
+             enum_variant(),
+             DoSomethingWithVariant());    
+}</pre>
+        <p>
+            Feel free to <a href="/public/tools/enum_iterator.h">download 
+                the enum_iterator class</a> for your own use. You'll also need a supporting 
+            file, <a href="/public/tools/atlcopies.h">atlcopies.h</a>.
+        </p>
+

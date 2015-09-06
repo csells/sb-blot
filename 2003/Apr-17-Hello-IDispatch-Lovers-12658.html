@@ -1,0 +1,222 @@
+<!--
+Date: 4/17/2003 4:40:00 AM  -08:00
+Permalink: 12658
+Disqus: 12658
+Tags: tools
+-->
+<h1>Hello IDispatch Lovers</h1>
+        <p>
+            I'm probably jumping into this topic a bit late but it doesn't seem to end. I 
+            admit I haven't read all article in this thread but I think I have an 
+            implementation solution for multiple dual interfaces on one class. And I would 
+            like opinions on it from others as well, and as to whether or not it displays 
+            proper COM implementation.
+        </p>
+        <p>
+            The implementation is very much like one that has been posted earlier, which 
+            I've seen different variations of many times before. However, I feel the one I 
+            am presenting allows all dual interfaces to be on one object and accessible via 
+            scripting without explicitly asking for a piece. No new interface definitions 
+            will be necessary with this technique. However, there may be one flaw. It will 
+            work ideally when none of the dispid's of any of the dual interfaces collide, 
+            and when none of the named functions collide.
+        </p>
+        <p>
+            I consider a collision when the dispids,or names are equal, but the parameter 
+            list/type are not. Even still, when they do collide, the implementers using 
+            this technique can choose which should take priority.
+        </p>
+        <p>
+            Using ATL, I defined a templated class which should be derived by the class 
+            that exposes multiple dual interfaces.
+        </p>
+        <p>
+            <small><font face="Courier New">template&lt;UINT t_uiNum, class tihclass = 
+                    CComTypeInfoHolder&gt;
+                    <br>
+                    class XMultiDualImpl : public IDispatch
+                    <br>
+                    {
+                    <br>
+                    public :
+                    <br>
+                    typedef tihclass _tihclass;
+                    <br>
+                    &nbsp;&nbsp;&nbsp; void Add( UINT uiIndex, LPDISPATCH pDisp, _tihclass &amp; 
+                    tih)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; {
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ASSERT( t_uiNum &gt; uiIndex-1 
+                    &amp;&amp; uiIndex&gt;0 );
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_arrDispImpls[uiIndex-1] = pDisp; 
+                    //no need to addref, pDisp==this
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_arrpTih[uiIndex-1] = &amp;tih;
+                    <br>
+                    &nbsp;&nbsp;&nbsp; };</font></small>
+        </p>
+        <p>
+            <small><font face="Courier New">&nbsp;&nbsp;&nbsp; STDMETHOD(GetTypeInfoCount)(UINT* 
+                    pctinfo) {*pctinfo = 1; return S_OK;}
+                    <br>
+                    &nbsp;&nbsp;&nbsp; STDMETHOD(GetTypeInfo)(UINT itinfo, LCID lcid, ITypeInfo** 
+                    pptinfo)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; {return m_arrpTih[0]-&gt;GetTypeInfo(itinfo, lcid, 
+                    pptinfo);}
+                    <br>
+                    &nbsp;&nbsp;&nbsp; STDMETHOD(GetIDsOfNames)(REFIID riid, LPOLESTR* rgszNames, 
+                    UINT cNames,
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LCID lcid, DISPID* rgdispid)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; {
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*perhaps the loop should check for 
+                    a succeeded hresult instead*/
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; HRESULT hr = DISP_E_UNKNOWNNAME;
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( UINT i=0; i &lt; t_uiNum 
+                    &amp;&amp; hr == DISP_E_UNKNOWNNAME; i++ )
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hr = 
+                    m_arrpTih[i]-&gt;GetIDsOfNames(riid, rgszNames, cNames, lcid, rgdispid);
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return hr;
+                    <br>
+                    &nbsp;&nbsp;&nbsp; };</font></small>
+        </p>
+        <p>
+            <font face="Courier New"><small>&nbsp;&nbsp;&nbsp; STDMETHOD(Invoke)(DISPID 
+                    dispidMember, REFIID riid, LCID lcid,</small> <small>WORD wFlags, DISPPARAMS* 
+                    pdispparams, VARIANT* pvarResult, EXCEPINFO* pexcepinfo, UINT* puArgErr)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; {
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; HRESULT hr = DISP_E_MEMBERNOTFOUND;
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( int i=0; i &lt; t_uiNum 
+                    &amp;&amp; hr == DISP_E_MEMBERNOTFOUND ; i++ )
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hr = 
+                    m_arrpTih[i]-&gt;Invoke( m_arrDispImpls[i], dispidMember, riid, lcid, wFlags, 
+                    pdispparams, pvarResult, pexcepinfo, puArgErr);
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return hr;
+                    <br>
+                    &nbsp;&nbsp;&nbsp; } ;</small></font>
+        </p>
+        <p>
+            <small><font face="Courier New">&nbsp;&nbsp;&nbsp; LPDISPATCH m_arrDispImpls[t_uiNum];
+                    <br>
+                    &nbsp;&nbsp;&nbsp; _tihclass * m_arrpTih[t_uiNum];</font></small>
+        </p>
+        <p>
+            <small><font face="Courier New">};</font></small>
+        </p>
+        <p>
+            As an example, if we were to implement an object with 3 dual interfaces we 
+            would do the following
+        </p>
+        <p>
+            <small><font face="Courier New">typedef XMultiDualImpl&lt;3&gt; XTriDualImpl ;</font></small>
+        </p>
+        <p>
+            <small><font face="Courier New">class DispTest3 : public XTriDualImpl,
+                    <br>
+                    &nbsp;&nbsp;&nbsp; public IDispatchImpl&lt;IDispTest1, &amp;IID_IDispTest1, 
+                    &amp;LIBID_FirstLib&gt;,
+                    <br>
+                    &nbsp;&nbsp;&nbsp; public IDispatchImpl&lt;IDispTest2, &amp;IID_IDispTest2, 
+                    &amp;LIBID_SecondLib&gt;,
+                    <br>
+                    &nbsp;&nbsp;&nbsp; public IDispatchImpl&lt;IThirdIntfTest, 
+                    &amp;IID_IThirdIntfTest, &amp;LIBID_ThridLib&gt;,
+                    <br>
+                    &nbsp;&nbsp;&nbsp; public CComObjectRoot,
+                    <br>
+                    &nbsp;&nbsp;&nbsp; public CComCoClass&lt;DispTest3,&amp;CLSID_DispTest3&gt;
+                    <br>
+                    {
+                    <br>
+                    public:
+                    <br>
+                    &nbsp;&nbsp;&nbsp; DispTest3()
+                    <br>
+                    &nbsp;&nbsp;&nbsp; {
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Add( 1,(IDispTest1*)this, 
+                    IDispatchImpl&lt;IDispTest1, &amp;IID_IDispTest1, &amp;LIBID_FirstLib&gt;::_tih 
+                    );
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Add( 2,(IDispTest2*)this, 
+                    IDispatchImpl&lt;IDispTest2, &amp;IID_IDispTest2, 
+                    &amp;LIBID_SecondLib&gt;::_tih );
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Add( 3,(IThirdIntfTest*)this, 
+                    IDispatchImpl&lt;IThirdIntfTest, &amp;IID_IThirdIntfTest, 
+                    &amp;LIBID_ThridLib&gt;::_tih );
+                    <br>
+                    }</font></small>
+        </p>
+        <p>
+            <small><font face="Courier New">BEGIN_COM_MAP(DispTest3)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY2(IDispatch, XTriDualImpl)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(IDispTest1)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(IDispTest2)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(IThirdIntfTest)
+                    <br>
+                    END_COM_MAP()</font></small>
+        </p>
+        <p>
+            <font face="Courier New"><small>//IDispTest1 methods [code omitted for brevity]</small>
+                <br>
+                <small>//IDispTest2 methods [code omitted for brevity]</small>
+                <br>
+                <small>//IThirdIntfTest methods [code omitted for brevity]</small>
+                <br>
+                <small>};</small></font>
+        </p>
+        <p>
+            I admit the constructor of the derived class leaves room for elegance.
+        </p>
+        <p>
+            Basically, all QueryInterfaces for IDispatch will result in the XMultiDualImpl 
+            vtable. The IDispatch implementation for that vtable basically asks each 
+            IDispatch vtable (of the dual interface) in it's array one by one if it can 
+            carry out the call. If it fails, it moves on to the next dual interface vtable.
+        </p>
+        <p>
+            One might point out the following however :
+        </p>
+        <p>
+            <font face="Courier New">pUnk-&gt;QueryInterface( IID_IDispatch, 
+                (void**)&amp;pIDispatch );
+                <br>
+                pUnk-&gt;QueryInteface( IID_IDispTest1, (void**)&amp;pIDispTest1 );</font>
+        </p>
+        <p>
+            pIDispatch-&gt;GetIDsOfNames does not have the same implementation as 
+            pIDispTest1-&gt;GetIDsOfNames. as well as the implementation differs for 
+            -&gt;Invoke. I question whether or not that's a problem. Since IDispTest1 
+            derives from IDispatch, I could see why it may be.
+        </p>
+        <p>
+            -herb</p>
+
+

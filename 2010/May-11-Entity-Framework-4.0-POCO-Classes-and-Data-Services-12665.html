@@ -1,0 +1,76 @@
+<!--
+Date: 5/11/2010 3:53:00 PM  -08:00
+Permalink: 12665
+Disqus: 12665
+Tags: data
+-->
+<h1>Entity Framework 4.0 POCO Classes and Data Services</h1>
+<p>If you've flipped on
+<a href="http://blogs.msdn.com/adonet/pages/walkthrough-poco-template-for-the-entity-framework.aspx">
+the POCO (Plain Ol' CLR Objects) code generation T4 templates for Entity 
+Framework</a> to enable testing or just 'cuz you like the code better, you might 
+find that you lack the ability to expose that same model via Data Services as
+<a href="http://odata.org">OData (Open Data)</a>. If you surf to the feed, 
+you'll likely see something like this:</p>
+<p>
+	<p style="FONT: 13pt/15pt verdana">The XML page cannot be displayed </p>
+	<p style="FONT: 8pt/11pt verdana">Cannot view XML input using XSL style 
+	sheet. Please correct the error and then click the
+	<u style="color:blue">Refresh</u> button, or 
+	try again later. </p>
+	<hr>
+	<p style="FONT: bold 8pt/11pt verdana">The following tags were not closed: 
+	feed. Error processing resource 'http://localhost:10749/MyODataEndpoint.svc/Posts'</p>
+	<pre style="LINE-HEIGHT: 12pt; FONT-VARIANT: normal; FONT-STYLE: normal; FONT-SIZE: 10pt; FONT-WEIGHT: normal">&nbsp;</pre>
+
+<p>There are two problems. The first problem is that we're not reporting the 
+problem very well. You can't see what's happening in IE8 with a simple View 
+Source, as apparently IE won't show malformed XML. Instead, you have to use
+<a href="http://www.fiddler2.com/fiddler2/">Fiddler</a> or some other tool (I'm 
+a big <a href="http://www.pocketsoap.com/tcptrace/">tcpTrace</a> fan) to see the 
+actual error in the HTTP response:</p>
+<p>&nbsp;</p>
+<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; standalone=&quot;yes&quot;?&gt;
+&lt;feed ...&gt;
+&lt;title type=&quot;text&quot;&gt;Posts&lt;/title&gt;
+&lt;id&gt;http://localhost:8080/MyODataEndpoint.svc/Posts&lt;/id&gt;
+&lt;updated&gt;2010-05-11T22:48:13Z&lt;/updated&gt;
+&lt;link rel=&quot;self&quot; title=&quot;Posts&quot; href=&quot;Posts&quot; /&gt;
+<strong>&lt;m:error&gt;
+&lt;m:code&gt;&lt;/m:code&gt;
+&lt;m:message xml:lang=&quot;en-US&quot;&gt;Internal Server Error. The type
+'System.Data.Entity.DynamicProxies.Post_CF2ABE5AD0B93AE51D470C9FDFD72E780956A6FD7294E0B4205C6324E1053422'
+is not a complex type or an entity type.&lt;/m:message&gt;
+&lt;/m:error&gt;</strong></pre>
+<p>&nbsp;</p>
+<p>It's in the creation of the OData feed that the error happens, so instead of 
+clearing the response and just returning the error, we dump it into the middle 
+of the output, making it very difficult to find. In this case, what we're 
+telling you is that you've mistakenly left dynamic proxy creation on, which 
+doesn't work with EF4 POCO objects and Data Services in .NET 4.0. To fix this, 
+you need to override the CreateDataSource method in your DataService&lt;T&gt; derived 
+class:</p>
+<pre>&nbsp;</pre>
+<pre>public class MyODataEndpoint : DataService&lt;FooEntities&gt; {
+  public static void InitializeService(DataServiceConfiguration config) {
+    ...
+  }
+
+<strong>  protected override sellsbrothersEntities CreateDataSource() {
+    var dataSource = new FooEntities();
+    dataSource.ContextOptions.ProxyCreationEnabled = false;
+    return dataSource;
+  }
+</strong>}</pre>
+<p>&nbsp;</p>
+<p>This solution came from Shyam Pather, a Dev Manager on the EF team. He says 
+that once you turn off proxy generation, you give up lazy loading and 
+&quot;immediate&quot; change tracking. Instead, you'll get &quot;snapshot&quot; change tracking, 
+which means the context won't be informed when the properites are changed, but the context 
+still detects changes when you call DetectChanges() or SaveChanges(). For the internals of 
+a Data Service, none of this matters, but any code you write in query interceptors, change interceptors, or service 
+operations will have to be aware of this.</p>
+<p>This limitations are only true when used from the OData endpoint, of course. 
+The rest of your app will get proxy creation by default unless you turn it off.</p>
+
+

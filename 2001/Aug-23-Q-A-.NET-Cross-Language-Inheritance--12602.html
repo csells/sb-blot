@@ -1,0 +1,59 @@
+<!--
+Date: 8/23/2001 12:00:00 AM  -08:00
+Permalink: 12602
+Disqus: 12602
+Tags: spout
+-->
+<h1>Q&A: .NET Cross Language Inheritance?</h1>
+<p>
+            <i><span class="created">August 23rd, 2001</span></i>
+        </p>
+        <h2>
+            Q: D.J. Stachniak writes:
+        </h2>
+        <p class="MsoPlainText">
+            I missed the Conference.NET, 
+            but I've been reading through <a href="http://www.develop.com/conferences/conferencedotnet/materials/default.asp">
+                the PowerPoint presentations</a> posted on DevelopMentor's web site. I 
+            noticed in the <a href="http://www.develop.com/conferences/conferencedotnet/materials/M4.pdf">
+                C++ In A Managed World presentation</a> that there is a slide (page 62 
+            specifically) which says ".NET supports real inheritance across languages - 
+            Although, that doesn't mean you should use it..."
+            <br>
+            <br>
+            Would anyone like to take a crack and explain to me why cross language 
+            inheritance might be bad?
+        </p>
+        <h2>
+            A: Chris responds:
+        </h2>
+        <p>
+            At the Microsoft PDC in 1993 (also known as the "COM PDC"), Kraig B. introduced 
+            COM by saying that it didn't have inheritance, but that was a good thing, 
+            because of the fragile base class problem. This problem says that derived 
+            objects, by definition, need to have incestuous knowledge of their base 
+            classes, including full understanding of the implied contract (which often 
+            requires to source to determine). What made this relationship fragile was that 
+            reliance on the implied contract caused all kinds of trouble when it changed, 
+            implying that it was knowledge of the source that caused this problem.
+        </p>
+        <p>
+            Of course, that's not the case. We often experiment with components that we 
+            don't have the source for and made decisions based on implied contracts that 
+            can easily change version to version. I would call this the "fragile use" 
+            problem, but it's more commonly called "DLL Hell." The idea that components can 
+            be replaced in the field without breaking things has long been known as a 
+            fallacy, and it doesn't matter if you've got the source or whether you're doing 
+            inheritance, aggregation or mere creation.
+        </p>
+        <p>
+            Eiffel's Design by Contract is a good step towards detecting problems, but 
+            that's an Eiffel-only thing. A good step towards reducing DLL Hell is the 
+            aggressive versioning and side-by-side installation of multiple versions that 
+            .NET supports. If your client or derived class binds to a specific version of a 
+            component, then there's no need to worry about it changing out from under you. 
+            Lack of source makes it harder to derive than to merely use, but assuming you 
+            can make things work empirically, cross-language inheritance might actually 
+            work in .NET (but don't hold me to that : ).
+        </p>
+        

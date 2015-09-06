@@ -1,0 +1,17 @@
+<!--
+Date: 1/26/2006 5:33:26 PM  -08:00
+Permalink: 1949
+Disqus: 1949
+Tags: tools
+-->
+<h1>Calling a Remote Index Server from .NET</h1>
+<P>I was building some code to access Index Server's results via .NET and I got this:</P>
+<P>// Catalog specified in connection string<BR>string query = "select Path from Scope() where FREETEXT('foo')";<BR>using( OleDbConnection conn = new OleDbConnection("Provider=MSIDXS.1;Data Source=MyCatalog") ) {<BR>&nbsp; conn.Open();<BR>&nbsp; OleDbDataAdapter cmd = new OleDbDataAdapter(query, conn);<BR>&nbsp; DataSet ds = new DataSet();<BR>&nbsp; cmd.Fill(ds, "SearchResults");<BR>&nbsp; DataTable table = ds.Tables[0];<BR>&nbsp; ds.Tables.Remove(table);<BR>&nbsp; return table;<BR>}</P>
+<P>This came from a combo of stuff I found on the net and my own experimenting. However, I had to get an MS employee who know IS (thanks Chad Ray!) to figure out how to access IS remotely, which I was finally able to get working thusly:</P>
+<P>// Server and catalog specified in query string, not connection string<BR>string query = "select Path from MyServer.MyCatalog..Scope() where FREETEXT('foo')";<BR>using( OleDbConnection conn = new OleDbConnection("Provider=MSIDXS.1") ) {<BR>&nbsp; conn.Open();<BR>&nbsp; OleDbDataAdapter cmd = new OleDbDataAdapter(query, conn);<BR>&nbsp; DataSet ds = new DataSet();<BR>&nbsp; cmd.Fill(ds, "SearchResults");<BR>&nbsp; DataTable table = ds.Tables[0];<BR>&nbsp; ds.Tables.Remove(table);<BR>&nbsp; return table;<BR>}</P>
+<P>Also, if the server or catalog name has anything "weird" in it, e.g. those wacky dashes, you're supposed to wrap it in double quotes. My experimenting showed that wrapping any server or catalog name in double quotes worked just fine, e.g.</P>
+<P>string query = "select Path from \"MyServer\".\"MyCatalog\"..Scope() where FREETEXT('foo')";</P>
+<P>However, if the server name is "localhost" or "127.0.0.1", IS doesn't like it, which meant that I had to check for those server names and drop the ones that used the loopback adapter (although using the machine name of the local machine worked just fine), e.g.</P>
+<P>static bool IsLocalHost(string server) {<BR>&nbsp; return string.IsNullOrEmpty(server) || (string.Compare(server, "localhost", true) == 0) || (string.Compare(server, "127.0.0.1") == 0);<BR>}</P>
+<P>string GetPlainTextQueryString(string text, string columns) {<BR>&nbsp; // IS doesn't like "localhost"<BR>&nbsp; if( IsLocalHost(_server) ) {<BR>&nbsp;&nbsp;&nbsp; return string.Format("select {0} from \"{1}\"..Scope() where FREETEXT('{2}')", columns, _catalog, text);<BR>&nbsp; }<BR>&nbsp; else {<BR>&nbsp;&nbsp;&nbsp; return string.Format("select {0} from \"{1}\".\"{2}\"..Scope() where FREETEXT('{3}')", columns, _server, _catalog, text);<BR>&nbsp; }<BR>}</P>
+<P>I'm only posting this 'cuz I couldn't find it on the net and I want to be able to find it again later. : )</P>

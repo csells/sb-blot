@@ -1,0 +1,17 @@
+<!--
+Date: 8/11/2005 4:05:50 PM  -08:00
+Permalink: 1835
+Disqus: 1835
+Tags: tools
+-->
+<h1>What should I do w/ the metadata?</h1>
+<P>Imagine I've got some "metadata" that describes some functionality of my system, e.g. the command line parameters to a tool:</P>
+<P>&lt;args description="Two wrongs don't make a right, but three lefts do"&gt;<BR>&nbsp; &lt;arg name="lefts" description="Number of left turns" type="int" default=4" /&gt;<BR>&nbsp; &lt;arg name="attitude" description="Driver attitude" required="true" type="string" /&gt;<BR>&lt;/args&gt;</P>
+<P>Once I have this "metadata" in place, should I a) use it to generate a class at compile-time that implements the command line parsing, or should I b) use it to drive a command-line parsing framework at run-time?</P>
+<P>If I do a), generate the code, the result might look like this:</P>
+<P>class Args {<BR>&nbsp; public void Parse(string[] args) {...}<BR>&nbsp; public string Usage { get {...} }<BR>&nbsp; public int Lefts { get {...}&nbsp;set {...} }<BR>&nbsp; public string Attitude { get {...} set {...} }<BR>}</P>
+<P>I've got better perf, but I have to generate the code in some way and .NET doesn't come with any built-in tools to do that (no, I don't count ASP.NET or XSLT as good codegen tools). Plus, the command-line args are now baked in and require a re-compile to change and who cares about perf to parse the command line? Finally, I'm much more likely to have most of the work done in a base class, e.g.</P>
+<P>class Args&nbsp;: <STRONG>ArgsBase</STRONG>&nbsp;{<BR>&nbsp; public void Parse(string[] args) { <STRONG>return base.Parse(args, ...);</STRONG> }<BR>&nbsp; public string Usage { get {...} }<BR>&nbsp; public int Lefts { get {...}&nbsp;set {...} }<BR>&nbsp; public string Attitude { get {...} set {...} }<BR>}</P>
+<P>In my experience, most of the work of code-gen is generating the smallest possible bit of code to provide a nice wrapper around a base class that does most of the work in a very interpretive manner.</P>
+<P>If I do b), have a run-time interpretter of the "metadata," I've got to build a command-line argument interpreter, but, as I've said, you almost always have that anyway. However, I also give up a develop-time wrapper aka "Intellicrack" which will be pried from my cold, dead fingers.</P>
+<P>What do you guys do?</P>

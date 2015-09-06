@@ -1,0 +1,74 @@
+<!--
+Date: 3/11/2004 12:00:00 AM  -08:00
+Permalink: 12503
+Disqus: 12503
+Tags: spout
+-->
+<h1>Avoid the GAC</h1>
+<p align="left"><i>Thursday, <span class="created">March 11th, 2004</span></i></p><p align="left">
+The .NET Global Assembly Cache (GAC) is a misunderstood and misused beast. For 
+all intents and purposes, it provides what COM and windows\system32 do, i.e. a 
+machine-wide place to drop shared DLLs. Of course, the problems with sharing 
+DLLs in a machine-wide spot is that it leads to a set of well-known problems 
+collectively called &quot;DLL Hell.&quot; There are many problems, but the biggest is that 
+when a shared DLL is updated, you're really updating an unknown set of 
+applications. If the set of applications is unknown, how can you possible test 
+them before making this change? And if you can't test them, you're likely to 
+break them. What this boils down to is that any of the shared spots for updates, 
+whether it's a COM CLSID, windows\system32 or the GAC, are dangerous and should 
+be avoided. And this is why the preferred .NET deployment scenario is &quot;xcopy 
+deployment,&quot; i.e. having your own private copy of each DLL that you test and 
+deploy with the rest of your application.</p><p align="left">&quot;Aha!&quot; you say. 
+&quot;The GAC supports multiple version of an assembly! When a foo.dll is updated to 
+v1.1, v1.0 sits right along side of it so that your app *doesn't* break!&quot; Of 
+course, that's absolutely true. But if that's the case, why do you care? I mean, 
+if there's a new assembly available but your app isn't picking it up, what 
+difference does it make?</p><p align="left">&quot;Aha again!, you say. &quot;I can put a 
+publisher policy into the GAC along with my assembly so that apps *are* updated 
+automatically!&quot; That's true, too, but now, like any of the machine-wide code 
+replacement strategies of old, you're on the hook for an awesome responsibility: 
+making sure that as close to 0% of apps, known to you or not, don't break. This 
+is an awesome responsibility and one that takes MS hundreds of man-years at each 
+new release of the .NET Framework. And even with those hundreds of man-years of 
+testing, we still don't always get it right. If this is a testing responsibility 
+that you're willing to live with, I admire you. Personally, I don't have the 
+moral fortitude to shoulder this burden. For example, we do sign <a href="http://www.genghisgroup.com">
+genghis.dll</a> when we ship it so that folks can put it into the GAC if they 
+want, but we make no promise of backwards compatibility between versions and 
+therefore we do not ship publisher policy DLLs. Instead, we expect folks to use 
+xcopy deployment and catch the problems at compile-time and test-time.</p><p align="left">
+So, if the GAC represents such a massive burden, why do we even have it? It's 
+for two things that I've been able to identify:</p><ol><li><p align="left">
+	Fixing critical bugs without touching the affected apps (and without 
+	breaking anything!)</li><li><p align="left">Sharing types at run-time 
+	between assemblies deployed separately</li></ol><p align="left">#1 is what 
+you get when you install Windows hot fixes and service packs via Windows Update. 
+A ton of design, implementation and testing time is spent to make sure that 
+existing code won't break before shipping these fixes.</p><p align="left">#2 is 
+needed if you're going to be sharing types between assemblies that you can't 
+deploy as a group but absolutely must keep to the same version of things. .NET 
+Remoting peers are in this category, but only if they're deployed in separate 
+directories so that they won't share the same set of types available via xcopy 
+deployment. However, if .NET Remoting peers are deployed on difference machines, 
+the GAC won't help you anyway as you'll be manually insuring the types are the 
+same across machines. BTW, the responsibility of keeping multiple machines to 
+the same set of types (and the same framework for hosting those types) spawned 
+an entirely new way to talk between machines, i.e. web services, so .NET 
+Remoting itself is something to avoid unless you can administer both ends of the 
+pipe for simultaneous updates.</p><p align="left">Another scenario that fits 
+into #2 is the Primary Interop Assembly (PIA). A PIA is a COM interop assembly 
+that's been pre-generated and dropped into the GAC so that everyone that adds a 
+reference in VS.NET to mso.dll (the COM library for Office) gets office.dll 
+instead (the .NET Office PIA). That way, everyone can talk to the same set of 
+types instead of everyone getting their own incompatible interop types generated 
+on the fly. However, PIAs are primarily a way to make sure that VS.NET has a 
+central place to pick up the shared types without regenerating new incompatible 
+types.</p><p align="left">Notice that &quot;Saving hard drive space&quot; wasn't on my 
+list of reasons to use the GAC. I just purchased a 60GB, 7200RPM hard drive for 
+my laptop for a measly coupla hundred bucks. I don't want to hear about you 
+jeopardizing the reliability of the applications on my machine to save a tiny 
+percentage of that space. Hell, when I buy a HD, I give 50% of it over to apps 
+anyway, so help yourself and keep my apps running by avoiding any machine-wide 
+space for updating shared DLLs, including the GAC! Thanks.</p><p align="left"><a href="/1199">
+Discuss (did I miss any reasons to use the GAC?)</a></p>
+

@@ -1,0 +1,120 @@
+<!--
+Date: 6/9/2001 12:00:00 AM  -08:00
+Permalink: 12609
+Disqus: 12609
+Tags: spout
+-->
+<h1>Choose Your Defaults Carefully</h1>
+<p>
+                    <i><span class="created">Saturday, 6/9/01</span></i>
+                </p>
+                <p>
+                    In the last week, I've been bitten twice by developers that have chosen 
+                    defaults poorly and, therefore, have adversely affected my life. The first was 
+                    on my Nokia phone. I was in a "meeting" with some of my key engineers (read: we 
+                    were goofing off at a movie on a Thursday afternoon), and I had set my phone to 
+                    Silent mode. Now, I have a <a href="http://www.nokiausa.com/beauty/1,2498,,FF.html?zipcode=97007&amp;rowid=49">
+                        Nokia 8260 (blue)</a> that I dearly love. It kicks butt on <a href="http://ericsson.sundial.com/ericssoncobrand/modules/ericsson_cobrand/phone_info.asp?phone_id=374">
+                        the silly Ericsson</a> that I used to have. However, I noticed when I came 
+                    out of the meeting that their had been several calls from my blushing bride. 
+                    The Nokia is cool not only because it's small enough to fit into my pocket 
+                    (where I keep it during our "meetings"), but also because it has a vibrate 
+                    mode. So, I figured that if the phone was in Silent mode, but the phone was 
+                    still on, if someone called, I'd get the vibrate in my pocket (separate from my 
+                    change and my keys to honor the spirit of the Nokia Silent profile). 
+                    Unfortunately, this was not the case. Calls came in, but no vibration was 
+                    forthcoming. This happened a couple more times in the next few days until I had 
+                    a free moment to check the settings for Silent mode (ironically this free 
+                    moment came while waiting for another movie to start today -- "Operation: 
+                    Swordfish," which I enjoyed, btw). The default for the vibrate setting in the 
+                    Silent profile was *off*. How could this possibly be right? It's a phone! It's 
+                    on! Sure, I want it silent so it doesn't bug people around me, but I still want 
+                    to know when someone calls! Hence the vibrate mode! Needless to say, my 
+                    blushing bride was less than pleased.
+                </p>
+                <p>
+                    The second time that incorrect defaults interrupted my life happened to be a 
+                    bug recently found in Gen&lt;X&gt;. 
+                    Because Gen&lt;X&gt; installs some COM components, we require it to be 
+                    installed by an account that's part of the Administrator group. Unfortunately, 
+                    the bug is that once Gen&lt;X&gt; is installed, another user can't use it on 
+                    that machine unless they are also part of the Administrator group. Of course, 
+                    since 98% of developers run with Admin privileges on their own machines, this 
+                    bug was never reported by the secular community. So how did we find it? It was 
+                    reported by none other than Keith "Mr. Security" Brown, who was experimenting 
+                    with running at a lower level of security for some perverse purposes that I can 
+                    only imagine... Anyway, when Keith calls you with a security bug, you listen 
+                    (at least it was the good kind of security bug, i.e. offering less access then 
+                    we should instead of more. I can only imagine what the phone call would be like 
+                    if Keith discovers that we've opened a hole...). The problem with security? 
+                    Defaults.
+                </p>
+                <p>
+                    The author of CRegKey, a class in ATL we were using to read the serial number 
+                    out of the Registry, built in a default access level setting. We use the 
+                    Registry key when our tools are started to make sure that user has a valid 
+                    serial number on their machine -- standard stuff. You need to be an Admin to 
+                    write the key, but you shouldn't have to be just to read it. However, the 
+                    default setting in the CRegKey::Open method is set to allow read-write 
+                    permissions, as show here:
+                </p>
+                <p>
+                    <pre>LONG Open(HKEY hKeyParent, LPCTSTR lpszKeyName, <b>REGSAM samDesired = KEY_ALL_ACCESS</B>);</pre>
+                <P>
+                </P>
+                <p>
+                    The developer who wrote the code (let's call him "Shawn"), being a human with 
+                    many tasks interested in doing them all efficiently, left off the default 
+                    value, assuming that the default would be read-only. This was the correct 
+                    assumption to make if you assume that the CRegKey author was specifying his 
+                    defaults properly. Unfortunately, he wasn't, so when we tried to merely read 
+                    the SN out of the Registry, we were asking for read-write permissions, and the 
+                    read failed, causing the SN validation to fail, keeping Keith from using 
+                    Gen&lt;X&gt; and motivating him to call me and complain about it. All due to 
+                    bad defaults.
+                </p>
+                <h2>
+                    Rules for Defaults
+                </h2>
+                <p>
+                    Defaults are often set to save typing. That's a bad idea. If the Nokia guy and 
+                    the CRegKey guy had but followed the these simple rules for determining 
+                    defaults, my life would have been better:
+                </p>
+                <ol>
+                    <li>
+                        <b>Apply "the principle of least surprise."</b>
+                    I'm sure he didn't invent this rule, but it's one I learned from Don Box and it 
+                    sticks with me as one of "the seven good ideas" that exist in our field (a 
+                    story all its own). The principle of least surprise says that you make 
+                    interface design decisions based on what people expect. Shawn expected the 
+                    default access level to be read-only. I expected my phone to vibrate in Silent 
+                    mode. Pretend that the default isn't even an option. What would people expect?
+                    <li>
+                        <b>Minimize the harm of inadvertently choosing the default.</b>
+                    Assuming the defaults are not changed (a very common occurrence), what bad 
+                    things could happen? If the default had been read-only on CRegKey, unit testing 
+                    a code path that required read-write would have immediately uncovered that 
+                    greater access was needed, a fix could have been immediately supplied and no 
+                    harm done (except some extra typing). However, because the default was 
+                    read-write, we introduce an invisible bug that Keith has to find. Likewise, if 
+                    the default had been vibrate in Silent mode, when a call came in, it would 
+                    still have been silent, but I would have been notified of the call. Again, no 
+                    harm (assuming no holes in your pockets and that you're wearing underwear). 
+                    However, because of the default, I missed calls and angered my wife. That 
+                    didn't happen with the Ericsson.
+                    <li>
+                        <b>Change defaults sparingly.</b> Once you've chosen your defaults and released 
+                        your thing, people are going to learn those defaults and depend on them. For 
+                        example, we can't go back into our ATL source and update the default to 
+                        CRegKey::Open because we've got all kinds of code paths through our code 
+                        depending on the default. If you change a default, even if the default was set 
+                        incorrectly to begin with, you're doing more harm than good. Unless you can 
+                        change the defaults without inducing harm, don't.
+                    </li>
+                </ol>
+                <p>
+                    Unfortunately, not all developers follow these rules, so when you make use of 
+                    defaults, please double-check them first.
+                </p>
+                

@@ -1,0 +1,14 @@
+<!--
+Date: 3/9/2010 1:47:12 PM  -08:00
+Permalink: 2334
+Disqus: 2334
+Tags: spout
+-->
+<h1>Creating a Lazy Sequence of Directory Descendants in C#</h1>
+<P>My dear friend Craig Andera posted <A href="http://www.pluralsight-training.net/community/blogs/craig/archive/2010/03/09/creating-a-lazy-sequence-of-directory-descendants-in-clojure.aspx">an implementation of a function that descends into a directory in a "lazy" manner</A>, i.e. you get the first descendant back right away and not after all descendants have been calculated. His implementation was in Clojure, a Lisp variant that runs on the Java VM:</P>
+<P>(import [java.io File])<BR><BR>(defn dir-descendants [dir]<BR>&nbsp; (let [children (.listFiles (File. dir))]<BR>&nbsp;&nbsp;&nbsp; (lazy-cat <BR>&nbsp;&nbsp;&nbsp;&nbsp; (map (memfn getPath) (filter (memfn isFile) children)) <BR>&nbsp;&nbsp;&nbsp;&nbsp; (mapcat dir-descendants <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (map (memfn getPath) (filter (memfn isDirectory) children))))))</P>
+<P>Craig was happy with this function because, even though it was a "mind-bender to write," it's easy to read and because C# "would almost certainly be at least somewhat more verbose."</P>
+<P>Taking this as a challenge, I rewrote this program in C#, maintaining the laziness:</P>
+<P>using System.IO;<BR>using System.Collections.Generic;</P>
+<P>namespace ConsoleApplication1 {<BR>&nbsp;&nbsp;&nbsp; class Program {<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; static IEnumerable&lt;string&gt; GetDirectoryDecendants(string path) {<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; foreach (var file in Directory.GetFiles(path)) { yield return file; }<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; foreach (var directory in Directory.GetDirectories(path)) {<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; foreach (var file in GetDirectoryDecendants(directory)) { yield return file; }<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<BR>&nbsp;&nbsp;&nbsp; }<BR>}</P>
+<P>The key hit here is the use of "yield return" which lets me return elements of an IEnumerable as I calculate them. This took me 5 minutes to write, my mind is straight and I find it fairly easy to read. I'll let you decide on the relative verbosity of each implementation.</P>

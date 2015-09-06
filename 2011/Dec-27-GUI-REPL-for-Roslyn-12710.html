@@ -1,0 +1,93 @@
+<!--
+Date: 12/27/2011 1:36:00 PM  -08:00
+Permalink: 12710
+Disqus: 12710
+Tags: spout,tools
+-->
+<h1>GUI REPL for Roslyn</h1>
+<p>If you recall from <a href="/12704">REPL for the Rosyln CTP 10/2011</a>, I’ve been playing around building a little C# REPL app using Roslyn. That version was built as a Console application, but I’ve refactored and rebuilt it as a WPF application:</p>  <p><a href="/public/post-images/12710-86.png"><img style="display: inline" title="image" alt="image" src="/public/post-images/12710-87.png" width="640" height="476" /></a></p>  <p>You can download the source code for both the Console and the WPF versions here:</p>  <p><a href="/public/samples/RoslynRepl.zip">RoslynRepl Sample Download</a></p>  <p>The benefit of a real GUI app is that output selection makes a lot more sense and that you could imagine real data visualization into data controls instead of just into strings. However, implementing a REPL shell in a GUI environment requires doing things considerably differently than in a Console app. Besides the stupid things I did, like doing a lot of Console.Write, and things that don’t make sense, like #exit or #prompt, there are a few interesting things that I did with this code, including handling partial submissions, rethinking history and rewiring Console.Write (just ‘cuz it’s stupid when I do it doesn’t mean that it shouldn’t work).</p>  <h2>Partial Submissions</h2>  <p>In this REPL, I decided that Enter means “execute” or “newline” depending on whether the submission is complete enough, according to Roslyn, to execute or not. If it is, I execute it, produce the output and move focus to either the next or a new submission TextBox. If the submission isn’t yet complete, e.g. &quot;void SayHi() {&quot;, then I just put in a newline. Further, I do some work to work properly with selections, i.e. if you press Enter when there’s a selection, the selection will be replaced with the Enter key.</p>  <p>So far I like this model a lot, since I don’t have to something like separate “execute” and “newline” into Enter and Alt+Enter or some such.</p>  <h2>Rethinking History</h2>  <p>In a GUI shell with partial submissions and multi-line editing, the arrows are important editing keys, so can’t be used for access to previous lines in history. Further, a GUI apps makes it very easy to simply scroll to the command that you want via the mouse or Shift+Tab, so there’s not a lot of use for Alt+Arrow keys. Pressing Enter again replaces the old output (or error) with new output (or error):</p>  <p><a href="/public/post-images/12710-88.png"><img style="display: inline" title="image" alt="image" src="/public/post-images/12710-89.png" width="240" height="226" /></a><a href="/public/post-images/12710-90.png"><img style="display: inline" title="image" alt="image" src="/public/post-images/12710-91.png" width="240" height="226" /></a></p>  <p>Currently when you re-execute a command from history, the command stays where it is in the history sequence, but it could as easily move to the end. I haven’t yet decided which I like better.</p>  <h2>Redirecting Console.Write</h2>  <p>Since this is a REPL environment works and acts like a shell, I expect that Console.Write (and it’s cousins like Console.WriteLine) to work. However, to make that work, I need to redirect standard output:</p>  <pre class="code"><span style="color: #2b91af">Console</span>.SetOut(<span style="color: blue">new </span><span style="color: #2b91af">ReplHostTextWriter</span>(host));</pre>
+
+
+<p>The ReplTextWriterClass simply forwards the text onto the host:</p>
+
+<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">ReplHostTextWriter </span>: <span style="color: #2b91af">TextWriter </span>{
+  <span style="color: blue">readonly </span><span style="color: #2b91af">IReplHost </span>host;<br />
+<br />  <span style="color: blue">public </span>ReplHostTextWriter(<span style="color: #2b91af">IReplHost </span>host) {
+    <span style="color: blue">this</span>.host = host;
+  }
+
+  <span style="color: blue">public override void </span>Write(<span style="color: blue">char </span>value) {
+    host.Write(value.ToString());
+  }
+
+  <span style="color: blue">public override </span><span style="color: #2b91af">Encoding </span>Encoding {
+    <span style="color: blue">get </span>{ <span style="color: blue">return </span><span style="color: #2b91af">Encoding</span>.Default; }
+  }
+}</pre>
+
+
+<p>The hosts implementation of IReplHost.Write simply forwards it onto the currently executing submission (the ReplSubmissionControl represents both a submission’s input and output bundled together). You’ll notice that the TextWriter takes each character one at a time. It would be nice to do some buffering for efficiency, but you’d also like the output to appear as its produced, so I opted out of buffering.</p>
+
+<p>However, one thing I don’t like is the extra newline at the end of most string output. I want the main window to decide how things are output, setting margins and the newline looks like a wacky margin, so the trailing CR/LF had to go. That’s an interesting algorithm to implement, however, since the characters come in one at a time and not line-by-line. I want separating newlines to appear, just not trailing newlines. I implement this policy with the TrimmedStringBuilder class:</p>
+
+<pre class="code"><span style="color: green">// Output a stream of strings with \r\n pairs potentially spread across strings,
+// trimming the trailing \r and \r\n to avoid the output containing the extra spacing.
+</span><span style="color: blue">class </span><span style="color: #2b91af">TrimmedStringBuilder </span>{
+  <span style="color: blue">readonly </span><span style="color: #2b91af">StringBuilder </span>sb;
+
+  <span style="color: blue">public </span>TrimmedStringBuilder(<span style="color: blue">string </span>s = <span style="color: #a31515">&quot;&quot;</span>) {
+    sb = <span style="color: blue">new </span><span style="color: #2b91af">StringBuilder</span>(s);
+  }
+
+  <span style="color: blue">public void </span>Clear() {
+    sb.Clear();
+  }
+
+  <span style="color: blue">public void </span>Append(<span style="color: blue">string </span>s) {
+    sb.Append(s);
+  }
+
+  <span style="color: blue">public override string </span>ToString() {
+    <span style="color: blue">int </span>len = sb.Length;
+
+    <span style="color: blue">if </span>(len &gt;= 1 &amp;&amp; sb[len - 1] == <span style="color: #a31515">'\r'</span>) {
+      len -= 1;
+    }
+    <span style="color: blue">else if </span>(len &gt;= 2 &amp;&amp; sb[len - 2] == <span style="color: #a31515">'\r' </span>&amp;&amp; sb[len - 1] == <span style="color: #a31515">'\n'</span>) {
+      len -= 2;
+    }
+
+    <span style="color: blue">return </span>sb.ToString(0, len);
+  }
+}</pre>
+
+
+<p>Usage inside the ReplSubmissionControl.Write method is like so:</p>
+
+<pre class="code"><span style="color: blue">public partial class </span><span style="color: #2b91af">ReplSubmissionControl </span>: <span style="color: #2b91af">UserControl </span>{<br />  ...<br /><pre class="code"><strong>  <span style="color: #2b91af">TrimmedStringBuilder </span>trimmedOutput = <span style="color: blue">new </span><span style="color: #2b91af">TrimmedStringBuilder</span>();
+</strong>
+  <span style="color: blue">public void </span>Write(<span style="color: blue">string </span>s) {
+<strong>    <span style="color: blue">if </span>(s == <span style="color: blue">null</span>) { trimmedOutput.Clear(); }
+    <span style="color: blue">else </span>{ trimmedOutput.Append(s); }
+</strong>
+    consoleContainer.Content = GetTextControl(<strong>trimmedOutput.ToString()</strong>);
+  }
+}
+</pre></pre>
+
+
+<p>Now, as the input comes in one character at a time, the trailing newlines are removed but separating newlines are kept. Also, you may be interested to know that the GetTextControl function builds a new read-only TextBox control on the fly to host the string content. This is so that the text can be selected, which isn’t possible when you set the content directly.</p>
+
+<p>Right now, there’s no support for Console.Read, since I don’t really know how I want that to happen yet. Pop-up a dialog box? Something else?</p>
+
+<h2>Completions, Syntax Highlighting and Auto-indent</h2>
+
+<p>I was a few hundred lines into implementing completions using Roslyn with the help of the Roslyn team when I realized two things:</p>
+
+<ol>
+  <li>Implementing completions to mimic the VS editor is hard.</li>
+
+  <li>Completions aren’t enough – I really want an entire C# editor with completions, syntax highlighting and auto-indentation.</li>
+</ol>
+
+<p>Maybe a future release of Roslyn will fix one or both of these issues, but for now, both are out of scope for my little REPL project.</p>  

@@ -1,0 +1,25 @@
+<!--
+Date: 7/20/2001 12:00:00 AM  -08:00
+Permalink: 12451
+Disqus: 12451
+Tags: tools
+-->
+<h1>CAspPtr</h1>
+    <p align="left">
+        If you've ever had to write the code to pull the ASP intrinsic objects from the 
+        MTS context, you might appreciate CAspPtr, which allows the following:
+    </p>
+    <div align="left">
+        <pre align="left">STDMETHODIMP CJon::DoIt() {
+<b>  CAspPtr&lt;IResponse&gt; spResponse;
+</b>  if( spResponse ) {
+    spResponse-&gt;Write(CComVariant(OLESTR("Baby got &lt;b&gt;&lt;i&gt;Response&lt;/i&gt;&lt;/b&gt;.")));
+  }  
+  return S_OK;
+}
+</pre>
+    </div>
+    <p align="left">
+        CAspPtr is available <a href="/public/tools/aspptr.h">here</a> and was inspired by <a href="mailto:jfland@tc.umn.edu">
+            Jon Flanders</a>. Thanks, Jon!
+    </p>

@@ -1,0 +1,11 @@
+<!--
+Date: 12/2/2003 3:47:09 PM  -08:00
+Permalink: 983
+Disqus: 983
+Tags: .net
+-->
+<h1>More Love for XAML Syntax: Dotted Element Names</h1>
+<P><A href="http://www.gotdotnet.com/team/dbox/default.aspx?key=2003-12-01T11:56:24Z">Don Box simplified</A> <a href="/12513">my XAML code</A>&nbsp;using resources and styles. He also illustrates another XAML-ism that I'm coming to love: dotted element names. When you see something a dotted element name in XAML:</P><PRE><FONT size=2>&lt;GridPanel&gt;<BR><STRONG><SPAN>&nbsp; &lt;GridPanel.Resources&gt;...&lt;/GridPanel.Resources&gt;</SPAN></STRONG></FONT><B><BR></B><FONT size=2>&nbsp; ...<BR>&lt;/GridPanel&gt;</FONT></PRE>
+<P>what you're looking at is a more convenient way of specifying an XML attribute using XML element syntax. For example, while you can specify a menu item like s</P><PRE><FONT size=2>&lt;MenuItem <STRONG><SPAN>Header="New"</SPAN></STRONG> /&gt;</FONT></PRE>
+<P>However, if you're doing anything fancy, like specifying an access key, you can do this using the dotted element name syntax:</P><PRE><FONT size=2>&lt;MenuItem&gt;<BR><STRONG><SPAN>&nbsp; &lt;MenuItem.Header&gt;</SPAN></STRONG></FONT><B><BR><FONT size=2><STRONG><SPAN>&nbsp;&nbsp;&nbsp; &lt;FlowPanel&gt;</SPAN></STRONG><BR><STRONG><SPAN>&nbsp; &nbsp;&nbsp;&nbsp; &lt;AccessKey Key="N" /&gt;</SPAN></STRONG><BR><STRONG><SPAN>&nbsp; &nbsp;&nbsp;&nbsp; &lt;SimpleText&gt;ew&lt;/SimpleText&gt;</SPAN></STRONG><BR><STRONG><SPAN>&nbsp;&nbsp;&nbsp; &lt;/FlowPanel&gt;</SPAN></STRONG><BR><STRONG><SPAN>&nbsp; &lt;/MenuItem.Header&gt;</SPAN></STRONG><BR></FONT></B><FONT size=2>&lt;/MenuItem&gt;</FONT></PRE>
+<P>In the first case, we're just specifying a string, so declaring the Header attribute inline makes sense. In the second case, we're composing the Header for the MenuItem as a FlowPanel, combining an AccessKey and a SimpleText element. Underneath the covers, XAML attributes translate into properties, so for those properties more complicated than strings, the dotted element name syntax allows properties to be specified as sub-elements.</P>

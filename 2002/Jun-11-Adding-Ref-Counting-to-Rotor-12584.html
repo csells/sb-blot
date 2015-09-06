@@ -1,0 +1,89 @@
+<!--
+Date: 6/11/2002 12:00:00 AM  -08:00
+Permalink: 12584
+Disqus: 12584
+Tags: spout
+-->
+<h1>Adding Ref-Counting to Rotor</h1>
+        <p>Microsoft has granted Sells Brothers, Inc. a research grant to add 
+        ref-counting to Rotor and to study the performance effects.
+        <a href="/public/tools/RotorRefCounting.doc">The proposal that lead to that 
+        grant is available here</a>. There's been a lot of speculation about 
+        just how we're planning to add ref-counting to Rotor. Here are the 
+        highlights:</p>
+        <ul>
+          <li>It's not just &quot;me,&quot; it's &quot;we.&quot; I've already have very useful input 
+          from several folks, including Jason Whittington, Ted Neward, Ian 
+          Griffiths, Serge Lidin, Craig Andera and Bill Conroy. Also, Chris 
+          Tavares will be spending most of July doing the actual implementation. 
+          If anyone else wants to dig in, feel free! I'm happy for the help and 
+          anyone that provides insight will get credit.<br>
+&nbsp;</li>
+          <li>The goal of adding ref-counting to Rotor is to measure the 
+          performance effects of a deterministic finalization-like model that we 
+          gave up when moving from COM/C++/VB6 to .NET. I say &quot;DF-like&quot; because 
+          we're not getting DF, because the price of determinism is that 
+          sometimes an object is never finalized, e.g. cycles. We can do better.<br>
+&nbsp;</li>
+          <li>We will not be replacing the existing GC's ref-tracking. It does a 
+          fabulous job managing memory and managing cycles and we won't touch 
+          that.<br>
+&nbsp;</li>
+          <li>The ref-counting implementation's sole job will be to call an 
+          object's finalizer ASAP. Note that this is in no way &quot;deterministic.&quot; 
+          Plain ref-counting is deterministic in that it calls an object's 
+          finalizer just as soon as there were no more outstanding object 
+          references. Cycles meant that this would never happen 
+          (deterministically). A hybrid ref-counting/ref-tracking system 
+          improves &quot;never&quot; to &quot;eventually&quot; in the case of a cycle and maintains 
+          the ref-counting's guarantee for ASAP in their absence.<br>
+&nbsp;</li>
+          <li>Even objects that don't have finalizers will need ref-counts, as 
+          they maintain references to objects that have finalizers (and so on).<br>
+&nbsp;</li>
+          <li>Value types will not need reference counts, but when they go out 
+          of scope, there will need to be a Release on any object references the 
+          value objects contain.<br>
+&nbsp;</li>
+          <li>When the GC kicks in and finally breaks a cycle, it would be nice 
+          to release all objects held by the cyclic objects so that they could 
+          return to normal ref-counting determinism. However, since we've 
+          already blown determinism by being in a cycle, this seems unlikely to 
+          be very helpful. Also, by skipping this we can keep all of our changes 
+          in the JITter and out of the GC, which simplifies the initial 
+          implementation. <br>
+&nbsp;</li>
+          <li>We'd plan on adding ref-counting at the runtime level in the 
+          JITter so that all languages gain the benefits w/o updating the 
+          compilers (or mandating anything special in any language). The real 
+          work is figuring out which IL instructions require AddRef/Release 
+          calls and getting those calls into the instruction stream. Because of 
+          this, we're not likely to be able to handle tail calls (at least, 
+          initially). Anyone with advise in this area would be welcomed with 
+          open arms.<br>
+&nbsp;</li>
+          <li>We plan on working nicely with existing IDispose-based code. Since 
+          our ref-counting is all about calling the finalizer, if the ref-count 
+          gets to zero and there is no finalizer to call, no finalizer will be 
+          called. That means that Dispose implementations that call 
+          GC.SuppressFinalize will not cause any problems with the ref-counter. 
+          Of course, the goal is that the IDisposable.Dispose protocol is not 
+          necessary at all.<br>
+&nbsp;</li>
+          <li>As a potential optimization, I have found a nice place to store a 
+          7-bit ref-count in the existing space allocated to every object, so 
+          there will be no space overhead, only CPU overhead. However, this 
+          narrows the number of objects per&nbsp; process with synch blocks 
+          and/or hash values from 134 million to 1 million. It also narrows the 
+          number of referencing objects from the traditional 4 billion to 127. 
+          Anecdotally, 127 seems like enough, but it will necessitate the need 
+          to abandon ref-counting on any object that reaches 127 extent 
+          references. Since most data structures where more than 127 references 
+          could happen are parent-child, e.g. every child in a tree with a 
+          reference to the root, and this indicates a cycle that can't be 
+          handled by the ref-counting anyway, turning these objects over to the 
+          ref-tracking portion of the algorithm seems reasonable. However, we 
+          won't know 'til we look how many object references an object is going 
+          to have, so we'll track maximum reference counts during our tests to 
+          see if this optimization makes sense at all.</li>
+        </ul>

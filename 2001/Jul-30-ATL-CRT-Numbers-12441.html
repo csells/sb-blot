@@ -1,0 +1,120 @@
+<!--
+Date: 7/30/2001 12:00:00 AM  -08:00
+Permalink: 12441
+Disqus: 12441
+Tags: tools
+-->
+<h1>ATL CRT Numbers</h1>
+<span class="created">July 30, 2001</span>
+    <p align="left">
+        The following table lists the various prices you pay for using the CRT and the 
+        default Win98 support in VC6. The builds were done with VC6, SP3, ATL COM 
+        in-proc server, no classes, no MFC, no merged p/s:
+    </p>
+    <table border="1" width="100%" height="173">
+        <tr>
+            <td width="25%" bgcolor="#000080" height="19">
+                <font color="#ffffff"><strong>Target</strong></font>
+            </td>
+            <td width="25%" bgcolor="#000080" height="19">
+                <font color="#ffffff"><strong>CRT</strong></font>
+            </td>
+            <td width="25%" bgcolor="#000080" height="19">
+                <font color="#ffffff"><strong>Win98</strong></font>
+            </td>
+            <td width="25%" bgcolor="#000080" height="19">
+                <font color="#ffffff"><strong>Size</strong></font>
+            </td>
+        </tr>
+        <tr>
+            <td width="25%" height="19">
+                RelMinSize
+            </td>
+            <td width="25%" height="19">
+                _ATL_MIN_CRT
+            </td>
+            <td width="25%" height="19">
+                yes
+            </td>
+            <td width="25%" height="19">
+                24KB
+            </td>
+        </tr>
+        <tr>
+            <td width="25%" height="19">
+                RelMinDepend
+            </td>
+            <td width="25%" height="19">
+                _ATL_MIN_CRT
+            </td>
+            <td width="25%" height="19">
+                yes
+            </td>
+            <td width="25%" height="19">
+                24KB
+            </td>
+        </tr>
+        <tr>
+            <td width="25%" bgcolor="#c0c0c0" height="19">
+                RelMinSize
+            </td>
+            <td width="25%" bgcolor="#c0c0c0" height="19">
+                _ATL_MIN_CRT
+            </td>
+            <td width="25%" bgcolor="#c0c0c0" height="19">
+                /opt:nowin98*
+            </td>
+            <td width="25%" bgcolor="#c0c0c0" height="19">
+                7KB
+            </td>
+        </tr>
+        <tr>
+            <td width="25%" bgcolor="#c0c0c0" height="19">
+                RelMinDepend
+            </td>
+            <td width="25%" bgcolor="#c0c0c0" height="19">
+                _ATL_MIN_CRT
+            </td>
+            <td width="25%" bgcolor="#c0c0c0" height="19">
+                /opt:nowin98
+            </td>
+            <td width="25%" bgcolor="#c0c0c0" height="19">
+                10KB
+            </td>
+        </tr>
+        <tr>
+            <td width="25%" height="19">
+                RelMinSize
+            </td>
+            <td width="25%" height="19">
+                MSVCRT
+            </td>
+            <td width="25%" height="19">
+                /opt:nowin98
+            </td>
+            <td width="25%" height="19">
+                20KB
+            </td>
+        </tr>
+        <tr>
+            <td width="25%" height="17">
+                RelMinDepend
+            </td>
+            <td width="25%" height="17">
+                MSVCRT
+            </td>
+            <td width="25%" height="17">
+                /opt:nowin98
+            </td>
+            <td width="25%" height="17">
+                22KB
+            </td>
+        </tr>
+    </table>
+    <p>
+        <i>*Note: /opt:nowin98 is a VC6 linker switch that says not to align binaries on a 
+            Win98-friendly boundary. /opt:nowin98 builds will still load and run under 
+            Win98 without a problem, but the loading time could be longer. Also, when 
+            images get above 24KB, the /opt:nowin98 seems not to much of an affect on the 
+            size of the image.</i>
+    </p>

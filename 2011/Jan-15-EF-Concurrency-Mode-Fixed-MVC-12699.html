@@ -1,0 +1,231 @@
+<!--
+Date: 1/15/2011 10:32:21 PM  -08:00
+Permalink: 12699
+Disqus: 12699
+-->
+<h1>EF Concurrency Mode Fixed + MVC</h1>
+  <p>Imagine a very simple EDM to describes web advertisements: </p>  <p><a href="/public/post-images/12699-35.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="image" border="0" alt="image" src="/public/post-images/12699-36.png" width="486" height="661" /></a> </p>  <p>Now imagine that I’d like to build a web application to manage instances of the Ad type. If multiple people are editing ads at once, especially the same set of ads, I’m likely to run into concurrency errors. By default, EF lets the last change win. </p>  <p>For example, if Chris and Bill are both editing Ad.Id == 1, if Chris pushes his changes to the database first, EF will not notice that the ad has been updated underneath Bill will he saves his changes and Chris’s changes will be lost. What we really would like to happen is that, when Bill attempts to save his changes, that we check if the data has changed since we cached it so that Bill gets an error and is able to merge his changes in with Chris’s. </p>  <p>This style of multi-user concurrency management is called “optimistic concurrency” because it assumes few people will be changing the same data at the same time. It’s the most efficient means of concurrency management when that condition is true. Another type of concurrency management is named “pessimistic concurrency,” and is generally implemented using locks on the database, which tends to slow things down.</p>  <p>By default, EF provides no concurrency support; if two people push changes to the same row in the database, whoever’s change goes in last wins. This results in data loss, which in the world of data is a big, fat, no-no.</p>  <p>The way that EF lets you decide how a row is changed is via the Concurrency Mode property on every one of the entity’s properties in the designer. By default, the Concurrency Mode is set to “None”, which results in SQL like the following when an update is needed:</p>  <pre class="csharpcode"><span class="kwrd">update</span> [dbo].[Ads]
+<span class="kwrd">set</span> [Title] = @0, [ImagePath] = @1, [Link] = @2, [ExpirationDate] = @3
+<strong><span class="kwrd">where</span> ([Id] = @4)</strong></pre>
+<style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>The Id column is used to select whether to perform an update, so any changes made to the underlying columns for that row are not detected and are therefore lost. The way to tell EF which columns to check is with the Concurrency Mode property set from None (the default) to Fixed on an entity’s property. For example, if you set Concurrency Model to Fixed for each of the read-write properties for our sample Ad entity, the update would look like the following:</p>
+
+<pre class="csharpcode"><span class="kwrd">update</span> [dbo].[Ads]
+<span class="kwrd">set</span> [Title] = @0, [ImagePath] = @1, [Link] = @2, [ExpirationDate] = @3
+<strong><span class="kwrd">where</span> ((((([Id] = @4) <span class="kwrd">and</span> ([Title] = @5)) <span class="kwrd">and</span> [ImagePath] <span class="kwrd">is</span> <span class="kwrd">null</span>)<br /><span class="kwrd">and</span> ([Link] = @6)) <span class="kwrd">and</span> ([ExpirationDate] = @7))</strong></pre>
+<style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>This is handy, but it also requires that we keep around an entity in memory in both its original state and its updated state for the length that the user is editing it. For desktop applications, that’s not an issue, but for stateless web pages, like MVC-based web pages, it is.</p>
+
+<p>It’s for this reason that the EF team itself recommends using a special read-only column just describing the “version” of the row. Ideally, whenever any of the data in a row changes, the version is updated so that when an update happens, we can check that special column, e.g.</p>
+
+<pre class="csharpcode"><span class="kwrd">update</span> [dbo].[Ads]
+<span class="kwrd">set</span> [Title] = @0, [ImagePath] = @1, [Link] = @2, [ExpirationDate] = @3
+<strong><span class="kwrd">where</span> (([Id] = @4) <span class="kwrd">and</span> ([<span class="kwrd">TimeStamp</span>] = @5))</strong></pre>
+<style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>Here, the TimeStamp column is our “version” column. We can add such a column in our SQL Server database using the “timestamp” type, as shown in SQL Server Management Studio here:</p>
+
+<p><a href="/public/post-images/12699-37.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="clip_image001[8]" border="0" alt="clip_image001[8]" src="/public/post-images/12699-38.png" width="671" height="302" /></a></p>
+
+<p>The semantics of the timestamp type are just what we want: every time a row is updated, the timestamp column is updated. To see this new column in the Entity Data Model, you’ll have to right-click on the designer surface and choose Update Model from Database, which results in the TimeStamp being added to our model:</p>
+
+<p><a href="/public/post-images/12699-39.jpeg"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="clip_image003" border="0" alt="clip_image003" src="/public/post-images/12699-40.jpeg" width="667" height="476" /></a></p>
+
+<p>The TimeStamp field will come through as type Binary, since EF4 doesn’t have direct support for it, and with a StoreGeneratedPattern of Computed (which is exactly right). To enable EF to use the new column to perform optimistic concurrency, we need only change the Concurrency Mode to Fixed.</p>
+
+<p>Now, here’s a simple Edit method on our MVC controller:</p>
+
+<pre class="csharpcode"><span class="rem">// GET: /Ad/Edit/5</span>
+<span class="kwrd">public</span> ActionResult Edit(<span class="kwrd">int</span> id) {
+  <span class="kwrd">return</span> View(db.Ads.Single(ad =&gt; ad.Id == id));
+}</pre>
+<style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>This kicks off the view, but with one key missing ingredient – the view doesn’t have the TimeStamp field in it; because it’s mapped in EF as binary data, the MVC form generator wouldn’t provide a field for it. To make sure we pass the version of the data along with the data itself, we have to add a field to our HTML form and, <a>because we don’t want the user to see it, let alone edit it, we need to make it hidden:</a></p>
+
+<pre class="csharpcode"><span class="asp">&lt;%</span> <span class="kwrd">using</span> (Html.BeginForm()) {<span class="asp">%&gt;</span>
+...
+<strong><span class="asp">&lt;%</span>: Html.HiddenFor(model =&gt; model.TimeStamp) <span class="asp">%&gt;</span>
+</strong>...
+<span class="asp">&lt;%</span> } <span class="asp">%&gt;</span></pre>
+
+<p>The Html.HiddenFor is an MVC helper that produces HTML that looks like so:</p>
+
+<pre class="csharpcode"><span class="kwrd">&lt;</span><span class="html">input</span> <span class="attr">id</span><span class="kwrd">=&quot;TimeStamp&quot;</span> <span class="attr">name</span><span class="kwrd">=&quot;TimeStamp&quot;</span> <span class="attr">type</span><span class="kwrd">=&quot;hidden&quot;</span> <span class="attr">value</span><span class="kwrd">=&quot;AAAAAAAAB9E=&quot;</span> <span class="kwrd">/&gt;</span></pre>
+<style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>Now, when we press the Save button, the SQL we saw earlier is invoked to use the ad’s unique ID as well as the version (our timestamp column). If there’s a concurrency problem, i.e. somebody else has updated the underlying row in the database since we cached our values on the HTML form, we get an exception:</p>
+
+<p><a href="/public/post-images/12699-41.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="clip_image004" border="0" alt="clip_image004" src="/public/post-images/12699-42.png" width="675" height="611" /></a></p>
+
+<p>The message is saying that no rows were updated, which happens when the timestamp of the underlying row no longer matches. To provide a more helpful message, you’ll want to catch the specific error yourself:</p>
+
+<pre class="csharpcode"><span class="rem">// POST: /Ad/Edit/</span>
+[HttpPost]
+<span class="kwrd">public</span> ActionResult Edit(Ad ad) {
+  <span class="kwrd">try</span> {
+    <span class="kwrd">if</span> (!ModelState.IsValid) { <span class="kwrd">return</span> View(); }
+    <span class="rem">// Attach the ad to the context and let the context know it's updated</span>
+    db.Ads.Attach(ad);
+    db.ObjectStateManager.ChangeObjectState(ad, EntityState.Modified);
+    db.SaveChanges();
+    <span class="kwrd">return</span> RedirectToAction(<span class="str">&quot;Index&quot;</span>);
+  }
+<strong>  <span class="kwrd">catch</span> (OptimisticConcurrencyException ex) {
+    ModelState.AddModelError(<span class="str">&quot;&quot;</span>, <span class="str">&quot;Oops! Looks like somebody beat you to it!&quot;</span>);
+    <span class="kwrd">return</span> View(ad);
+  }
+</strong>}</pre>
+<style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>Here we’re catching the OptimisticConcurrencyException and setting our own message before sending the user back to their data for them to grab what they want and try again.</p>
+
+<h2>Where Are We?</h2>
+
+<p>EF works great with MVC, but in the case of optimistic concurrency, you’ve got to work around the stateless model of the web a little to get it working just the way you like.</p>  

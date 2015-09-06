@@ -1,0 +1,30 @@
+<!--
+Date: 7/19/2001 12:00:00 AM  -08:00
+Permalink: 12452
+Disqus: 12452
+Tags: tools
+-->
+<h1>Smart IEnumVARIANT</h1>
+
+    <p>
+        Visual Basic and its variants (sic) use IEnumVARIANT to implement the For-Each 
+        statement. Unfortunately, they only ask for 1 element at a time, leading to 
+        terrible performance across apartments. I propose two solutions. One allows you 
+        to wrap any collection in a CollectionBuffer object and set the buffering 
+        yourself, e.g.
+    </p>
+    <pre>Dim collBuffer As Object
+Set collBuffer = CreateObject("SmartEnumSvr.CollectionBuffer")
+collBuffer.Collection = coll ' coll is an interface on any collection
+collBuffer.BufferSize = 1024 ' How many items would you like buffered?
+
+c = 0
+For Each v In collBuffer ' Uses SmartEnumVARIANT to buffer items
+    c = c + 1
+Next v
+MsgBox "Counted " &amp; c
+	</pre>
+    <p>
+        The second solution allows you to leverage SmartEnumVARIANT on the server-side, 
+        seamlessly to the client. <a href="/12654">A detailed explanation and code 
+            is available here.</a></p>

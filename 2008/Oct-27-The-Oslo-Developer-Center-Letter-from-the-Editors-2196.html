@@ -1,0 +1,57 @@
+<!--
+Date: 10/27/2008 10:33:53 AM  -08:00
+Permalink: 2196
+Disqus: 2196
+Tags: osloeditorial
+-->
+<h1>The Oslo Developer Center: Letter from the Editors</h1>
+<P>Welcome to <A href="http://msdn.microsoft.com/oslo">the "Oslo" Developer Center</A>, your one-stop shop for all things "Oslo." Do you need to learn how M works (or what the heck it is?)? Do you want to sprinkle some of that repository stuff into your SQL Server? Do you need a quick video tutorial on the "Oslo" SDK tools? Then you've come to the right place!</P>
+<P>This DevCenter is a bi-directional communication channel between the "Oslo" product team and you, our customers. We have all kinds of things we want to tell you about Oslo and all manner of ways for us to tell it to you, e.g. articles, videos, screencasts, samples, tools, etc. But more important than that, we want to hear from you, so we've set up a <A href="http://social.msdn.microsoft.com/Forums/en-US/oslo/threads/">forum</A> for you to ask questions and a <A href="https://connect.microsoft.com/oslo">Connect site</A> for you to report bugs. And, if you blog about Oslo, you're very likely to get noticed and featured on the home page. Or, if you do post about Oslo or find something Olso-related that you think deserves mention and we haven't found it yet, then don't hesitate to <A href="http://blogs.msdn.com/modelcitizen/contact.aspx">tell us</A>! Finally, if that doesn't make you happy, you should feel free to send your email directly to the site's editors, <A href="mailto:csells@microsoft.com">Chris Sells</A> and <A href="mailto:v-kents@microsoft.com">Kent Sharkey</A>. We're here for you!</P><B>
+<P>What is "Oslo?"</P></B>
+<P>And to kick this conversation off, we'd like to provide the 10,000 foot introduction to "Oslo". "Oslo" is the code name for our platform for model-driven applications. The goal of "Oslo" is to provide a 10x productivity gain by making model-driven applications mainstream. At the core of this platform are <I>domain-specific </I>models, language and tools:</P>
+<UL>
+<LI>A language, <B>M</B>, for authoring domains textually</LI>
+<LI>A tool, <B>Quadrant</B>, for authoring domains visually</LI>
+<LI>A <B>Repository</B> for managing domain models</LI>
+<LI>A library of pre-built domain models and languages</LI></UL>
+<P>Together, these components will make it more efficient for a team to develop, implement, and maintain applications and services.</P>
+<P><B>What is "M"?</B></P>
+<P>"M" is a new declarative language that provides developers with an approachable, textual format for authoring models and DSLs for those models. The "M" language consists of three parts: MGraph, MSchema and MGrammar. MGraph is used to write down values in a graph structure similar to syntaxes like JSON. MSchema builds on MGraph by providing a structural type system, extent declarations for storing values, and computed values, which are queries over values and extents. MGrammar is used to describe a domain-specific language in terms of token and syntax rules, which are then used to parse text into an MGraph.</P><B>
+<P>What is "Quadrant"?</P></B>
+<P>Quadrant is a real-time editor over a SQL database. Updates in Quadrant are automatically propagated to the database. Views over the same data are automatically refreshed when those data changes are made to the database. This is technically possible because Quadrant is built on an innovative dataflow technology. Quadrant's user experience is reflective of the experience in Office tools.</P>
+<p><i>Quadrant is available to PDC attendees on the VPC, but not yet available for download. We hope to get Quadrant into a future Oslo CTP soon!</i></p>
+<P><STRONG>What is the Repository?</STRONG></P>
+<P>The "Oslo" repository delivers a platform to manage application metadata. The "Oslo" repository provides a common set of features to enable data-driven applications to leverage a platform investment made by Microsoft. </P>
+<P>The "Oslo" repository builds naturally upon the SQL Server database and provides optimizations for storing and sharing models &#8211; by providing a thin layer on top of the existing DBMS engine, this enables customers to easily leverage the existing SQL Server database ecosystem (e.g. tools, reporting, BI, etc). The repository is designed for extensibility, and supports common tasks such as impact analysis and access control. The repository manages end-to-end system models across the lifecycle, including support for both design and run-time views of application metadata. Pre-built models will be delivered as a starting point for building your full application, and with extensibility points so that your models can be augmented as needed.</P><B>
+<P>Call to Action!</P></B>
+<P>See for yourself. Download and install the <A href="http://download.microsoft.com/download/4/2/3/423FFDF3-B0B9-4EF0-990F-82DDE530B672/RepositoryOct2008CTP.msi">Microsoft "Oslo" SDK</A>. It contains lots of goodies, including:</P>
+<UL>
+<LI>Compilers and tools 
+<UL>
+<LI>The "M" compiler (m.exe)</LI>
+<LI>The MGrammar compiler (mg.exe)</LI>
+<LI>A tool to parse files based on a .mgx, and output an "M" or XAML file (mgx.exe)</LI>
+<LI>A tool to load "M" content into a SQL database (mx.exe)</LI>
+<LI>Visual Studio language integration for "M"</LI>
+<LI>Intellipad, a text editor with MSchema and MGrammar integration (ipad.exe)</LI>
+<LI>MSBuild integration for the "M" compiler</LI>
+<LI>"M" Add-in for Excel 2007 </LI></UL></LI>
+<LI>Documentation 
+<UL>
+<LI>Oslo Overview</LI>
+<LI>"M" in a Nutshell</LI>
+<LI>"M" Language Specification</LI>
+<LI>MGrammar in a Nutshell</LI>
+<LI>MGrammar Language Specification</LI>
+<LI>Intellipad Primer</LI>
+<LI>Help content for "M", Models, and the Repository</LI></UL></LI>
+<LI>The Oslo and Dublin models</LI>
+<LI>Samples 
+<UL>
+<LI>M Models: Northwind DBMS, WMI schemas (subset), enumeration and relationship patterns, and query examples</LI>
+<LI>MParserDemo, a sample that demonstrates using the "M" framework</LI>
+<LI>Samples for "M" Language Specification</LI>
+<LI>MGrammar samples</LI>
+<LI>Intellipad samples</LI></UL></LI></UL>
+<P>And then, once you've dug through all of that, come here for more and to post your bugs and questions. We're working to keep the content up to date and fresh, so they'll always be something new for you at the Oslo DevCenter.</P>
+<P>XXOO, Chris Sells &amp; Kent Sharkey</P>

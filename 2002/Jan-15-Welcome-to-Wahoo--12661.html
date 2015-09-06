@@ -1,0 +1,56 @@
+<!--
+Date: 1/15/2002 10:42:17 AM  -08:00
+Permalink: 12661
+Disqus: 12661
+Tags: fun
+-->
+<h1>Welcome to Wahoo!</h1>
+<p><a href="/public/wahoo2/Wahoo.application">
+<img border="0" src="/public/wahoo/wahoo.JPG" align="right" hspace="10" width="281" height="590"></a>This page is dedicated to the game of Wahoo! 
+-- a .NET application meant to be 
+invoked from a .NET client across the internet. </p>
+<p>If you'd like the ClickOnce version (for .NET 2.0),
+<a href="/public/wahoo2/Wahoo.application">click here</a> and (after clicking a few 
+more times), an application that looks like the picture on the right will 
+appear.</p>
+<p>To invoke the No-Touch Version version (for .NET 1.x),
+<a href="/public/wahoo/wahoo.exe">click here</a> and wait a little while. In a few seconds, 
+an application that looks like the picture on the right will appear. <i>You 
+should note that No-Touch Deployed applications deployed across the Internet are 
+disabled by default when .NET 2.0 is installed on the client machine.</i></p>
+<p>If you find that Wahoo! doesn't have permission to run on your .NET 1.x computer, you 
+can <a href="/public/wahoo/WahooPermissionsSetup.msi">grant Wahoo! Internet permissions using 
+this MSI setup file</a> (Keith Brown helped me fix my SP1 permissions problem!). Even the new permissions are pretty strict, e.g. they do not 
+even allow writing to the file system. If you'd like to increase the permissions 
+allows for Wahoo! so that it can cache high scores to the file system, you can 
+do so via the Trust Assembly Wizard available in Start-&gt;Settings-&gt;Control 
+Panel-&gt;Administration Tools-&gt;Microsoft .NET Framework Wizards.</p>
+<p><font color="#FF0000"><b>Keith Brown has asked me to remind all of you that 
+even though Wahoo! is managed and executes in the .NET security sandbox, the 
+code in the MSI to grant permissions for the .NET 1.0x version is running with FullTrust permissions, meaning that it could do 
+bad things, where &quot;bad things&quot; is defined as: trash the registry, delete files, 
+send email from your account, spread viruses, reformat disks, change arbitrary 
+spreadsheet values or formulae, remove single columns from database tables, 
+invert the buttons on your mouse, reset your MineSweeper high scores, send lists 
+of installed software to Microsoft, and generally misbehave (thanks Tim Ewald 
+for the exhaustive list : ). Of course, this applies to any MSI file, setup 
+program or any other code that you download onto your machine and run outside of 
+the .NET or Win32 security sandboxes. Keith would like everyone to promise to 
+stop installing new code of any kind on their machines and let software migrate 
+there instead, either via No-Touch Deployment/mobile code-style install-on-demand or via 
+administrator-approved means. Keith believes that installing code on your 
+machine can only cause trouble and I agree -- unless there is code on your 
+machine, nothing bad can happen. Nothing good can happen, either, but &quot;Hey, 
+let's be careful out there!&quot;</b></font></p>
+<p> 
+<a href="/public/writing/wfbook">The full source code to the .NET 2.0 version is 
+available here</a>. 
+<a href="/public/wahoo/Wahoo.zip">The full source code to the .NET 1.x version (including the MSI file) is available here</a>. The
+<a href="/public/wahoo/html/index.htm">original HTML version</a> is available, as well.</p>
+<p>Wahoo! was awarded 
+<a href="http://www.gotdotnet.com/team/windowsforms/WindowsFormsCodingHero2_12_02.aspx">the Windows Forms Coding Heroes Award</a> on 2/12/02 
+by the Windows Forms team on GotDotNet. I'd like to thank the academy... : )</p>
+
+<p>If you like this game, you might also like
+<a href="http://www.valuediscovery.com/snake.exe">Snake</a>, by
+<a href="mailto:tomasg@SPSS.COM">Tomas Gudmundsson</a>. I know I do.</p>

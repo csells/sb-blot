@@ -1,0 +1,15 @@
+<!--
+Date: 10/29/2004 11:21:40 AM  -08:00
+Permalink: 1568
+Disqus: 1568
+Tags: .net
+-->
+<h1>First Commercial .NET No Touch Deployment App</h1>
+<P>Mark Levison of Databeacon talks about the first commercial-grade .NET No-Touch Deployment application to be deployed over the internet</A>&nbsp;(at least, as far as he and I know). I asked Mark what his motivations were for using a smart client instead of a web app. These were his reasons:</P>
+<OL>
+<LI>"Integration with Desktop <FONT face=Tahoma>&#8211;</FONT> export to excel, word, send to mail recipient, etc.</LI>
+<LI>"The user never has to wait for a round trip to the server. Once the application is up and running everything is done locally, the user is never left waiting by a suddenly slow internet connection.</LI>
+<LI>"Our application gets a full blown window with its menu and toolbar, we're not stuck inside of IE.</LI>
+<LI>"Uses the clients CPU do all of work. Our application is graphically and sometimes computationally intensive, if we did all of this work server side, we would eventually run into scaling problems."</LI></OL>
+<P>Congrats Mark and Databeacon. This is but the beginning of much greater things to come.</P>
+<p><b>NOTE: I don't know if this was exuberance at making the instructions for running the sample easy or not, but you should absolutely not "[u]se the Microsoft .NET Framework wizard to grant full trust to trusted sites." Trusted or not, you should not award any code any more permission than it needs. For instructions on how to build an MSI setup for configuring a NTD client for just the right amount of permissions until you can use ClickOnce (which handles permission elevation much better than NTD), you can <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnforms/html/winforms11122002.asp">read this article on the topic</a>.</b></p>

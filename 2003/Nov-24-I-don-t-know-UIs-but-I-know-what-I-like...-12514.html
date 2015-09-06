@@ -1,0 +1,83 @@
+<!--
+Date: 11/24/2003 12:00:00 AM  -08:00
+Permalink: 12514
+Disqus: 12514
+Tags: spout
+-->
+<h1>I don't know UIs, but I know what I like...</h1>
+<p><i>Monday, <span class="created">November 24, 
+2003</span></i></p><p>The user in me sees Longhorn and dreams of software without 
+limits. The engineer in me sees Longhorn and is scared of software without 
+limits. An engineer's days are defined by requirements and restrictions. Those 
+restrictions come not only from the capabilities of the tools and technologies 
+being bolted together, but also accepted practice. For years, I've been 
+comfortable designing &quot;rich&quot; client applications because a) my tools and 
+technologies haven't let me do much that was really &quot;rich&quot; and b) because &quot;rich&quot; 
+was pre-defined by existing applications.</p><p>In fact, when I started 
+programming Windows 3.1, I adopted a single 3-step UI design process:</p><ol><li>
+	Figure out the the requirements of the particular UI doodad I needed</li><li>
+	Find my favorite example of it in Visual Studio, Word or Outlook</li><li>
+	Make User/MFC/WTL/WinForms do that</li></ol><p>It doesn't take much to 
+design an application that looks like this:</p><img alt="" src="/public/spout/winforms01232003-fig01.gif" border="0" width="240" height="200"><p>
+or even one that looks like this:</p><img alt="" src="/public/spout/winforms11202003-fig02.gif" border="0" width="345" height="228"><p>
+when the process is merely aping existing apps. I was even encouraged to use 
+this kind of UI design by books with color pictures from well respected authors:</p><p><a href="http://www.amazon.com/exec/obidos/tg/detail/-/1893115941/joelonsoftware"><img style="MARGIN-LEFT: 5px" height="140" alt="User Interface Design for Programmers" src="/public/spout/UI_For_Programmers.jpg" width="112" border="0"></a></p><p>
+When the web came along, things were scary because all the guidelines were gone. 
+However, at first the limitations were strict, so I didn't have any trouble 
+building sites that looked like this:</p><p><img border="0" src="/public/spout/img.1.jpg" width="427" height="421"></p><p>
+but when a few years later, the limitations faded away and I was expected to 
+conceive of and implement stuff like this:</p><p><img border="0" src="/public/spout/img.3.jpg" width="462" height="623"></p><p>
+I didn't have a clue. Luckily, the web &quot;way&quot; settled down over the years so that 
+we figured out basically how to design web sites:</p><p><font face="Verdana, Arial, Helvetica, sans-serif" size="2"><b><font size="1"><a href="http://www.sensible.com/buythebook.html"><img height="121" alt="Book cover: Don't Make Me Think!" hspace="10" src="http://www.sensible.com/DMMT%20cover%203d%20140h.jpg" width="92" border="0"></a></font></b></font></p><p>
+Plus, limitations took hold as we realized that you could build pretty much 
+anything you wanted unless you wanted it to work on someone's machine besides 
+yours, which turned the screws down pretty tightly.</p><p>Still, while the 
+emerging conventions helped me figure out what I wanted my own web site to look 
+like in general, I had to *pay* for help from a otherly-skilled professional 
+before I could get the specifics:</p><p><img border="0" src="/public/spout/img.9.jpg" width="496" height="475"></p><p>
+This is where it got scary until I had the one application designed for which I 
+would ever need a designer. With my web site out of the way, it was smooth 
+sailing.</p><p>That is, until Longhorn and Avalon came along.</p><p>Avalon drops 
+the bottom out of the limitations and the guidelines again, leaving guys like me 
+in a lurch. Oh sure, I've done pretty much everything there is to do in this 
+industry, from coder to President, from docs to QA, from project management to 
+*shudder* marketing. However, what I haven't done and always hoped to avoid was 
+design the graphics that go along with an application. Those were always things 
+that I could hire done, most often as a deductible expense.</p><p>But now what 
+do I do? MS doesn't provide MSDN authors a &quot;graphic artist&quot; budget. We do have 
+very talented graphic artists at MSDN, but what's my boss going to say when 
+they're swamped doing graphics for my pet projects and not the public-facing web 
+site?</p><p>And standard bitmap graphic artifacts aren't enough; I need *vector* 
+graphics. Even I can see that while this is fine:</p><p><img border="0" src="/public/spout/img.4.jpg" width="593" height="438"></p><p>
+nobody is expanding sol.exe's main window to get more &quot;green space&quot;:</p><p><img border="0" src="/public/spout/img.8.jpg" width="593" height="438"></p><p>
+To solve problems like these, we need vector graphics that look good when 
+they're scaled, which I understand is roughly 10x harder than bitmaps (which are 
+already beyond me).</p><p>But just the graphics aren't enough, either. MS is 
+busy redesigning the Windows &quot;user experience&quot; to include the best of Windows 
+and the web:</p><p><img alt="" src="/public/spout/apparchetypes2.gif" border="0" width="450" height="358"></p><p>
+Apps are supposed to behavior sensibly (which I can handle) *and* look cool 
+(where do I learn to make *that* happen?!?).</p><p>In fact, taking the next step 
+from the budding UX guidelines, we seem to be heading into a place where if I 
+want to build my own sol to fix the scaling, I'll be trying to fit a &quot;menu 
+system&quot; on the front like the gaming guys do:</p><p><img border="0" src="/public/spout/img.6.jpg" width="367" height="242"></p><p>
+and like so:</p><p><img border="0" src="/public/spout/img.7.jpg" width="384" height="259"></p><p>
+In fact, I've heard tell that there's a special guy that designs these pre-game 
+antics separately from the rest of the game just so folks think the game is cool 
+as soon as it starts, long before you're actually playing it. How can I stand up 
+to that kind of pressure? I was pretty damn happy with myself when I made blocks 
+fall and stack:</p><p><a href="/public/wahoo/wahoo.exe"><img height="590" hspace="10" src="/public/spout/wahoo.JPG" width="281" border="0"></a></p><p>
+And while this is the only scalable game of its kind of which I know (I was 
+ready for Avalon a while ago, apparently : ), it still has the standard un-cool 
+&quot;menu system&quot; that Windows comes with out of the box.</p><p>And there's no 
+relief in sight! Avalon, by taking advantage of 3D hardware and displays that 
+haven't even been invented yet, along with intrinsic support for every kind of 
+media and animation that I'm familiar with, blows right by the limitations we've 
+grown to know and love in Windows and web applications. Now we're into the world 
+of game programmers, where if you can imagine it, you can do it.</p><p>But where 
+am I going to get the graphics for what I can imagine?</p><p>How do I imagine a 
+user experience when MS is literally still writing the book on it and they 
+haven't shipped a Longhorn Visual Studio, Word *or* Outlook?</p><p>Graphic/user 
+experience designers of the world, please be gentle; the engineers are spooked 
+and could stampede at any moment...</p><p><a href="/967">
+Know where I can get some graphics/user experience designers cheap?</a></p>
+

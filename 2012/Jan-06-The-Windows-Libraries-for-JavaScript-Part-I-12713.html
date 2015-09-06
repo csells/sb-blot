@@ -1,0 +1,178 @@
+<!--
+Date: 1/6/2012 5:28:55 PM  -08:00
+Permalink: 12713
+Disqus: 12713
+Tags: telerik,win8
+-->
+<h1>The Windows Libraries for JavaScript: Part I</h1>
+<p><font color="#ff0000">DISCLAIMER: This post is targeted at </font><a href="http://buildwindows.com"><font color="#ff0000">the //build/ version of the Windows Developer Preview</font></a><font color="#ff0000"> (aka Windows 8). Things are likely to change with future releases. On your head be it.</font></p>  <p>In <a href="/12712">the last post in this series</a>, we looked at getting started building Metro style apps built using JavaScript (Metro/JS apps) with Microsoft Visual Studio 11 for the Windows Developer Preview (aka VS11) and Microsoft Expression Blend 5 Developer Preview (aka Blend).</p>  <p>In this installment, we’re going to take a look at the library that brings WinRT and the web platform together: the Windows Library for JavaScript (aka WinJS) and build an app while we’re doing it.</p>  <h2>The Need for WinJS</h2>  <p>While it is the case, as you’ll see, that a Metro/JS apps have the same access to the underlying Windows platform as any other language projection (like Metro/VB, Metro/C# and Metro/C++ apps), it’s also the case that HTML/JavaScript programmers have a certain style that they are used to programming in. In some cases, those habits need to change because Metro/JS apps aren’t web sites or even web applications; Metro/JS apps are native applications that happen to be built with HTML, JavaScript, CSS, SVG, etc.</p>  <p>However, in many cases, existing JavaScript habits are good ones and should be encouraged. Towards that end, Microsoft engineers have built the Windows Libraries for JavaScript (WinJS), which is a set of reusable JavaScript and CSS files which were created specifically to make it easier for you to build Metro/JS apps with the right Win8 “feel” to them.</p>  <p>The easiest way to bring WinJS into your project is to create an application using any of the Metro/JS project templates, since all of them include the WinJS files:</p>  <p><a href="/public/post-images/12713-118.jpeg"><img style="display: inline" title="clip_image002" alt="clip_image002" src="/public/post-images/12713-119.jpeg" width="280" height="480" /></a></p>  <p>WinJS is defined by the files under the winjs folder. The Blank Application project template produces an application with an empty window, but it does it with style; specifically the style that makes a Metro/JS app look like a Win8 app. Of course, the styles alone can’t make everything right – you’ll also need the right layout, behavior, etc. As an example of how to build a Metro/JS apps that’s slightly more exciting than the one we’ve been looking at so far, let’s build one of the most famous members of the Windows team – Raymond Chen.</p>  <p>Mr. Chen is a developer on the Windows team that brought you the Windows Developer Preview (aka Win8). Further, he’s the author of the most excellent book “The Old New Thing” based on <a href="http://blogs.msdn.com/b/oldnewthing/">a blog of the same name</a>:</p>  <p><a href="/public/post-images/12713-120.jpeg"><img style="display: inline" title="clip_image004" alt="clip_image004" src="/public/post-images/12713-121.jpeg" width="726" height="768" /></a></p>  <p>Chen’s blog is famous for digging into the forgotten nooks and crannies of the Windows platform. And for our purposes, Chen’s blog is an excellent target for our sample because he’s chosen a blogging platform that exposes the full text of his posts in a programmatic form (both RSS and Atom) so that we can build a Win8 app to show them.</p>  <p>Any blog displayed in the browser is essentially the title, date and content from each of the latest blog posts. To start, we need to download the data for each of his posts. To do that, we first need to know where to put that code.</p>  <h2>The WinJS.Application object</h2>  <p>The Blank Application template-generated default.html loads a minimal set of WinJS JavaScript and CSS files:</p>  <pre class="code"><span style="background: white; color: blue">&lt;!</span><span style="background: white; color: maroon">DOCTYPE </span><span style="background: white; color: red">html</span><span style="background: white; color: blue">&gt;
+&lt;</span><span style="background: white; color: maroon">html</span><span style="background: white; color: blue">&gt;
+&lt;</span><span style="background: white; color: maroon">head</span><span style="background: white; color: blue">&gt;
+    &lt;</span><span style="background: white; color: maroon">meta </span><span style="background: white; color: red">charset</span><span style="background: white; color: blue">=&quot;utf-8&quot; /&gt;
+    &lt;</span><span style="background: white; color: maroon">title</span><span style="background: white; color: blue">&gt;</span><span style="background: white; color: black">RssReader</span><span style="background: white; color: blue">&lt;/</span><span style="background: white; color: maroon">title</span><span style="background: white; color: blue">&gt;
+<strong>    </strong></span><strong><span style="background: white; color: #006400">&lt;!-- WinJS references --&gt;
+    </span><span style="background: white; color: blue">&lt;</span><span style="background: white; color: maroon">link </span><span style="background: white; color: red">rel</span><span style="background: white; color: blue">=&quot;stylesheet&quot; </span><span style="background: white; color: red">href</span></strong><strong><span style="background: white; color: blue">=&quot;/winjs/css/ui-dark.css&quot; /&gt;
+    &lt;</span><span style="background: white; color: maroon">script </span><span style="background: white; color: red">src</span><span style="background: white; color: blue">=&quot;/winjs/js/base.js&quot;&gt;&lt;/</span><span style="background: white; color: maroon">script</span></strong><strong><span style="background: white; color: blue">&gt;
+    &lt;</span><span style="background: white; color: maroon">script </span><span style="background: white; color: red">src</span><span style="background: white; color: blue">=&quot;/winjs/js/wwaapp.js&quot;&gt;&lt;/</span><span style="background: white; color: maroon">script</span></strong><span style="background: white; color: blue"><strong>&gt;
+</strong>    </span><span style="background: white; color: #006400">&lt;!-- RssReader references --&gt;
+    </span><span style="background: white; color: blue">&lt;</span><span style="background: white; color: maroon">link </span><span style="background: white; color: red">rel</span><span style="background: white; color: blue">=&quot;stylesheet&quot; </span><span style="background: white; color: red">href</span><span style="background: white; color: blue">=&quot;/css/default.css&quot; /&gt;
+    &lt;</span><span style="background: white; color: maroon">script </span><span style="background: white; color: red">src</span><span style="background: white; color: blue">=&quot;/js/default.js&quot;&gt;&lt;/</span><span style="background: white; color: maroon">script</span><span style="background: white; color: blue">&gt;
+&lt;/</span><span style="background: white; color: maroon">head</span><span style="background: white; color: blue">&gt;
+&lt;</span><span style="background: white; color: maroon">body</span><span style="background: white; color: blue">&gt;
+&lt;/</span><span style="background: white; color: maroon">body</span><span style="background: white; color: blue">&gt;
+&lt;/</span><span style="background: white; color: maroon">html</span><span style="background: white; color: blue">&gt;
+</span></pre>
+
+<p>Updating the sample with some slightly more interesting HTML:</p>
+
+<pre class="code"><span style="background: white; color: blue">&lt;!</span><span style="background: white; color: maroon">DOCTYPE </span><span style="background: white; color: red">html</span><span style="background: white; color: blue">&gt;
+&lt;</span><span style="background: white; color: maroon">html</span><span style="background: white; color: blue">&gt;
+...<br /></span><span style="background: white; color: blue">&lt;</span><span style="background: white; color: maroon">body</span><span style="background: white; color: blue">&gt;
+<strong>    &lt;</strong></span><strong><span style="background: white; color: maroon">h1</span><span style="background: white; color: blue">&gt;</span><span style="background: white; color: black">The Old New Thing</span><span style="background: white; color: blue">&lt;/</span><span style="background: white; color: maroon">h1</span></strong><strong><span style="background: white; color: blue">&gt;
+    &lt;</span><span style="background: white; color: maroon">div </span><span style="background: white; color: red">id</span><span style="background: white; color: blue">=&quot;downloadStatus&quot;&gt;&lt;/</span><span style="background: white; color: maroon">div</span></strong><strong><span style="background: white; color: blue">&gt;
+    &lt;</span><span style="background: white; color: maroon">div </span><span style="background: white; color: red">id</span><span style="background: white; color: blue">=&quot;posts&quot;&gt;&lt;/</span><span style="background: white; color: maroon">div</span></strong><span style="background: white; color: blue"><strong>&gt;
+</strong>&lt;/</span><span style="background: white; color: maroon">body</span><span style="background: white; color: blue">&gt;
+&lt;/</span><span style="background: white; color: maroon">html</span><span style="background: white; color: blue">&gt;
+</span></pre>
+
+<p>Here we’re setting the header text of our app and creating two div elements as placeholders: one for the status of our RSS download and one for the data from the RSS when we get it. Also, let’s replace the contents of default.css with styles to match Chen’s blog:</p>
+
+<pre class="code"><span style="background: white; color: maroon">body </span><span style="background: white; color: black">{
+    </span><span style="background: white; color: red">background-color</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">#fff</span><span style="background: white; color: black">;
+    </span><span style="background: white; color: red">color</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">#000</span><span style="background: white; color: black">;
+    </span><span style="background: white; color: red">font-family</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">Verdana</span><span style="background: white; color: black">;
+    </span><span style="background: white; color: red">padding</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">8pt</span><span style="background: white; color: black">;
+}
+
+</span><span style="background: white; color: maroon">a:link</span><span style="background: white; color: black">, </span><span style="background: white; color: maroon">a:visited</span><span style="background: white; color: black">, </span><span style="background: white; color: maroon">a:active </span><span style="background: white; color: black">{
+    </span><span style="background: white; color: red">color</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">#700</span><span style="background: white; color: black">;
+    </span><span style="background: white; color: red">font-weight</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">inherit</span><span style="background: white; color: black">;
+}
+
+</span><span style="background: white; color: maroon">h1 </span><span style="background: white; color: black">{
+    </span><span style="background: white; color: red">text-transform</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">none</span><span style="background: white; color: black">;
+    </span><span style="background: white; color: red">font-family</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">inherit</span><span style="background: white; color: black">;
+    </span><span style="background: white; color: red">font-size</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">22pt</span><span style="background: white; color: black">;
+}
+
+</span><span style="background: white; color: maroon">#posts </span><span style="background: white; color: black">{
+    </span><span style="background: white; color: red">width</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">99%</span><span style="background: white; color: black">;
+    </span><span style="background: white; color: red">height</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">100%</span><span style="background: white; color: black">;
+    </span><span style="background: white; color: red">overflow</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">auto</span><span style="background: white; color: black">;
+}
+
+</span><span style="background: white; color: maroon">.postTitle </span><span style="background: white; color: black">{
+    </span><span style="background: white; color: red">color</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">#700</span><span style="background: white; color: black">;
+    </span><span style="background: white; color: red">font-size</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">1.2em</span><span style="background: white; color: black">;
+    </span><span style="background: white; color: red">font-weight</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">bold</span><span style="background: white; color: black">;
+}
+
+</span><span style="background: white; color: maroon">.postDate </span><span style="background: white; color: black">{
+    </span><span style="background: white; color: red">color</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">#666</span><span style="background: white; color: black">;
+    </span><span style="background: white; color: red">font-size</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">11pt</span><span style="background: white; color: black">;
+}
+
+</span><span style="background: white; color: maroon">.postContent </span><span style="background: white; color: black">{
+    </span><span style="background: white; color: red">font-size</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">medium</span><span style="background: white; color: black">;
+    </span><span style="background: white; color: red">line-height</span><span style="background: white; color: black">: </span><span style="background: white; color: blue">18px</span><span style="background: white; color: black">;
+}</span><span style="background: white; color: black">
+</span></pre>
+
+<p>To support app lifetime, Win8 provides a set of app-level events. The generated default.js file subscribes to the app’s mainwindowactivated event and then starts the WinJS application:</p>
+
+<pre class="code"><span style="background: white; color: teal">(</span><span style="background: white; color: blue">function </span><span style="background: white; color: teal">() {
+  </span><span style="background: white; color: #a31515">'use strict'</span><span style="background: white; color: teal">;
+  </span><span style="background: white; color: green">// Uncomment the following line to enable first chance exceptions.
+  // Debug.enableFirstChanceException(true);
+
+<strong>  </strong></span><strong><span style="background: white; color: black">WinJS</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">Application</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">onmainwindowactivated </span><span style="background: white; color: teal">= </span><span style="background: white; color: blue">function </span><span style="background: white; color: teal">(</span><span style="background: white; color: black">e</span></strong><span style="background: white; color: teal"><strong>) {
+</strong>    </span><span style="background: white; color: blue">if </span><span style="background: white; color: teal">(</span><span style="background: white; color: black">e</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">detail</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">kind </span><span style="background: white; color: teal">===<br />        </span><span style="background: white; color: black">Windows</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">ApplicationModel</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">Activation</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">ActivationKind</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">launch</span><span style="background: white; color: teal">) {<br />
+</span><span style="background: white; color: teal"><br /><br />      </span><span style="background: white; color: green">// TODO: startup code here
+    </span><span style="background: white; color: teal">}
+<strong>  }
+
+  </strong></span><strong><span style="background: white; color: black">WinJS</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">Application</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">start</span></strong><span style="background: white; color: teal"><strong>();
+</strong>})();</span></pre>
+
+<p><a></a>
+
+  <pre class="code"></a></pre>
+</a>
+
+  <p>The contents of the generated default.js file are contained within a self-executing anonymous function declaration (that is a mouthful – it’s fun to use a language with key concepts missing).</p>
+
+  <p>By default, any function or variable defined outside of a function in your JavaScript files is global across your Metro/JS app. Variables and functions defined within a function are only visible within that function. The template uses this outer function declaration to help you follow good JavaScript design patterns, ensuring that your functions and variables do not pollute the global namespace.</p>
+
+  <p>After grabbing the Application object from the WinJS namespace, the code subscribes to the event fired after the application and its resources (like default.html) have been loaded. This is a good place to do initialization, as we’ll see.</p>
+
+  <p>For any of the application events to fire, you need to let the application know you’re ready to receive them, which is what the call to the start method does.</p>
+
+  <p>The mainwindowactivated event handler is the perfect place for us to kick off the download of the data from Chen’s blog.</p>
+
+  <h2>Async HTTP using WinJS.xhr</h2>
+
+  <p>The xhr function in the WinJS namespaces provides a series of options for downloading data in both text and XML formats using HTTP. The name of the xhr function stands for XMLHttpRequest, which is the name of the object that sparked the <a href="http://en.wikipedia.org/wiki/Ajax_%28programming%29">AJAX</a>/<a href="http://en.wikipedia.org/wiki/Web_2.0">Web 2.0</a> revolution around 2005 (although the object has been part of Internet Explorer since version 5.0 released in 1999). The xhr function provided with WinJS is a wrapper that takes a number of options, including which HTTP verb to use (GET by default), which HTTP headers to include (none by default) and which URL to retrieve data from:</p>
+
+  <pre class="code"><span style="background: white; color: black">WinJS</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">Application</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">onmainwindowactivated </span><span style="background: white; color: teal">= </span><span style="background: white; color: blue">function </span><span style="background: white; color: teal">(</span><span style="background: white; color: black">e</span><span style="background: white; color: teal">) {
+  </span><span style="background: white; color: green">// start the download
+  </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">chen </span><span style="background: white; color: teal">= </span><span style="background: white; color: #a31515">&quot;http://blogs.msdn.com/b/oldnewthing/rss.aspx&quot;</span><span style="background: white; color: teal">;
+  </span><span style="background: white; color: black">downloadStatus</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">innerText </span><span style="background: white; color: teal">= </span><span style="background: white; color: #a31515">&quot;downloading posts...&quot;</span><span style="background: white; color: teal">;
+<strong>  </strong></span><strong><span style="background: white; color: black">WinJS</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">xhr</span><span style="background: white; color: teal">({ </span><span style="background: white; color: black">url</span><span style="background: white; color: teal">: </span><span style="background: white; color: black">chen </span><span style="background: white; color: teal">}).</span><span style="background: white; color: black">then</span><span style="background: white; color: teal">(</span><span style="background: white; color: black">processPosts</span><span style="background: white; color: teal">, </span><span style="background: white; color: black">downloadError</span></strong><span style="background: white; color: teal"><strong>);
+</strong>}
+</span></pre>
+
+  <p>Instead of providing the option to retrieve the data synchronously or asynchronously the way the XMLHttpRequest object does, xhr forces an asynchronous call so that the UI will not be blocked while data is retrieved. You’ll see this all over the Win8 programming model as reflected into Metro/JS and it helps you make more responsive programs. In our case, because we don’t know how long the request is going to take, we’re setting the text content of the downloadStatus div to indicate progress.</p>
+
+  <p>Asynchronous functions from WinJS return an object called a promise, which represents results to be provided at some time in the future. The promise object exposes the then method, which takes an optional three functions, one for success, one for failure and one for progress.</p>
+
+  <p>The call to the xhr function returns the promise immediately, at which point we set the functions to call in the case of success or failure, ignoring progress:</p>
+
+  <pre class="code"><span style="background: white; color: blue">function </span><span style="background: white; color: black">processPosts</span><span style="background: white; color: teal">(</span><span style="background: white; color: black">request</span><span style="background: white; color: teal">) {
+  </span><span style="background: white; color: green">// clear the progress indicator
+  </span><span style="background: white; color: black">downloadStatus</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">innerText </span><span style="background: white; color: teal">= </span><span style="background: white; color: #a31515">&quot;&quot;</span><span style="background: white; color: teal">;
+
+  </span><span style="background: white; color: green">// parse the RSS
+  </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">items </span><span style="background: white; color: teal">= </span><span style="background: white; color: black">request</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">responseXML</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">selectNodes</span><span style="background: white; color: teal">(</span><span style="background: white; color: #a31515">&quot;//item&quot;</span><span style="background: white; color: teal">);
+  </span><span style="background: white; color: blue">if </span><span style="background: white; color: teal">(</span><span style="background: white; color: black">items</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">length </span><span style="background: white; color: teal">== </span><span style="background: white; color: black">0</span><span style="background: white; color: teal">) {
+    </span><span style="background: white; color: black">downloadStatus</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">innerText </span><span style="background: white; color: teal">= </span><span style="background: white; color: #a31515">&quot;error downloading posts&quot;</span><span style="background: white; color: teal">;
+  }
+
+  </span><span style="background: white; color: blue">for </span><span style="background: white; color: teal">(</span><span style="background: white; color: blue">var </span><span style="background: white; color: black">i </span><span style="background: white; color: teal">= </span><span style="background: white; color: black">0</span><span style="background: white; color: teal">, </span><span style="background: white; color: black">len </span><span style="background: white; color: teal">= </span><span style="background: white; color: black">items</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">length</span><span style="background: white; color: teal">; </span><span style="background: white; color: black">i </span><span style="background: white; color: teal">&lt; </span><span style="background: white; color: black">len</span><span style="background: white; color: teal">; </span><span style="background: white; color: black">i</span><span style="background: white; color: teal">++) {
+    </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">item </span><span style="background: white; color: teal">= </span><span style="background: white; color: black">items</span><span style="background: white; color: teal">[</span><span style="background: white; color: black">i</span><span style="background: white; color: teal">];
+
+    </span><span style="background: white; color: green">// append data to #posts div
+    </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">parent </span><span style="background: white; color: teal">= </span><span style="background: white; color: black">document</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">createElement</span><span style="background: white; color: teal">(</span><span style="background: white; color: #a31515">&quot;div&quot;</span><span style="background: white; color: teal">);
+    </span><span style="background: white; color: black">appendDiv</span><span style="background: white; color: teal">(</span><span style="background: white; color: black">parent</span><span style="background: white; color: teal">, </span><span style="background: white; color: black">item</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">selectNodes</span><span style="background: white; color: teal">(</span><span style="background: white; color: #a31515">&quot;title&quot;</span><span style="background: white; color: teal">)[</span><span style="background: white; color: black">0</span><span style="background: white; color: teal">].</span><span style="background: white; color: black">text</span><span style="background: white; color: teal">, </span><span style="background: white; color: #a31515">&quot;postTitle&quot;</span><span style="background: white; color: teal">);
+    </span><span style="background: white; color: black">appendDiv</span><span style="background: white; color: teal">(</span><span style="background: white; color: black">parent</span><span style="background: white; color: teal">, </span><span style="background: white; color: black">item</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">selectNodes</span><span style="background: white; color: teal">(</span><span style="background: white; color: #a31515">&quot;pubDate&quot;</span><span style="background: white; color: teal">)[</span><span style="background: white; color: black">0</span><span style="background: white; color: teal">].</span><span style="background: white; color: black">text</span><span style="background: white; color: teal">, </span><span style="background: white; color: #a31515">&quot;postDate&quot;</span><span style="background: white; color: teal">);
+    </span><span style="background: white; color: black">appendDiv</span><span style="background: white; color: teal">(</span><span style="background: white; color: black">parent</span><span style="background: white; color: teal">, </span><span style="background: white; color: black">item</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">selectNodes</span><span style="background: white; color: teal">(</span><span style="background: white; color: #a31515">&quot;description&quot;</span><span style="background: white; color: teal">)[</span><span style="background: white; color: black">0</span><span style="background: white; color: teal">].</span><span style="background: white; color: black">text</span><span style="background: white; color: teal">, </span><span style="background: white; color: #a31515">&quot;postContent&quot;</span><span style="background: white; color: teal">);
+    </span><span style="background: white; color: black">posts</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">appendChild</span><span style="background: white; color: teal">(</span><span style="background: white; color: black">parent</span><span style="background: white; color: teal">);
+  }
+}
+
+</span><span style="background: white; color: blue">function </span><span style="background: white; color: black">appendDiv</span><span style="background: white; color: teal">(</span><span style="background: white; color: black">parent</span><span style="background: white; color: teal">, </span><span style="background: white; color: black">html</span><span style="background: white; color: teal">, </span><span style="background: white; color: black">className</span><span style="background: white; color: teal">) {
+  </span><span style="background: white; color: blue">var </span><span style="background: white; color: black">div </span><span style="background: white; color: teal">= </span><span style="background: white; color: black">document</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">createElement</span><span style="background: white; color: teal">(</span><span style="background: white; color: #a31515">&quot;div&quot;</span><span style="background: white; color: teal">);
+  </span><span style="background: white; color: black">div</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">innerHTML </span><span style="background: white; color: teal">= </span><span style="background: white; color: black">html</span><span style="background: white; color: teal">;
+  </span><span style="background: white; color: black">div</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">className </span><span style="background: white; color: teal">= </span><span style="background: white; color: black">className</span><span style="background: white; color: teal">;
+  </span><span style="background: white; color: black">parent</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">appendChild</span><span style="background: white; color: teal">(</span><span style="background: white; color: black">div</span><span style="background: white; color: teal">);
+}
+
+</span><span style="background: white; color: blue">function </span><span style="background: white; color: black">downloadError</span><span style="background: white; color: teal">() {
+  </span><span style="background: white; color: black">downloadStatus</span><span style="background: white; color: teal">.</span><span style="background: white; color: black">innerText </span><span style="background: white; color: teal">= </span><span style="background: white; color: #a31515">&quot;error downloading posts&quot;</span><span style="background: white; color: teal">;
+}
+</span></pre>
+
+  <p>When the xhr call has completed successfully, the processPosts function is called with a request object which has all the information as if we’d use the XMLHttpRequest object directly. The property we care about is responseXML, which contains the RSS data we requested. From the RSS, we use an XPath expression to select the set of item nodes, extracting the title, pubDate and description data to be used to create a div element per item, with div elements for each of the pieces of data we’re showing, styled appropriately.</p>
+
+  <p>For readers of The Old New Thing, the output should look pretty darn familiar:</p>
+
+  <p><a href="/public/post-images/12713-122.jpeg"><img style="display: inline" title="clip_image006" alt="clip_image006" src="/public/post-images/12713-123.jpeg" width="818" height="768" /></a></p>
+
+  <p>At this point, you may worry about whether our use of the xhr function will actually work, since a page provided by a web server would fail. The reason this works is because Metro/JS apps run in a secure sandbox and are, by default, allowed the ability to make cross-domain HTTP requests even though web pages are not.</p>
+
+  <p><em>Actually, it’s not quite true that Metro apps are allowed access to the Internet by default – it’s just that Metro app project in VS11 are provided that access by default, as it’s such a common need.</em></p>
+
+  <h2>Where Are We?</h2>
+
+  <p><font size="1"><font size="3">At this point, we’ve built a working Metro/JS app that does a real thing using WinJS. In the next installment, we’ll look at how WinJS provides features to make DOM manipulation better.</font></font></p>
+
+  <p><font size="1"><em>Portions Copyright © 2011 Microsoft Corporation. Reproduced with permission from Microsoft Corporation. All rights reserved.</em></font></p>  

@@ -1,0 +1,33 @@
+<!--
+Date: 11/27/2001 3:52:00 PM  -08:00
+Permalink: 12369
+Disqus: 12369
+Tags: fun
+-->
+<h1>I am not making this up...</h1>
+<p>A friend of mine stumbled over this in the Microsoft source code:</p>
+<pre>//  Function:   RunCommandEx
+//  Synopsis:   runs the given command in the current session, more robust
+//				than RunCommand
+//  Arguments:  none
+//  Returns:    S_OK if success
+//  History:    October 3, 2000 - created [<i>name withheld to protect the guilty</i>]
+HRESULT RunCommandEx(LPCWSTR szCmdLine) {
+	DWORD dwTry = 0;
+	HRESULT hResult = S_OK;
+
+	// try run command 3 times at most
+	while (dwTry<4) {
+		hResult = RunCommand(szCmdLine);
+		if (hResult!=E_FAIL) {
+			// we succeeded
+			break;
+		}
+		dwTry++;
+	}
+	if (dwTry==4) {
+		ATLTRACE(L"COuld start the command even we tried 4 times\n");
+		ASSERT(FALSE);
+	}
+	return hResult;
+}</pre><p>That's not <i>quite</i> my definition of robust, but oh well...</p><p><i>Tue <span class="created">11/27/2001 3:52 PM</span></i></p>

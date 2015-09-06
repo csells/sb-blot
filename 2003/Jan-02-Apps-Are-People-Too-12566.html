@@ -1,0 +1,80 @@
+<!--
+Date: 1/2/2003 12:00:00 AM  -08:00
+Permalink: 12566
+Disqus: 12566
+Tags: spout
+-->
+<h1>Apps Are People, Too</h1>
+<p>I concerned <a href="/12661">Wahoo!</a><a/> patron 
+sent in the following screen shot of the current high scores as exposed by the 
+high scores service:</p><p>
+<img border="0" src="/public/spout/wahoo_top_10.JPG" width="641" height="458"></p><p>
+As you can see, the high scores service has turned into the poster child for the 
+need for web service security. However, after hanging out at two Web Services 
+DevCons and talking with Keith &quot;Mr. Security&quot; Brown, I've come to the conclusion 
+that there is no good way to secure this specific web service. Even worse than 
+that, there's an entire class of web services just like it that can't be 
+guaranteed secure.</p><p>The goal of the high scores web service is to provide 
+access only to the Wahoo! app itself. Only Wahoo! knows when someone has earned 
+their score while playing instead of merely faked it through some other means. 
+Of course, this application is just for fun, so the lack of a secure high scores 
+repository is hardly a big deal (although I'm often surprised when people tell 
+me that they play wahoo.exe instead of sol.exe). However, imagine that a real 
+application wanted to do the same thing. Maybe Microsoft only wants Office 
+applications and not Linux knock-offs to query the clip art web service on 
+microsoft.com. Or maybe your business wants to provide a web service that only 
+your apps can talk to.</p><p>Of course, Microsoft doesn't ship the source code 
+for Word and your business is unlikely to ship the source code for your apps if 
+you plan on making money on them (remember actually making money on software?), 
+so that's different than Wahoo!, isn't it? No. Every time you put code on a 
+machine outside of your sphere of influence, you might as well ship code, 
+especially if it's .NET code, which comes with a built-in disassembler! &quot;But 
+wait,&quot; you say. &quot;What about code obfuscators?&quot; Well, that arms race has already 
+been fought in the world of Java and disassemblers won. There was no way that an 
+obfuscator can hide the details of Java byte code without completely destroying 
+the usability of the code (particularly in the area of performance). .NET will 
+be no different.</p><p>&quot;Aha! But what about unmanaged code? x86 can't be read 
+like IL.&quot; You're right. It is harder to disassemble x86 than IL, but not 
+significantly so. The x86 disassembler tool vendors have been working for a lot 
+longer on this problem and we've bred guys like Andrew Shulman and Matt Peitrek 
+that dream in x86 and only translate to English as a convenience for their 
+wives.</p><p>The bottom line that if you ship code, you might as well ship the 
+source, as it's available anyway. If a computer can execute your code, somebody 
+can read it and pull out the details of whatever you're using to obfuscate the 
+communication between your code and your back end (whether it's a web service or 
+not).</p><p>&quot;So why do I have to log in all the time if there's no such thing as 
+security?&quot; Well, it's not as if there aren't ways to secure systems in the 
+world, but all working security thus far invented depends on physical security, 
+whether it's the private part of a key pair secured in your safe or a password 
+secured in your brain. The reason that applications can't make use of this kind 
+of security is because they don't have access to safes and their minds can be 
+read much more easily that those of humans (although a rubber hose is just as 
+effective as ildasm.exe, when something is really important).</p><p>So what does 
+that mean for applications that want to make use of back-ends? I see four 
+solutions. One, you can tie security to a user instead of an application. For 
+example, if I make everyone sign up for a Wahoo! account to log high scores, I'd 
+at least know who to ban from use when they faked impossibly high scores. 
+However, it also opens up the possibility of the user completely bypassing the 
+application altogether, including any checks that the client may make on 
+validity of the data being sent to the back-end.</p><p>The second possibility is 
+to make things hard*er* on the potential hackers. Keith summed it up nicely:</p><p>
+&quot;After looking at your JPG, I'd suggest some server side filtering. Limits on 
+user name length and content would help you at least reduce the amount of space 
+that hackers can use for advertising. OTOH, you've got a nice little bulletin 
+board going there ;-)&quot;</p><p>Anything I do in the way of encryption and 
+obfuscation between the app and the back-end will slow down potential hackers 
+and for something like Wahoo!, I don't suspect it would take much to keep folks 
+honest (turning off the asmx test page would be a good first step, for example : 
+).</p><p>One way to make things harder, and a third way to secure apps, is a 
+dongle, which adds new hardware to a machine along with the software. 
+Unfortunately, a dongle could be reverse engineered just as a hunk of software. 
+It's only the fairly uncommon use of dongles that keeps them from being broken 
+more often.</p><p>The fourth option, which Keith mentioned, is Microsoft's new 
+Palladium platform, which operates with special hardware and software to limit a 
+user's access to their own computer, kind of like a universal dongle.</p><p>The 
+real question is, what's secure enough? Unfortunately, this is an arms race that 
+will eventually be won by any hacker with enough smarts, time and money. For 
+users, we continue to make things harder on hackers as we transition from 
+passwords to biometrics and smart cards. For applications, we've got dongles and 
+precious little else, which makes it darn hard to treat apps like the 
+independent entities into which they're evolving.</p>

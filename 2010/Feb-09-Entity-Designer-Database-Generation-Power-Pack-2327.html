@@ -1,0 +1,15 @@
+<!--
+Date: 2/9/2010 5:55:24 PM  -08:00
+Permalink: 2327
+Disqus: 2327
+Tags: tools
+-->
+<h1>Entity Designer Database Generation Power Pack</h1>
+<img align=right src="http://blogs.msdn.com/blogfiles/adonet/WindowsLiveWriter/EntityDesignerDatabaseGenerationPowerPac_83DF/Untitled_thumb_1.png" />
+If you like Model-First design in Entity Framework, you're going to love <A href="http://blogs.msdn.com/adonet/archive/2010/02/08/entity-designer-database-generation-power-pack.aspx">the Entity Designer Database Generation Power Pack</A>. The original <A href="http://msdn.microsoft.com/en-us/library/dd456817(VS.100).aspx" mce_href="http://msdn.microsoft.com/en-us/library/dd456817(VS.100).aspx">Database Generation feature</A> in the Entity Designer in VS 2010 is extensible via <A href="http://go.microsoft.com/fwlink/?LinkId=166027" mce_href="http://go.microsoft.com/fwlink/?LinkId=166027">Windows Workflows</A> and <A href="http://msdn.microsoft.com/en-us/library/bb126445.aspx" mce_href="http://msdn.microsoft.com/en-us/library/bb126445.aspx">T4 Templates</A>. This Power Pack builds on these extensibility mechanisms and introduces the following:
+<UL>
+<LI>Basic Table-per-Hierarchy support. This is represented by the &#8220;Generate T-SQL via T4 (TPH)&#8221; workflow. 
+<LI>The SSDL and MSL generation pieces can now be tweaked through T4 templates, both in TPH and TPT strategies through the &#8220;Generate T-SQL via T4 (TPT)&#8221; and &#8220;Generate T-SQL via T4 (TPH)&#8221; workflows. 
+<LI>Direct deployment and data/schema migration are available through the &#8220;Generate Migration T-SQL and Deploy&#8221; workflow. This workflow will use the Team System Data APIs to diff our default T-SQL script against the target database and create a new script which will perform non-invasive ALTERs and data migration where necessary. 
+<LI>A new user interface will now display when &#8220;Generate Database from Model&#8221; is selected &#8211; this acts as a &#8220;workflow manager&#8221; which will present to you our default workflows and allow you to create your own, customizable workflows based on your own strategy, script generation, and deployment requirements.</LI></UL>
+<P>Highly recommended. Enjoy!</P>

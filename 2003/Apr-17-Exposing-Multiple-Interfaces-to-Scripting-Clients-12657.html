@@ -1,0 +1,712 @@
+<!--
+Date: 4/17/2003 4:40:00 AM  -08:00
+Permalink: 12657
+Disqus: 12657
+Tags: tools
+-->
+<h1>Exposing Multiple Interfaces to Scripting Clients</h1>
+        <p>
+            This page represents an attempt to capture the collective consciousness of the 
+            COM community. Of course, thoughtful feedback is welcome and encouraged (who 
+            the hell am I to voice the collective opinions of the entire COM community?). 
+            Once this is all sorted out, I anticipate never implementing IDispatch again 
+            (&quot;Get COM+ now, I'll show you how!&quot;).
+        </p>
+        <p>
+            This page attempts to answer the question:
+            <dl>
+                <dd>
+                    &quot;How do I expose multiple interfaces to scriping clients?&quot;</dd>
+            </dl>
+        <p>
+            Why is this an issue? Because IDispatch is limited? No. It's a problem because 
+            current scripting clients don't support QI. Based on my observations of this 
+            list and my <em><strong>extensive</strong></em> conversations with members of 
+            the COM community, I see several solutions to this problem:
+        </p>
+        <a name="technique1">
+            <h2>
+                1. Don't try to expose the functionality of multiple interfaces to a scripting 
+                client.
+            </h2>
+        </a>
+        <p>
+            This is my favorite technique and was originally suggested to me by Keith 
+            Brown. He recommends using IDispatch to model the entire functionality of the 
+            object at a higher level than the individual interfaces, e.g.
+        </p>
+        <p>
+            <small><font face="Lucida Console">interface IRect : IUnknown
+                    <br>
+                    {
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT GetCoords([out] long* pleft, [out] long* ptop,
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    [out] long* pright, [out] long* pbottom);</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; HRESULT SetCoords([in] long left, 
+                    [in] long top,
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    [in] long right, [in] long bottom);
+                    <br>
+                    }</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">interface I2DObject : IUnknown
+                    <br>
+                    {
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Inflate([in] long cx, [in] long cy);
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Translate([in] long cy, [in] long cy);
+                    <br>
+                    }</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">// For scripting clients only
+                    <br>
+                    [ hidden, dual ]
+                    <br>
+                    interface _IRectangle : IDispatch
+                    <br>
+                    {
+                    <br>
+                    &nbsp;&nbsp;&nbsp; [propput] HRESULT Left([in] long left);
+                    <br>
+                    &nbsp;&nbsp;&nbsp; [propget] HRESULT Left([out, retval] long* pleft);
+                    <br>
+                    &nbsp;&nbsp;&nbsp; ...
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Inflate([in] long cx, [in] long cy);
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Translate([in] long cy, [in] long cy);
+                    <br>
+                    }</font></small>
+        </p>
+        <p>
+            An implementation would use the dual strictly for IDispatch purposes, i.e. 
+            vtbl-binding clients wouldn't use _IRectangle:
+        </p>
+        <p>
+            <small><font face="Lucida Console">class CRectangle : ...,
+                    <br>
+                    &nbsp;&nbsp;&nbsp; public IRect,
+                    <br>
+                    &nbsp;&nbsp;&nbsp; public I2DObject,
+                    <br>
+                    &nbsp;&nbsp;&nbsp; public IDispatchImpl&lt;_IRectangle, &amp;IID__IRectangle,
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    &amp;LIBID_SHAPESLib&gt;
+                    <br>
+                    {
+                    <br>
+                    public:
+                    <br>
+                    BEGIN_COM_MAP(CRectangle)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(IRect)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(I2DObject)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(IDispatch)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; // No entry for _IRectangle
+                    <br>
+                    END_COM_MAP()</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; // IRect methods
+                    <br>
+                    &nbsp;&nbsp;&nbsp; ...</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; // I2DObject methods
+                    <br>
+                    &nbsp;&nbsp;&nbsp; ...</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; // _IRectangle methods
+                    <br>
+                    &nbsp;&nbsp;&nbsp; ...</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">};</font></small>
+        </p>
+        <p>
+            Since we're no longer using interface-based programming, this technique allows 
+            full control when implementing the single interface the scripting client will 
+            see w/o having to worry about mapping every method of all of the interfaces. By 
+            using the dual strictly as a means of implementing IDispatch and not exposing 
+            it, your IDispatch implementation can evolve as your object functionality 
+            evolves, i.e. using another dual w/ another IID. While it's still possible for 
+            a savvy developer to get a hold of the dual and try to implement it or derive 
+            from it, a slap on the forehead is generally enough to discourage this 
+            behavior.
+        </p>
+        <p>
+            Unfortunately, nobody ever likes this technique because it forces them to 
+            provide client-specific implementation (which, btw, you'll likely to have to do 
+            anyway...).
+        </p>
+        <a name="technique2">
+            <h2>
+                2. Use the C++ MI trick.
+            </h2>
+        </a>
+        <p>
+            If you have n interfaces that are already [oleautomation] compatible, you can 
+            define a dual interface in IDL that is a union of all of the methods of all of 
+            the interfaces you'd like to expose methods from and let the C++ compiler match 
+            up the vtbls for you.
+        </p>
+        <p>
+            <small><font face="Lucida Console">[ oleautomation ]
+                    <br>
+                    interface IRect : IUnknown
+                    <br>
+                    {
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT GetCoords([out] long* pleft, [out] long* ptop,
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    [out] long* pright, [out] long* pbottom);</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; HRESULT SetCoords([in] long left, 
+                    [in] long top,
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    [in] long right, [in] long bottom);
+                    <br>
+                    }</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">[ oleautomation ]
+                    <br>
+                    interface I2DObject : IUnknown
+                    <br>
+                    {
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Inflate([in] long cx, [in] long cy);
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Translate([in] long cy, [in] long cy);
+                    <br>
+                    }</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">[ hidden, dual ]
+                    <br>
+                    interface _IRectangle
+                    <br>
+                    {</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; // Copied from IRect
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT GetCoords([out] long* pleft, [out] long* ptop,
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    [out] long* pright, [out] long* pbottom);</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; HRESULT SetCoords([in] long left, 
+                    [in] long top,
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    [in] long right, [in] long bottom);</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; // Copied from I2DObject
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Inflate([in] long cx, [in] long cy);
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Translate([in] long cy, [in] long cy);</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">}</font></small>
+        </p>
+        <p>
+            The implementation derives from all of the interfaces and implements the union 
+            of the methods. The C++ compiler will fill in the vtbl entries for the dual 
+            interface using the methods you are already implementing for your non-dual 
+            interfaces, e.g.
+        </p>
+        <p>
+            <small><font face="Lucida Console">class CRectangle :
+                    <br>
+                    &nbsp;&nbsp;&nbsp; ...,
+                    <br>
+                    &nbsp;&nbsp;&nbsp; public IRect,
+                    <br>
+                    &nbsp;&nbsp;&nbsp; public I2DObject,
+                    <br>
+                    &nbsp;&nbsp;&nbsp; public IDispatchImpl&lt;_IRectangle, &amp;IID__IRectangle,
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    &amp;LIBID_SHAPESLib&gt;</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">{
+                    <br>
+                    public:</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">BEGIN_COM_MAP(CRectangle)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(IRect)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(I2DObject)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; COM_INTERFACE_ENTRY(IDispatch)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; // No entry for _IRectangle
+                    <br>
+                    END_COM_MAP()</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; // IRect methods
+                    <br>
+                    &nbsp;&nbsp;&nbsp; ...</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; // I2DObject methods
+                    <br>
+                    &nbsp;&nbsp;&nbsp; ...</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; // _IRectangle methods already 
+                    implemented!</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">};</font></small>
+        </p>
+        <p>
+            This method allows your clients to have access to the union of the methods of 
+            all of the interfaces that you have copied and pasted into your dual interface. 
+            However, now you're left with the copy 'n' paste dance in IDL and there's no 
+            way to resolve name conflicts, e.g. IRect and I2DObject both have a method 
+            Foo() that is each meant to do different things. This method also requires you 
+            to define your non-dual interfaces with scripting clients in mind. Finally, 
+            this method also exposes the dual in the TypeLib to savvy developers (see the 
+            aforementioned forehead-slap solution).
+        </p>
+        <a name="technique3">
+            <h2>
+                3. Use a typeinfo-driven implementation of IDispatch that provides a union of 
+                the methods of the scriptable interfaces.
+            </h2>
+        </a>
+        <p>
+            <a href="mailto:Daniel.Sinclair@btinternet.com">Daniel Sinclair</a> provides 
+            another implementation of this technique called <a href="http://www.object-site.co.uk/MartinG/COM/download/MultiDual.zip">
+                MultiDual</a>, described in this <a href="http://www.object-site.co.uk/MartinG/COM/ReadmeMD.html">
+                online ReadMe</a>.
+            <br>
+            <a href="mailto:herb@CON2.COM">Herbert Carroll</a> provides a 
+			<a href="/12658">similar implementation</a>, but not based on typeinfo.
+            <br>
+            <a href="mailto:Kjell.Tangen@computas.com">Kjell Tangen</a> provides another 
+            solution for by implementing a extended version of 
+			<a href="/public/tools/multidisp/winnie_the_pooh_dispatch.h">CComTypeInfoHolder</a>.
+        </p>
+        <p>
+            Imagine the following IDL:
+        </p>
+        <p>
+            <small><font face="Lucida Console">[ oleautomation ]
+                    <br>
+                    interface ICowboy : IUnknown
+                    <br>
+                    {
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Draw([in] long nSpeed); // Conflicts with 
+                    IArtist::Draw
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Shoot(); 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    // Conflicts with ICurse::Shoot
+                    <br>
+                    }</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">[ oleautomation ]
+                    <br>
+                    interface IArtist : IUnknown
+                    <br>
+                    {
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Draw([in] long nStrokes); // Conflicts with 
+                    ICowboy::Draw
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Paint();
+                    <br>
+                    }</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">[ oleautomation ]
+                    <br>
+                    interface ICurse : IUnknown
+                    <br>
+                    {
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Shoot(); // Conflicts with ICowboy::Shoot
+                    <br>
+                    &nbsp;&nbsp;&nbsp; HRESULT Darn();
+                    <br>
+                    }</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">library TURNOFTHECENTURYLib
+                    <br>
+                    {
+                    <br>
+                    &nbsp;&nbsp;&nbsp; coclass AcePowell
+                    <br>
+                    &nbsp;&nbsp;&nbsp; {
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; interface ICowboy;
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [default] interface IArtist;
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; interface ICurse;
+                    <br>
+                    &nbsp;&nbsp;&nbsp; }
+                    <br>
+                    }</font></small>
+        </p>
+        <p>
+            The client would like to write code like this:
+        </p>
+        <p>
+            <small><font face="Lucida Console">&lt;script language=vbscript&gt;</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; ace.paint&nbsp;&nbsp;&nbsp; ' 
+                    unambiguously IArtist::Paint
+                    <br>
+                    &nbsp;&nbsp;&nbsp; ace.draw 100 ' resolved to IArtist::Draw because
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    'IArtist is [default]</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; ace.darn&nbsp;&nbsp;&nbsp; ' 
+                    unambiguously ICurse::Darn
+                    <br>
+                    &nbsp;&nbsp;&nbsp; ace.shoot&nbsp;&nbsp; ' resolved to ICowboy::Shoot because 
+                    ICowboy
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    ' comes before ICurse in the coclass statement</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; 
+                    ace.icurse_shoot&nbsp;&nbsp;&nbsp; ' resolved to ICurse::Shoot because of 
+                    prefix
+                    <br>
+                    &nbsp;&nbsp;&nbsp; ace.icurse_darn&nbsp;&nbsp;&nbsp;&nbsp; ' prefix unnecessary 
+                    but still works</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&lt;/script&gt;</font></small>
+        </p>
+        <p>
+            The typelib-based table-driven implementation would use the coclass statement 
+            to map calls to GetIDsOfNames and Invoke to the appropriate interface 
+            definition, doing a little pre-processing along the way to provide 
+            non-colliding DISPIDs for non-default interface methods and handling the 
+            prefixes to perform fully-scoped name resolution.
+        </p>
+        <p>
+            Because the implementation is completely table-deriven based on the coclass 
+            statement, an aggregatable implementation of IDispatch that provided this 
+            amalgam behaviour could be implemented that only depended on the object to 
+            expose IProvideClassInfo. In fact, some members of this list have provided 
+            implementations of similiar techniques w/o, unless I'm mistaken, the name 
+            resolution scheme I've proposed above. Assuming such an implementation of 
+            IDispatch, the object implementation could look like this:
+        </p>
+        <p>
+            <small><font face="Lucida Console">class CAcePowell :
+                    <br>
+                    &nbsp;&nbsp;&nbsp; ...,
+                    <br>
+                    &nbsp;&nbsp;&nbsp; public IProvideClassInfo
+                    <br>
+                    {</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">BEGIN_COM_MAP(CAcePowell)
+                    <br>
+                    &nbsp;&nbsp;&nbsp; // Appropriate entries for nested composition of
+                    <br>
+                    &nbsp;&nbsp;&nbsp; // ICowboy, IArtist and ICurse</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; 
+                    COM_INTERFACE_ENTRY_AUTOAGGREGATE(IID_IDispatch, m_spunkDisp.p,
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    CLSID_StdAmalgamDispatch)</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; 
+                    COM_INTERACE_ENTRY(IProvideClassInfo)
+                    <br>
+                    END_COM_MAP()</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; ...</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">private:
+                    <br>
+                    &nbsp;&nbsp;&nbsp; CComPtr&lt;IUnknown&gt; m_spunkDisp;
+                    <br>
+                    };</font></small>
+        </p>
+        <p>
+            Note: Assuming the implementation exposed the same DISPIDs for the methods and 
+            properties of the default interface as the default interface, early bound 
+            clients would be just as happy as late bound ones. And, because no dual 
+            interface is defined to implement IDispatch, there's no worry of a developer 
+            getting a hold of the interface definition for the dual interface directly 
+            (although a slap is still warranted for those that try).
+        </p>
+        <a name="technique4">
+            <h2>
+                4. Use a typeinfo-driven implementation of IDispatch that provides a collection 
+                of nested objects that implement the scriptable interfaces.
+            </h2>
+        </a>
+        <p>
+            Don and I implemented this technique at Tim's house. It's available 
+			<a href="/public/tools/multidisp/multidisp.zip">here</a>. Also, this has been updated by
+            <a href="mailto:sergesandler@insureware.com">Serge Sandler</a> for 
+            VC6 and for Win9x compatibility.</p>
+        <p>
+            Assuming the AcePowell IDL shown above, the client would like to write the 
+            following code (which performs the same as the previous client code):
+        </p>
+        <p>
+            <small><font face="Lucida Console">&lt;script language=vbscript&gt;</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; ace.paint&nbsp;&nbsp;&nbsp; ' top 
+                    level object has all methods of
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    ' [default] interface</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; dim artist
+                    <br>
+                    <em>&nbsp;&nbsp;&nbsp; set artist = ace.iartist ' Can &quot;QI&quot; for specific 
+                        interface
+                        <br>
+                    </em>&nbsp;&nbsp;&nbsp; artist.draw 100</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; dim curse
+                    <br>
+                    <em>&nbsp;&nbsp;&nbsp; set curse = artist.icurse ' Simulated QI
+                        <br>
+                    </em>&nbsp;&nbsp;&nbsp; curse.darn</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; dim cowboy
+                    <br>
+                    <em>&nbsp;&nbsp;&nbsp; set cowboy = curse.icowboy ' Simulated QI
+                        <br>
+                    </em>&nbsp;&nbsp;&nbsp; cowboy.shoot</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; curse.shoot
+                    <br>
+                    &nbsp;&nbsp;&nbsp; curse.darn</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&lt;/script&gt;</font></small>
+        </p>
+        <p>
+            As you can see, we're exposing a collection of objects where the top level 
+            object has all of the methods and properties of the [default] interface as well 
+            a property to obtain an interface pointer on a sub-object for each of the 
+            oleautomation interfaces. The sub-objects are separate COM identities whose 
+            implementation of IDispatch simply forwards to the main identity via the 
+            specific interface in question. Each of the sub-objects also have one property 
+            per interface to get to the other interfaces, thus simulated the rules of COM 
+            identity as exposed via QI. This allows us to build an invocation model very 
+            similar to VB's where QI is an assignment and references of type class mean 
+            references to the [default] interface.
+        </p>
+        <p>
+            Parts of the implementation for this scheme have also been posted w/o, unless 
+            I'm mistaken, the full simulated QI as I propose above. The nested 
+            implementation of IDispatch could also be fully typelib-drived based on an 
+            object's implementation of IProvideClassInfo and aggregated, e.g. using a clsid 
+            like CLSID_StdNestedDispatch.
+        </p>
+        <p>
+            One alternative syntax that might be a bit more flexible is the following:
+        </p>
+        <p>
+            <small><font face="Lucida Console">&lt;script language=vbscript&gt;</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; ace.paint&nbsp;&nbsp;&nbsp; ' top 
+                    level object has all methods of
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                    ' [default] interface</font></small>
+        </p>
+        <p>
+            <font face="Lucida Console"><small>&nbsp;&nbsp;&nbsp; dim artist
+                    <br>
+                    <em>&nbsp;&nbsp;&nbsp; set artist = ace.interface(&quot;iartist&quot;)</small>
+                <br>
+                </em><small>&nbsp;&nbsp;&nbsp; if not artist is nothing then artist.draw 100</small></font>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; dim curse
+                    <br>
+                    <em>&nbsp;&nbsp;&nbsp; set curse = artist.interface(&quot;icurse&quot;)
+                        <br>
+                    </em>&nbsp;&nbsp;&nbsp; if not curse is nothing then curse.darn</font></small>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&nbsp;&nbsp;&nbsp; dim cowboy
+                    <br>
+                    <em>&nbsp;&nbsp;&nbsp; set cowboy = curse.interface(&quot;icowboy&quot;)
+                        <br>
+                    </em>&nbsp;&nbsp;&nbsp; if not cowboy is nothing then cowboy.shoot</font></small>
+        </p>
+        <p>
+            <font face="Lucida Console"><small>&nbsp;&nbsp; if not curse is nothing then
+                    <br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; curse.shoot
+                    <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; curse.darn</small>
+                <br>
+                <small>&nbsp;&nbsp;&nbsp; end if</small></font>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&lt;/script&gt;</font></small>
+        </p>
+        <p>
+            This syntax makes it even more clear that we're doing COM, it only requires one 
+            additional property (interface) and it's easier to handle the QI failure case.
+        </p>
+        <a name="technique5">
+            <h2>
+                5. Use a separate object to perform QI.
+            </h2>
+        </a>
+        <p>
+            This method is made real in an implementation by <a href="mailto:dave.rogers@fmcsc.com">
+                Dave Rogers</a>, available at <a href="http://www.combatcom.com/ViewPage/ViewPage.asp?lowURL=/adminstore/component-warehouse/thedispadapter.htm">
+                http://www.combatcom.com/adminstore/component-warehouse/thedispadapter.htm</a>
+            and <a href="mailto:valery.pryamikov@SM.SIEMENS.NO">Valery Pryamikov</a>, available at <a href="http://home.sol.no/~valery">
+                http://home.sol.no/~valery</a> Instead of building the pseudo-QI into the 
+            object itself, Valery uses another another object to perform the QI. This 
+            allows the client code to look like this:
+        </p>
+        <p>
+            <small><font face="Lucida Console">&lt;script language=vbscript&gt;</font></small>
+        </p>
+        <p>
+            <font face="Lucida Console"><small>&nbsp;&nbsp;&nbsp; ' Requires object to implement 
+                    IProvideClassInfo or IPersist</small>
+                <br>
+                <em><small>&nbsp;&nbsp;&nbsp; set dispenum.ObjectClass = ace</small></em></font>
+        </p>
+        <p>
+            <font face="Lucida Console"><small>&nbsp;&nbsp;&nbsp; ' Doesn't require 
+                    IProvideClassInfo or IPersist</small>
+                <br>
+                <small>&nbsp;&nbsp;&nbsp; ' Note: Could use CLSID instead of ProgID
+                    <br>
+                    <em>&nbsp;&nbsp;&nbsp; dispenum.SetCLSIDObjectClass(ace, 
+                        &quot;Ace.AcePowell.1&quot;) </em></small></font>
+        </p>
+        <p>
+            <font face="Lucida Console"><small>&nbsp;&nbsp;&nbsp; Dim artist</small>
+                <br>
+                <em><small>&nbsp;&nbsp;&nbsp; Set artist = dispenum(&quot;iartist&quot;) ' Use disenum 
+                        to perform QI</small>
+                    <br>
+                </em><small>&nbsp;&nbsp;&nbsp; If not artist is nothing then artist.draw 100</small></font>
+        </p>
+        <p>
+            <font face="Lucida Console"><small>&nbsp;&nbsp;&nbsp; Dim curse</small>
+                <br>
+                <em><small>&nbsp;&nbsp;&nbsp; Set curse = dispenum(&quot;icurse&quot;)</small>
+                    <br>
+                </em><small>&nbsp;&nbsp;&nbsp; If not curse is nothing then curse.darn</small></font>
+        </p>
+        <p>
+            <font face="Lucida Console"><small>&nbsp;&nbsp;&nbsp; Dim cowboy</small>
+                <br>
+                <em><small>&nbsp;&nbsp;&nbsp; Set cowboy = dispenum(&quot;icowboy&quot;)</small>
+                    <br>
+                </em><small>&nbsp;&nbsp;&nbsp; If not cowboy is nothing then cowboy.shoot</small></font>
+        </p>
+        <p>
+            <font face="Lucida Console"><small>&nbsp;&nbsp; If not curse is nothing then</small>
+                <br>
+                <small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Curse.shoot</small>
+                <br>
+                <small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Curse.darn</small>
+                <br>
+                <small>&nbsp;&nbsp;&nbsp; End if</small></font>
+        </p>
+        <p>
+            <small><font face="Lucida Console">&lt;/script&gt;</font></small>
+        </p>
+        <p>
+            This technique requires another object to perform the QI, so it seems a little 
+            weird, but the good news is that it works with existing objects. No recompile 
+            necessary!
+        </p>
+        <h2>
+            Now What?
+        </h2>
+        <p>
+            Given those techniques of implementing IDispatch to expose the functionality of 
+            multiple interfaces, the first two require no additional tool support. You can 
+            use them today. The last two, amalgam dispatch and nested dispatch, represent 
+            two models of exposing the functionality of multiple interfaces to a scripting 
+            client. Either model may be appropriate, but each is conceptually separate, 
+            i.e. the object implementor would pick one or the other.
+        </p>
+        <p>
+            After writing the client code, I find I really like technique 4 best. It looks 
+            like COM to me. However, I can see that some folks would prefer technique 3 or 
+            5.
+        </p>
+        <p>
+            So, what do we do now? Do we wait for MS to ship COM+? We won't see 
+            meta-information driven scripting until the turn of the millennia. Do we wait 
+            for MS to implement CLSID_StdAmalgamDispatch and CLSID_StdNestedDispatch? Those 
+            guys are pretty busy with COM+, so I won't hold my breath. Are we sure of the 
+            ramifications and usage of amalgam dispatch and nested dispatch? I'm pretty 
+            sure, but not completely so. If you think I'm all wrong (or even just a litte), <a href="mailto:csells@sellsbrothers.com?subject=TypeLib-Driven Dispatch">
+                let me know</a>.
+        </p>
+        <p>
+            On the other hand, if there are enough folks that are excited about a 
+            typelib-driven implementation of IDispatch, we can get it done. I've dedicated 
+            this web page to collecting and distributing the pieces. If folks have some 
+            source to contribute, I'll use it to build the two implementations. If folks 
+            have full implementations, I'm happy to post those as well. Please, let's stop 
+            implementing IDispatch so I can stop thinking about the worthlessness of duals. 
+            Thanks.
+        </p>
+        <p>
+            BTW, want to know the real reason we have duals? It saves a vptr. Doh!</p>
+<p><i>
+<a href="http://science.webhostinggeeks.com/sellsbrothers_interfejs_kod_skripting_klijenta">This article is translated to Serbo-Croatian</a> by Anja Skrba from <a href="http://webhostinggeeks.com/"> Webhostinggeeks.com</a>.</i></p>

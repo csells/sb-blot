@@ -1,0 +1,8 @@
+<!--
+Date: 10/24/2005 12:00:00 AM  -08:00
+Permalink: 12464
+Disqus: 12464
+Tags: spout
+-->
+<h1>Typed WF Communications Details</h1>
+<p align="left">If you downloaded the samples from my previous <a href="#Workflow_Communication_Spelunking">two</a> <a href="#More_Workflow_Communciation_Spelunking">forays</a> into WF communications programming, you probably couldn't get them to build. The problem is that when I packaged things up, I removed the bin directories. I haven't figured out just why this causes everything to stop building, but with the help of Dennis Pilarinos, I rearranged the two projects into three:</p><ol><li><p align="left">communications interface (CommunicationLibrary): the data exchange service interface definition, compiles into CommunicationLibrary.dll</li><li><p align="left">communications activities (WorkflowProject1): uses a pre-build step to generate the typed activities generated from the communications library using the wca tool, references CommunicationLibrary.dll and compiles into WorkflowProject1.dll (nice name, eh? : )</li><li><p align="left">application (EventSinkAndMethodInvoke2): the app that uses the typed activities, references both CommunicationLibrary.dll and WorkflowProject1.dll</li></ol><p align="left">It's only by separating the communications activities into a separate assembly that things can build and rebuild reliably. You can <a href="/public/samples/WfEventSinkAndMethodInvoke2with3projectsAndStateMachine.zip">download the newly configured code here</a>. Enjoy.</p>

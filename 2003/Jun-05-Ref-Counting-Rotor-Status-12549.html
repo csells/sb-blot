@@ -1,0 +1,35 @@
+<!--
+Date: 6/5/2003 12:00:00 AM  -08:00
+Permalink: 12549
+Disqus: 12549
+Tags: spout
+-->
+<h1>Ref-Counting 
++ Rotor Status</h1>
+<p>I just got this email 
+from Chris Tavares (who's doing the lion's share of the implementation work to 
+add ref-counting to Rotor):</p><blockquote><p style="text-autospace: none"><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:blue">
+	using</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;"> 
+	System;<br></span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:blue">
+	class</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;"> 
+	FinalizerObj {<br>&nbsp; <span style="color:blue">int</span> n;<br><br>&nbsp; <span style="color:blue">
+	public</span> FinalizerObj(<span style="color:blue">int</span> n) {<br>&nbsp;&nbsp;&nbsp; <span style="color:blue">
+	this</span>.n = n;<br>&nbsp;&nbsp;&nbsp; Console.WriteLine(&quot;Created 
+	Finalizer object {0}&quot;, n);<br>&nbsp; }<br><br>&nbsp; ~FinalizerObj() {<br>&nbsp;&nbsp;&nbsp; 
+	Console.WriteLine(&quot;Finalizing finalizer object {0}&quot;, n);<br>&nbsp; }<br>}<br><br></span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:blue">
+	class</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;"> 
+	TestApp {<br>&nbsp; <span style="color:blue">public</span> <span style="color:blue">
+	static</span> <span style="color:blue">void</span> Main() {<br>&nbsp;&nbsp;&nbsp; <span style="color:blue">
+	for</span>( <span style="color:blue">int</span> i = 0; i &lt; 5; ++i ) 
+	LeakAnObj(i);<br>&nbsp; }<br><br>&nbsp; <span style="color:blue">static</span> <span style="color:blue">
+	void</span> LeakAnObj( <span style="color:blue">int</span> i ) {<br>&nbsp;&nbsp;&nbsp; 
+	FinalizerObj obj = <span style="color:blue">new</span> FinalizerObj(i);<br>&nbsp; 
+	}<br>}</span></p><p>Under the desktop CLR, I get this:<pre>
+C:\Home\Chris\Projects\Rotor\src\tests&gt;FinalizerTest<br>Created Finalizer object 0<br>Created Finalizer object 1<br>Created Finalizer object 2<br>Created Finalizer object 3<br>Created Finalizer object 4<br>Finalizing finalizer object 4<br>Finalizing finalizer object 0<br>Finalizing finalizer object 3<br>Finalizing finalizer object 2<br>Finalizing finalizer object 1
+</pre>But when I run under Rotor, now I get this:<br><pre>
+C:\Home\Chris\Projects\Rotor\src\tests&gt;clix FinalizerTest.exe<br>Created Finalizer object 0<br>Finalizing finalizer object 0<br>Created Finalizer object 1<br>Finalizing finalizer object 1<br>Created Finalizer object 2<br>Finalizing finalizer object 2<br>Created Finalizer object 3<br>Finalizing finalizer object 3<br>Created Finalizer object 4<br>Finalizing finalizer object 4<br>Finalizing finalizer object 4<br>Finalizing finalizer object 0<br>Finalizing finalizer object 3<br>Finalizing finalizer object 2<br>Finalizing finalizer object 1</pre><p>
+	I obviously still need to figure out how to pull the object off the 
+	finalization queue, but that will have to wait until tomorrow night.</p></blockquote><p>
+Even though they're being called by us and by the GC, this is the first time 
+we've been able to get finalizers working. Wahoo!</p>
+

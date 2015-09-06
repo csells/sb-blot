@@ -1,0 +1,121 @@
+<!--
+Date: 1/2/2012 11:04:26 AM  -08:00
+Permalink: 12711
+Disqus: 12711
+Tags: telerik,win8
+-->
+<h1>Your First Metro style App in JavaScript</h1>
+<p><font color="#ff0000">DISCLAIMER: This post is targeted at <a href="http://buildwindows.com">the //build/ version of the Windows Developer Preview</a> (aka Windows 8). Things are likely to change with future releases. On your head be it.</font></p>  <p>A “Windows Metro style app” is an application built for the devices running the new Windows user experience of Windows 8. A Metro style app built using JavaScript is a first class Windows application built with the technologies of the web, e.g. HTML, CSS, JavaScript, JSON, SVG, etc. Unlike a web site, a Metro JS app is not deployed page-by-page from a web server, but rather installed locally on the user’s machine. Like any other first class Windows app, a Metro JS app has access to the underlying platform and is able to share information with other apps.</p>  <p>Like any web site, a Metro JS app starts with an HTML file:</p>  <pre class="code"><span style="background: white; color: blue">&lt;!</span><span style="background: white; color: maroon">DOCTYPE </span><span style="background: white; color: red">html</span><span style="background: white; color: blue">&gt;
+&lt;</span><span style="background: white; color: maroon">html</span><span style="background: white; color: blue">&gt;
+&lt;</span><span style="background: white; color: maroon">head</span><span style="background: white; color: blue">&gt;&lt;</span><span style="background: white; color: maroon">title</span><span style="background: white; color: blue">&gt;</span><span style="background: white; color: black">Hello, Win8</span><span style="background: white; color: blue">&lt;/</span><span style="background: white; color: maroon">title</span><span style="background: white; color: blue">&gt;&lt;/</span><span style="background: white; color: maroon">head</span><span style="background: white; color: blue">&gt;
+&lt;</span><span style="background: white; color: maroon">body</span><span style="background: white; color: blue">&gt;&lt;</span><span style="background: white; color: maroon">h1</span><span style="background: white; color: blue">&gt;</span><span style="background: white; color: black">Hello and welcome to Metro style Win8!</span><span style="background: white; color: blue">&lt;/</span><span style="background: white; color: maroon">h1</span><span style="background: white; color: blue">&gt;&lt;/</span><span style="background: white; color: maroon">body</span><span style="background: white; color: blue">&gt;
+&lt;/</span><span style="background: white; color: maroon">html</span><span style="background: white; color: blue">&gt;
+</span></pre>
+
+<p>This HTML, if it were loaded in the web browser, would result in the world’s most boring web site. Also, surfing to a web page in the browser is not at all how your customers will execute a Metro style app. Instead, they’ll install it from the Windows Store and execute it from the Start Screen:</p>
+
+<p><a href="/public/post-images/12711-92.png"><img style="display: inline" title="image" alt="image" src="/public/post-images/12711-93.png" width="640" height="400" /></a></p>
+
+<p>Further, a web page (or series of web pages, styles, code, resources, etc.) is not a Metro JS app. A Metro JS app includes these things, but also includes metadata and resources:</p>
+
+<ul>
+  <li>A <b>manifest file </b>to describe your application, including the name, description, the start page, etc. </li>
+
+  <li>A set of large and small<b> logo images</b> to be displayed by the shell. </li>
+
+  <li>A <b>store logo</b> to be displayed by the Windows Store. </li>
+
+  <li>A <b>splash screen</b> to show when your app starts. </li>
+</ul>
+
+<p>The manifest file is an XML file called appxmanifest.xml and a minimal one looks like this:</p>
+
+<pre class="code"><span style="background: white; color: blue">&lt;?</span><span style="background: white; color: #a31515">xml </span><span style="background: white; color: red">version</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">1.0</span><span style="background: white; color: black">&quot; </span><span style="background: white; color: red">encoding</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">utf-8</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">?&gt;
+&lt;</span><span style="background: white; color: #a31515">Package </span><span style="background: white; color: red">xmlns</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">http://schemas.microsoft.com/appx/2010/manifest</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">&gt;
+
+  &lt;</span><span style="background: white; color: #a31515">Identity
+    </span><span style="background: white; color: red">Name</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">hello</span><span style="background: white; color: black">&quot;
+    </span><span style="background: white; color: red">Version</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">1.0.0.0</span><span style="background: white; color: black">&quot;
+    </span><span style="background: white; color: red">Publisher</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">CN=Microsoft Corporation, O=Microsoft Corporation,<br />               L=Redmond, S=Washington, C=US</span><span style="background: white; color: black">&quot; </span><span style="background: white; color: blue">/&gt;
+
+  &lt;</span><span style="background: white; color: #a31515">Properties</span><span style="background: white; color: blue">&gt;
+    &lt;</span><span style="background: white; color: #a31515">DisplayName</span><span style="background: white; color: blue">&gt;</span><span style="background: white; color: black">Hello</span><span style="background: white; color: blue">&lt;/</span><span style="background: white; color: #a31515">DisplayName</span><span style="background: white; color: blue">&gt;
+    &lt;</span><span style="background: white; color: #a31515">Description</span><span style="background: white; color: blue">&gt;</span><span style="background: white; color: black">Hello</span><span style="background: white; color: blue">&lt;/</span><span style="background: white; color: #a31515">Description</span><span style="background: white; color: blue">&gt;
+    &lt;</span><span style="background: white; color: #a31515">PublisherDisplayName</span><span style="background: white; color: blue">&gt;</span><span style="background: white; color: black">csells</span><span style="background: white; color: blue">&lt;/</span><span style="background: white; color: #a31515">PublisherDisplayName</span><span style="background: white; color: blue">&gt;
+    &lt;</span><span style="background: white; color: #a31515">Logo</span><span style="background: white; color: blue">&gt;</span><span style="background: white; color: black">images\storelogo.png</span><span style="background: white; color: blue">&lt;/</span><span style="background: white; color: #a31515">Logo</span><span style="background: white; color: blue">&gt;
+  &lt;/</span><span style="background: white; color: #a31515">Properties</span><span style="background: white; color: blue">&gt;
+
+  &lt;</span><span style="background: white; color: #a31515">Prerequisites</span><span style="background: white; color: blue">&gt;
+    &lt;</span><span style="background: white; color: #a31515">OSMinVersion</span><span style="background: white; color: blue">&gt;</span><span style="background: white; color: black">6.2</span><span style="background: white; color: blue">&lt;/</span><span style="background: white; color: #a31515">OSMinVersion</span><span style="background: white; color: blue">&gt;
+    &lt;</span><span style="background: white; color: #a31515">OSMaxVersionTested</span><span style="background: white; color: blue">&gt;</span><span style="background: white; color: black">6.2</span><span style="background: white; color: blue">&lt;/</span><span style="background: white; color: #a31515">OSMaxVersionTested</span><span style="background: white; color: blue">&gt;
+  &lt;/</span><span style="background: white; color: #a31515">Prerequisites</span><span style="background: white; color: blue">&gt;
+
+  &lt;</span><span style="background: white; color: #a31515">Resources</span><span style="background: white; color: blue">&gt;
+    &lt;</span><span style="background: white; color: #a31515">Resource </span><span style="background: white; color: red">Language</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">en-US</span><span style="background: white; color: black">&quot; </span><span style="background: white; color: blue">/&gt;
+  &lt;/</span><span style="background: white; color: #a31515">Resources</span><span style="background: white; color: blue">&gt;
+
+  &lt;</span><span style="background: white; color: #a31515">Applications</span><span style="background: white; color: blue">&gt;
+    &lt;</span><span style="background: white; color: #a31515">Application 
+      </span><span style="background: white; color: red">Id</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">hello.App</span><span style="background: white; color: black">&quot;      
+ <strong>     </strong></span><strong><span style="background: white; color: red">StartPage</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">default.html</span><span style="background: white; color: black">&quot;</span></strong><span style="background: white; color: blue"><strong>&gt;
+</strong>
+      &lt;</span><span style="background: white; color: #a31515">VisualElements
+        </span><span style="background: white; color: red">DisplayName</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">Hello</span><span style="background: white; color: black">&quot;
+        </span><span style="background: white; color: red">Logo</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">images\logo.png</span><span style="background: white; color: black">&quot;
+        </span><span style="background: white; color: red">SmallLogo</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">images\smalllogo.png</span><span style="background: white; color: black">&quot;
+        </span><span style="background: white; color: red">Description</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">Hello</span><span style="background: white; color: black">&quot;
+        </span><span style="background: white; color: red">ForegroundText</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">light</span><span style="background: white; color: black">&quot;
+        </span><span style="background: white; color: red">BackgroundColor</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">#0084FF</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">&gt;
+
+        &lt;</span><span style="background: white; color: #a31515">SplashScreen </span><span style="background: white; color: red">Image</span><span style="background: white; color: blue">=</span><span style="background: white; color: black">&quot;</span><span style="background: white; color: blue">images\splashscreen.png</span><span style="background: white; color: black">&quot; </span><span style="background: white; color: blue">/&gt;
+
+      &lt;/</span><span style="background: white; color: #a31515">VisualElements</span><span style="background: white; color: blue">&gt;
+    &lt;/</span><span style="background: white; color: #a31515">Application</span><span style="background: white; color: blue">&gt;
+  &lt;/</span><span style="background: white; color: #a31515">Applications</span><span style="background: white; color: blue">&gt;
+
+&lt;/</span><span style="background: white; color: #a31515">Package</span><span style="background: white; color: blue">&gt;
+</span></pre>
+
+<p>The manifest has things in it like the name of the application, the description for the application, a reference to the images and, most importantly, the name of the HTML file that represents the app’s start page.</p>
+
+<p>With the manifest and supporting files in place, getting your super exciting app registered with the system is a matter of starting up PowerShell (which you can do from the Start Screen by typing “powershell”), and importing the “appx” module (Figure 1).</p>
+
+<p><a href="/public/post-images/12711-94.png"><img style="display: inline" title="image" alt="image" src="/public/post-images/12711-95.png" width="640" height="200" /></a></p>
+
+<p>If you’re not familiar with it, <a href="http://technet.microsoft.com/en-us/library/bb978526.aspx">Windows PowerShell</a> is the next-gen command line shell built into Windows. Out of the Win8 box, it comes with the “appx” module, which allows you to manage the modern applications installed on your computer:</p>
+
+<ul>
+  <li><b>Add-AppxPackage:</b> install an application so that it can be launched </li>
+
+  <li><b>Get-AppxPackage:</b> get a list of installed applications </li>
+
+  <li><b>Get-AppxPackageManifest:</b> get the manifest details of an installed application </li>
+
+  <li><strong>Get-AppxLastError: </strong>get the details for the last appx-related error </li>
+
+  <li><b>Remove-AppxPackage:</b> uninstall an application </li>
+</ul>
+
+<p>The “appx” part of the command names come from the packaged form of a Metro style app, which is called an “appx” after the file extension. To create one, you can use the “MakeAppx.exe” command-line tool available via the Developer Command Prompt available on the Start Screen. The job of MakeAppx.exe is to package your application, manifest and all, into a single file with a “.appx” extension. An appx file is a file in <a href="http://technet.microsoft.com/en-us/query/dd742818">the Open Packaging Conventions (OPC) format</a>, which essential means it’s a .zip file with a few extras. If you’re going to package and sign your application for submission into <a href="http://blogs.msdn.com/b/windowsstore/archive/2011/12/06/announcing-the-new-windows-store.aspx">the Windows Store</a>, you may decide to use MakeAppx.exe and SignTool.exe as part of that process.</p>
+
+<p>However, <a>to simply test an application on your developer box, Add-AppxPackage gives you all you need</a>:</p>
+
+<p><a href="/public/post-images/12711-96.png"><img style="display: inline" title="image" alt="image" src="/public/post-images/12711-97.png" width="640" height="242" /></a></p>
+
+<p>In addition to taking a path to a .appx file, the Add-AppxPackage command allows you to pass in the path to a manifest file using the -Register option, which gives you the ability to install your application for testing without going through the extra step of packaging:</p>
+
+<p><a href="/public/post-images/12711-102.png"><img style="display: inline" title="image" alt="image" src="/public/post-images/12711-103.png" width="640" height="230" /></a></p>
+
+<p>You can double-check that your application has been installed using the Get-AppxPackage command.</p>
+
+<p>Once your application has been installed, you can see it in the shell:</p>
+
+<p><a href="/public/post-images/12711-100.png"><img style="display: inline" title="image" alt="image" src="/public/post-images/12711-101.png" width="640" height="151" /></a></p>
+
+<p>Launching it will you show the inspirational “Hello” message displayed full-screen without any Windows chrome.</p>
+
+<h2>Where Are We?</h2>
+
+<p>After seeing what files and tools used to build and install a Metro style app, you’re probably already hoping for a tool to help you create, edit, package, launch and debug. For that, we’ve got Microsoft Visual Studio 11 Express for the Windows Developer Preview (aka VS11), which we’ll talk about <a href="/12712">next time</a>.</p>
+
+<p><em><font size="1">Portions Copyright © 2011 Microsoft Corporation. Reproduced with permission from Microsoft Corporation. All rights reserved.</font></em></p>  

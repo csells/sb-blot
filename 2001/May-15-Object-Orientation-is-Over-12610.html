@@ -1,0 +1,137 @@
+<!--
+Date: 5/15/2001 12:00:00 AM  -08:00
+Permalink: 12610
+Disqus: 12610
+Tags: spout
+-->
+<h1>Object-Orientation is Over</h1>
+<p>
+                <i><span class="created">Tuesday, 5/15/01</span></i> </p>
+                <p>
+                    Java, and Java 2.0 (aka .NET), have brought with them the end of 
+                    object-orientation. Of course, by that I mean that object-orientation is no 
+                    longer a question -- it's just how we program. Even our scripting languages 
+                    have classes and objects now. That fight is over, as are the advances in that 
+                    area. Object-oriented programming, with inheritance, polymorphism and 
+                    encapsulation, is just the way we do things now and Java and .NET represent the 
+                    end of that line and the beginning of several others:
+                </p>
+                <h2>
+                    <b>Generic Programming</b>
+                </h2>
+                <p>
+                    Generic programming (aka "generics") provides the ability to write a partial 
+                    type or function and let the compiler or runtime environment fill in the 
+                    details based on client usage. Of course, C++ templates have provided generics 
+                    via templates for a long time. Unfortunately, no modern object-oriented 
+                    languages, i.e. Java and C#, have generics as yet, but they're coming. <a href="http://research.microsoft.com/projects/clrgen/generics.pdf">
+                        My favorite research paper in this area describes how generics can be added to 
+                        .NET languages</a>, using C# as an example, written by Microsoft's own 
+                    researchers, Andrew Kennedy and Don Syme.
+                    <br>
+                    <br>
+                    Generics have been around for a long, long time, so if you aren't already 
+                    familiar with them, you're behind. Only C++ programmers do this now, but very 
+                    soon, everyone will be.
+                </p>
+                <h2>
+                    <b>Component-based Programming</b>
+                </h2>
+                <p>
+                    Components differ from objects in that they are binary objects, often callable 
+                    from languages other than that in which they were written. COM, Java and .NET 
+                    are popular modern component development environments, but even DLLs have 
+                    provided component-like features since Windows. Components provide a degree of 
+                    encapsulation that often exceeds that of source-based OO environments, often at 
+                    the expense of ease of use (although both Java and .NET work real hard to make 
+                    components look and feel like objects).
+                </p>
+                <h2>
+                    <b>Aspect-Oriented Programming</b>
+                </h2>
+                <p>
+                    Aspect-oriented programming (AOP) provides the ability to define a set of 
+                    characteristics of an object or a component that are actually implemented by 
+                    the hosting runtime. The benefit, of course, is that it's much easier to 
+                    declare the need for some feature, e.g. method tracing or the need for a 
+                    component to be part of a transaction, than it is to write the code. To date, 
+                    we've had pretty primitive support of AOP in the popular programming 
+                    environments, but it's been there, e.g.
+                </p>
+                <ul>
+                    <li>
+                    COM+ catalog attributes that describe services provided by the COM+ runtime to 
+                    components or groups of components (called "applications"), e.g. transactions, 
+                    object pooling or role-based security.
+                    <li>
+                    Keywords in Java, e.g. the transient keyword that signals to the serialization 
+                    engine whether to serialize an object's member variable or not.
+                    <li>
+                    .NET attributes that extend a component's metadata, which is available via .NET 
+                    reflection to clients, some of which are built into the .NET runtime and some 
+                    of which that are custom to your particular application.
+                    <li>
+                        And my personal favorite, as pointed out to me by Don Box, is the PE attribute 
+                        that marks an EXE as a Win32 Console application. This is primitive, but this 
+                        attribute tells the OS to set up a console window for routing of stdio.
+                    </li>
+                </ul>
+                <p>
+                    The .NET attribute mechanism represents a giant step forward in AOP. It's the 
+                    first popular environment that provides a convenient, extensible mechanism for 
+                    not only declaring attributes, but also implementing custom attribute provides, 
+                    i.e. those bits of code that are activated when an attribute is encountered. 
+                    Extensible .NET metadata is replacing the COM+ catalog and providing exactly 
+                    what the Java serialization keywords provide and I expect most language to 
+                    converge on the AOP style that .NET provides.
+                </p>
+                <h2>
+                    Generative Programming
+                </h2>
+                <p>
+                    Generative programming is the newest of these new programming styles. The term 
+                    itself was boasted into popular usage by the <a href="http://www.amazon.com/exec/obidos/ASIN/0201309777">
+                        book of the same name</a> by Krzysztof Czarnecki and Ulrich Eisenecker. 
+                    Generative programming is about representing your system's design requirements 
+                    in some computer-readable form, e.g. SQL schemas, XML, UML, etc, and feeding it 
+                    to some kind of metaprogram that will generate your program. The main benefit 
+                    of generative programming is that as the design requirements change, your 
+                    programs can be regenerated, saving you from manually replicating design 
+                    changes into the code. Likewise, as the implementation choices need to change, 
+                    e.g. from Java to C# or from Linux to Windows, the metaprograms can change and 
+                    your programs can be regenerated, saving you from doing the porting work.
+                </p>
+                <p>
+                    Macro languages, e.g. the C preprocessor, are generative languages for 
+                    generating code within files. ASP and PHP are both generative languages for 
+                    building web pages. Of course,
+                        DevelopMentor's own Gen&lt;X&gt;, was built from the ground up to be a 
+                    generative programming tool (although we designed and built it long before we'd 
+                    heard the term). Generative programming has a vast potential, I think (although 
+                    I'm biased), because it encourages you to specify your design requirements and 
+                    keep them up to date with the code, but also because of the potential for 
+                    generating large parts of a system's code, testing data and even documentation. 
+                    In fact, in building Gen&lt;X&gt; itself, we find ourselves generating more and 
+                    more of the next version using the previous version. We don't use it for unique 
+                    code, but we use it for the repetitive horizontal or hierarchical code as well 
+                    as reference docs and test data. Highly recommended.
+                </p>
+                <p>
+                    <i><b>[new]</b> Comment from Mickey Williams <A href="mailto:[mickey.williams@codevtech.com">
+                            [mickey.williams@codevtech.com</A>], Mon 7/2/2001 10:54 AM:</i>
+                </p>
+                <p>
+                    "I'd like to remind you that Eiffel has had generics longer than C++, and 
+                    Eiffel's generics work on .NET. So there.
+                </p>
+                <p>
+                    "Best regards from the Eiffel bigot,
+                    <br>
+                    "Mickey"
+                </p>
+                <p>
+                    That's true, Mickey. I knew that <a href="http://www.eiffel.com/">Eiffel</a>
+                    supported templates, but I didn't know that <a href="http://eiffel.com/doc/manuals/technology/dotnet/eiffelsharp/demo.html">
+                        Eiffel# (the .NET version of Eiffel)</a> did, so that's really cool.
+                </p>
+                

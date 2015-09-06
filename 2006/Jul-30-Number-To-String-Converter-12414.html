@@ -1,0 +1,39 @@
+<!--
+Date: 7/30/2006 12:00:00 AM  -08:00
+Permalink: 12414
+Disqus: 12414
+Tags: tools
+-->
+<h1>Number To String Converter</h1>
+
+	<p align="left">To capture the work that Doug and I did to make Indigo (WCF) 
+	and Avalon (WPF) work together, I tore up
+	<a href="/12467">
+	our PDC sample application</a> into a set of simpler technology samples. To 
+	make it fun for myself, as part of these samples, I built a little library 
+	for converting numbers into strings of English words, e.g. 4 is &quot;four:&quot;</p>
+	<p align="left"><img border="0" src="/public/tools/num2str0.jpg" width="318" height="230"></p>
+	<p align="left">To drive home the point (of which there wasn't any because 
+	the sample had nothing whatever to do with number to English phrase 
+	conversions), I spent some time polishing the algorithm so that it handled 
+	decimal points:</p>
+	<p align="left"><img border="0" src="/public/tools/num2str1.jpg" width="356" height="230"></p>
+	<p align="left">and when that didn't satisfy me, I added large numbers and 
+	negative numbers:</p>
+	<p align="left"><img border="0" src="/public/tools/num2str2.jpg" width="826" height="230"></p>
+	<p align="left">Before writing this code, I searched the net and didn't find 
+	any algorithms that handled both negative numbers and decimal points, let 
+	alone for .NET or in the number of lines of code to which I cut it down (93, 
+	including comments). I know it's not useful, but it was fun. If you want the 
+	code, you can get it by
+	<a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=26ceb696-1ab1-4860-8bba-ff38472eb6df">
+	downloading the .NET 3.0 Cross Technology samples</a> and checking out the 
+	WinSDK_Samples\CrossTechnology\WpfDataBindingToWcfResults\service\NumberUtility.cs 
+	file. I built the file to be dropped into any .NET 2.0+ project (and even 
+	.NET 1.x projects, if you remove the &quot;using System.Collections.Generic&quot; 
+	statement at the top of the file -- I don't actually use generics), 
+	regardless of whether you're using Avalon or Indigo or not.</p>
+	<p align="left">Enjoy.</p>
+	<p align="left">
+	<a href="/2020">
+	Discuss</a></p>

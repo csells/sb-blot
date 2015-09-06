@@ -1,0 +1,60 @@
+<!--
+Date: 7/18/2001 12:00:00 AM  -08:00
+Permalink: 12453
+Disqus: 12453
+Tags: tools
+-->
+<h1>Implementing Marshal-by-Value using ATL</h1>
+<span class="created">July 18, 2001</span>
+    <p>
+        Not too long ago, Jonathan Borden, <a href="mailto:jborden@MEDIAONE.NET">jborden@MEDIAONE.NET</a>, 
+        posted a nifty class called <a href="/public/tools/mbvimpl.h">IMarshalByValueImpl</a> that 
+        implemented IMarshal for objects interested in being marshaled by value . It 
+        was built in the ATL style, i.e. it used fun template tricks, and depended on 
+        the COM class also implementing either IPersistStream or IPersistStreamImpl. 
+        And, in fact, ATL provides an implementation of IPersistStreamInit called 
+        IPersistStreamInitImpl. However, IPersistStreamInitImpl has one fatal flaw: it 
+        implements GetSizeMax by returning E_NOTIMPL. This breaks Jonathan's 
+        IMarshalByValueImpl, which depends on a sane implementation of GetSizeMax from 
+        the class.</p>
+    <p>
+        <a href="/public/tools/psiimpl2.h">IPersistStreamInitImpl2</a> leverages the property map of 
+        ATL's IPersistStreamInitImpl to build GetSizeMax. The code is not pretty. It's 
+        just pieced together from ATL's implementation of IPersistStreamInit::Save and 
+        CComVariant::WriteToStream, but it seems to work (thanks to Dharma Shukla, <a href="mailto:v-dharsh@microsoft.com">
+            v-dharsh@microsoft.com</a>, for testing it!).</p>
+    <p>
+        Here's the usage for giving a class MBV:</p>
+    <pre>class PassByValue :
+  public CComObjectRootEx&lt;CComMultiThreadModel&gt;,
+  public CComCoClass&lt;PassByValue, &amp;CLSID_PassByValue&gt;,
+  public IDispatchImpl&lt;IPassByValue, &amp;IID_IPassByValue&gt;,
+  public IMarshalByValueImpl&lt;PassByValue&gt;,
+  public IPersistStreamInitImpl2&lt;PassByValue&gt;
+{
+public:
+BEGIN_COM_MAP(PassByValue)
+  COM_INTERFACE_ENTRY(IDispatch)
+  COM_INTERFACE_ENTRY(IPassByValue)
+  COM_INTERFACE_ENTRY(IMarshal)
+  // Don't need to expose these to the world
+  //COM_INTERFACE_ENTRY(IPersist)
+  //COM_INTERFACE_ENTRY  
+  (IPersistStreamInit)
+END_COM_MAP()
+
+BEGIN_PROP_MAP(PassByValue)
+  // List of properties to marshal-by-value
+  ...
+END_PROP_MAP()
+
+  // IPassByValue methods
+  ...
+
+private:
+  // Whatever data members you wish to marshal
+  ...
+
+public:
+  BOOL m_bRequiresSave; // Required by IPersistStreamInitImpl2
+};</pre>

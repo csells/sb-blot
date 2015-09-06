@@ -1,0 +1,32 @@
+<!--
+Date: 7/23/2003 12:00:00 AM  -08:00
+Permalink: 12535
+Disqus: 12535
+Tags: spout
+-->
+<h1>Using GotDotNet Workspaces For Commercial Work</h1>
+<p><i>Wednesday, <span class="created">July 23, 
+2003</span></i></p><p>When I visit Redmond, I share an office with Andy Oakley, the PM 
+for GotDotNet Workspaces. Workspaces was recently released from beta to v1.0 and 
+when that happened, Andy sent around feedback from users.</p><p>Of course, folks 
+love it in general (even some hard-to-please MS internals), but I was surprised 
+to see to some folks were using private Workspaces for their team's main source 
+code base. I shouldn't have been surprised; this makes a lot of sense. Private 
+workspaces provide a protected space for file sharing, discussion, bug tracking 
+and source code control. The last time I set up a commercial software 
+development team, I needed weeks to get all of this picked out, installed and 
+working and I needed an IT guy to keep it running and backed up. I remember 
+hearing about a 3rd party that was going to bundle all of this together for a 
+fee, but never got around to it. With Workspaces, MS already provides the whole 
+team development environment, including VS.NET integration and a web interface, 
+and it's free! Plus, with a private workspace, only folks on your team get 
+access.</p><p>IMO, the only big piece that was missing from Workspaces was a way 
+to pull down all of the source onto a build machine for regular automatic 
+builds. For commercial work, this is key. So, Andy, tired of my whining, built <a href="http://www.gotdotnet.com/Community/Workspaces/Workspace.aspx?id=b3fb58ff-363b-4d0d-9f42-4946d86a19eb">
+a command line tool for pulling down all source from a GDN Workspace</a> (and 
+put it up in <a href="http://www.gotdotnet.com/Community/Workspaces/Workspace.aspx?id=b3fb58ff-363b-4d0d-9f42-4946d86a19eb">
+it's own GDN Workspace</a>). Personally, I'd be slightly happier if it took 
+arguments from the command line instead of a .config file, but that's easily 
+added from <a href="http://www.genghisgroup.com">the Genghis 
+CommandLineParser class</a> for those that are interested. Enjoy!</p>
+

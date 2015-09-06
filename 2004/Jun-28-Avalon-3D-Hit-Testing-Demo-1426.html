@@ -1,0 +1,9 @@
+<!--
+Date: 6/28/2004 3:26:28 PM  -08:00
+Permalink: 1426
+Disqus: 1426
+Tags: .net
+-->
+<h1>Avalon 3D Hit Testing Demo</h1>
+<P>The benefit of 3D support in Avalon is not the 3D support itself (we've had various ways to do 3D stuff in Windows apps for a while now, including both OpenGL and DirectX). The benefit is the tight integration we get between 3D and 2D elements in Avalon (and we'll get even closer integration as we move closer to the Longhorn release).</P>
+<P>For example, in his <A href="http://weblogs.asp.net/danlehen/archive/2004/06/27/167463.aspx">Avalon 3D Hit Testing Demo</A>, Daniel Lehenbauer shows how hit testing can move into a ViewPort3D element (the representation of a 3D scene in an Avalon display) into the specific element being clicked. In other words, you can have a Button right next to a ViewPort3D showing a teapot and your app can easily tell which one was clicked. Handling a teapot click is slightly harder than handling a Button click simple because the Button does it's own hit testing, but the Avalon 3D hit testing supports advanced features like clicking through the handle of the teapot w/o that being classified as a "hit," all of which Daniel explains nicely in his sample.</P>

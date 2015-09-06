@@ -1,0 +1,17 @@
+<!--
+Date: 6/19/2004 7:36:51 AM  -08:00
+Permalink: 1408
+Disqus: 1408
+Tags: .net
+-->
+<h1>Longhorn 4074, MSBuild + GetOutputAssembly</h1>
+<P>If you're using Longhorn 4074 and MSBuild is telling you this, 'The target "GetOutputAssembly" does not exist in the project.', then try these steps to solve the problem:</P>
+<UL>
+<LI>
+<P class=MsoPlainText style="MARGIN: 0in 0in 0pt">Backup %windows%\microsoft.net\windows\v6.0.4030\WindowsCommon.Target because you're about to modify it</P></LI>
+<LI>
+<P class=MsoPlainText style="MARGIN: 0in 0in 0pt">In WindowsCommon.Target, replace all GetOutputAssembly with BuildOutputGroup</P></LI>
+<LI>
+<P class=MsoPlainText style="MARGIN: 0in 0in 0pt">Save and Close WindowsCommon.Target</P></LI>
+<LI>
+<P class=MsoPlainText style="MARGIN: 0in 0in 0pt">Re-run MSBuild and enjoy</P></LI></UL>

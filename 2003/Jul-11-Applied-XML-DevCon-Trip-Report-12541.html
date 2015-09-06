@@ -1,0 +1,129 @@
+<!--
+Date: 7/11/2003 12:00:00 AM  -08:00
+Permalink: 12541
+Disqus: 12541
+Tags: conference
+-->
+<h1>Applied XML DevCon Trip Report</h1>
+<h2>
+Dave Winer's Keynote:</h2><ul><li>Users care about you software working, not 
+	*how* it works</li><li>Users don't want to be controlled</li><li>As 
+	developers, &quot;we're very impressed with the complexity that we can 
+	understand&quot;</li></ul><h2>Don Box:</h2><ul><li>&quot;No one that gets laid 
+	actually replaces the CPU in their computers anymore. And, since they don't 
+	get laid, they can't reproduce and natural selection will take it's toll. 
+	Likewise, objects are not meant for field replacement.&quot;</li><li>Building on 
+	abstractions means that the abstraction needs to be kept constant</li><li>
+	the wire is god. schemas are relative to your needs. the same XML instance 
+	doc can be many different schemas in a pipeline</li><li>I missed why the 
+	abstractions in a service-oriented architecture are somehow better than 
+	those in an object-oriented architecture, except that maybe SOA abstractions 
+	are courser grained, but that can be true of OOA, too, can't it?</li></ul><h2>
+Brian Jepson:</h2><ul><li>WAP is just another XML format to product that exposes 
+	your data to WAP-enabled devices, e.g. phones</li><li>Very cool to watch 
+	Brian control his presentation via his cell phone (nothing to do with XML, 
+	but very cool never the less). He was using a Mac and didn't know if a niche 
+	OS like Windows had apps that did such things (although he did find <a href="http://www.jeyo.com/">
+	this that might work</a>)</li></ul><h2>Don &quot;XML&quot;:</h2><ul><li>In NJ, they 
+	teach middle school kids HTML, XML and PowerPoint (holy cow!)</li><li>Lots 
+	of folks asking questions, evidently interested in SVG and/or 
+	declarative-based UI models</li></ul><h2>Patrick Logan:</h2><ul><li>Patrick 
+	gave his talk sitting down, which didn't help him keep the audience's 
+	attention</li></ul><h2>Ted Neward:</h2><ul><li>EJB 2.1 for web services 
+	looks pretty easy</li><li>&quot;Swing sucks. People are using WinForms to access 
+	J2EE web services.&quot;</li><li>&quot;Sun has drunk very deeply of the idea that web 
+	services are just CORBA.Next&quot; aka Sun views web services as just another RPC, 
+	which means that they use rcp/encoded instead of doc/literal</li></ul><h2>
+David Ing:</h2><ul><li>Don't take &quot;rules&quot; from speakers at conferences. You can 
+	be entertained by such talks, but you need to make your own decisions</li></ul><h2>
+KeithBa:</h2><ul><li>Keith starts right where I love -- in the code. What better 
+	way to show the new programming model and features of WSE 2.0 than to jump 
+	right to the code? Fabulous</li><li>And not only did he do a fabulous job 
+	writing code to demo WSE 2.0, he did it by building a heckle application 
+	that the audience loved (and took full advantage of : ). You are a master, 
+	Keith</li><li>And! His application is a great example of the need for the 
+	flexible model that WSE 2.0 provides and he brings it right back around how 
+	his amusing, seemingly trivial app is really not suited for an RPC-style 
+	(which we should eschew anyway). Nice</li><li>And then Dave Winer jumps in 
+	to accuse him of saying that there is no such thing as asynch; there is only 
+	polling. Keith is way over the top nice about it and the audience disagrees 
+	with Dave pretty much as a whole</li></ul><h2>Speaker Panel:</h2><ul><li>
+	tons of controversy; end result is that XML solves a huge number of problems 
+	and there's no reason to do &quot;this vs. that&quot; because XML allows everyone to 
+	co-exist and interop (although programming may be needed to gain the latter)</li></ul><h2>
+Ken Levy:</h2><ul><li>First time showing these plans in public (off of a 2am 
+	build)</li><li>Showed off cool new XML editor integrated into VS.NET: <ul><li>
+		showed red squiggles and helpful error messages about invalid XML</li><li>
+		can select text and have it wrapped in XML comments, CDATA blocks, etc.</li></ul></li><li>
+	showed integration of errors using DTD files, i.e. checking elements that 
+	don't have appropriate attributes as defined by the DTD, etc.<ul><li>will 
+		reformat your XML</li><li>may provide outline view for drilling into 
+		large XML docs</li><li>lots of intellisense based on XML/DTD/XSD tools</li></ul></li><li>
+	can create schema from a DTD inside of VS.NET</li><li>can infer schema from 
+	an XML instance</li><li>will enable custom mappings of XML namespaces to 
+	corresponding visual editors, e.g. showed an example of editing SVG: first 
+	view is the rendering of SVG; second view was code. If you change the code 
+	while you're also looking at the SVG view, the SVG view is updated on the 
+	fly</li><li>showed interactive XSLT debugger</li><li>will be releasing <a href="http://www.gotdotnet.com/team/xmltools/">
+	these tools on the XML Tools page for use w/ VS.NET 2003</a> in the fall 
+	(tentatively)</li><li>send <a href="mailto:klevy@microsoft.com">Ken Levy</a> 
+	the things that you'd like to see in the XML tools space</li></ul><h2>Jeff 
+Barr</h2><ul><li>Amazon is able to turn around small features very quickly and 
+	that's the corporate culture</li><li>they spent $300M on distribution 
+	centers and $900M on technology</li><li>when folks were scraping the web, 
+	Amazon could have broken those apps, but realized that the folks doing the 
+	scraping were building legitimate apps with that data that was good for 
+	Amazon, so instead of crushing those folks, they tried to not change the 
+	format of the pages w/o a good reason (in spite of the added cost of 
+	supporting robot traffic)</li><li>to support the largest number of 
+	customers, they support rich SOAP interface and a REST interface</li><li>
+	return &quot;light&quot; and &quot;heavy&quot; data, depending on how much info developers want</li><li>
+	business model for users seems to be picking an unused domain, setting up a 
+	site selling something specific, e.g. power tools, then building the whole 
+	site using the data and purchasing/shipping services of the Amazon web 
+	services. Wow</li><li>the associate program is hugely successful for Amazon 
+	in terms of revenue generation</li><li>the protocol is loose so that 
+	developers have a wide range of choices of what they want to do with it, 
+	e.g. if Amazon doesn't have all of the information being requested, they 
+	return what they have instead of failing, letting the developer decide if 
+	they want to use the info that Amazon provides or fail on their own</li><li>
+	Amazon versioning: new versions get new URLs. Old versions use new code 
+	internally, but return same old data format from same old URL</li><li>for 
+	keeping their own data up to date, Amazon also publishes a set of services 
+	for sellers to update their data and will soon be exposing a service for 
+	sellers to create new ASINs (Amazon product IDs) for their own products</li><li>
+	80% of the requests are for raw XML/REST (with or without transformation)</li><li>
+	as things get more complex, SOAP will take over</li></ul><h2>Steve Loughran:</h2><ul><li>
+	bottom line: SOAP is ready for use in embedded systems (although things can 
+	get better and likely will)</li></ul><h2>Tarlochan Cheema:</h2><ul><li>the 
+	motivation for the sets of web services that microsoft.com is about to 
+	expose is for better communication with partners, e.g. avoiding shipping 
+	CD-ROMs around, as well as providing real programmatic interfaces for folks 
+	that are scraping data from microsoft.com, e.g. top downloads</li><li>the 
+	way that MS stayed at lots of 9s of reliability is with writing good code, 
+	of course, but mostly with heavy use of caching</li></ul><h2>Tim Ewald:</h2><ul><li>
+	XML schema shouldn't be used for nominal typing; it should be used for 
+	structural typing</li><li>different parts of an XML pipeline can have 
+	different XML schemas to check different things</li></ul><h2>Chris Dix:</h2><ul><li>
+	&quot;Everywhere is walking distance if you have the time. Steven Wright&quot;</li><li>
+	Since you can embed non-SVG data and script into SVG, these are the elements 
+	needed for stand-alone, cross-platform &quot;intelligent&quot; data that can provide 
+	it's own UI</li></ul><h2>Aaron Skonnard:</h2><ul><li>&quot;Scott (my code monkey) 
+	and I are still in the running for the $1M playing DevelopMentor Survivor. 
+	We kicked Don off the island first because he was the strongest and Tim 
+	second because he was the smartest.&quot;</li><li>XSD isn't enough to check real 
+	business rules</li><li>XPath is more flexible</li><li>Can write a .NET 
+	SoapExtension like this:</li></ul><p style="text-autospace: none"><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">
+[WebService]<br>[AssertNamespaceBinding(&quot;t&quot;,&quot;urn:geometry/&quot;)]<br></span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:blue">
+public</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;"> <span style="color:blue">
+class</span> Geometry {<br>&nbsp; [WebMethod]<br>&nbsp; [Assert(&quot;//t:length &gt; //t:width&quot;, 
+&quot;Length must be greater than width&quot;)]<br>&nbsp; [Assert(&quot;(//t:length div //t:width) 
+= 2&quot;, &quot;Length must be double the width&quot;)]<br>&nbsp; <span style="color:blue">
+public</span> <span style="color:blue">double</span> CalcArea(<span style="color:blue">double</span> 
+length, <span style="color:blue">double</span> width){<br>&nbsp;&nbsp;&nbsp; <span style="color:blue">
+return</span> length * width;<br>&nbsp; }<br>}</span></p><ul><li><p style="text-autospace: none">
+	Even cooler, because the constraints are part of the .NET metadata of the 
+	method, when the docs and the WSDL is generated from the Geometry web 
+	service, the constraints can be pushed in as well, making the constraints 
+	available to the developer</li></ul>
+

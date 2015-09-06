@@ -1,0 +1,17 @@
+<!--
+Date: 7/31/2001 12:00:00 AM  -08:00
+Permalink: 12440
+Disqus: 12440
+Tags: tools
+-->
+<h1>VARIANT_BOOL Wrapper</h1>
+<span class="created">July 31, 2001</span>
+    <p align="left">
+        CComBool is a class to prevent the misuse of the VARIANT_BOOL type. 
+        VARIANT_BOOL is a problem because its legal values are -1 and 0 instead of 1 
+        and 0, making converting back and forth between bool, BOOL and VARIANT_BOOL 
+        problematic. CComBool supports the constructors and operators needed to convert 
+        between the three C++ Windows Boolean types. It also supports operator&amp; and 
+        CopyTo for common COM client and server usage. <a href="/public/tools/combool.h">CComBool is 
+            available here</a>.
+    </p>

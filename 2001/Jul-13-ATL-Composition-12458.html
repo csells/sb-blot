@@ -1,0 +1,29 @@
+<!--
+Date: 7/13/2001 12:00:00 AM  -08:00
+Permalink: 12458
+Disqus: 12458
+Tags: tools
+-->
+<h1>ATL Composition</h1>
+<span class="created">July 13, 2001</span>
+        
+    <p>
+        I've developed a set of macros to support implementing interfaces using nested 
+        composition in ATL (the one common way of implementing interfaces they 
+        neglected). The benefit of composition is that it is easy to implement multiple 
+        interfaces with methods with the same name but that require different behavior, 
+        e.g.
+    </p>
+    <pre>interface IArtist : IUnknown {
+     HRESULT Draw();
+}
+
+interface ICowboy : IUnknown {
+     HRESULT Draw();
+}</pre>
+    <p>
+        The benefit of this particular implementation is that it has no object size 
+        overhead. Interfaces implemented using nested composition have no greater 
+        overhead than using multiple-inheritance. Feel free to <a href="/public/tools/atlcompose.h">
+            download atlcompose.h</a> for your own use.
+    </p>

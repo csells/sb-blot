@@ -1,0 +1,118 @@
+<!--
+Date: 2/27/2002 12:00:00 AM  -08:00
+Permalink: 12591
+Disqus: 12591
+Tags: spout
+-->
+<h1>HTTP is Dead?</h1>
+
+        <p>Your friend and mine, Don Box, caused quite a stir yesterday with
+        <a href="http://zdnet.com.com/2100-1105-845220.html">his 
+        keynote at European DevWeek in London</a>. 
+        <a href="http://www.razorsoft.net/weblog/stories/2002/02/28/thatKeynoteyouKnowTheOne.html">
+        Peter Drayton has also written up a summary</a> (which is much more 
+        technically meaty), as well as a commentary. There has been some quite 
+        spiriting follow up on this talk all over the Internet:
+        <a href="http://discuss.develop.com/archives/wa.exe?A1=ind0202d&L=dotnet#38">
+        the .NET mailing list</a>,
+        <a href="http://groups.yahoo.com/group/win_tech_off_topic/message/3856">
+        the Off Topic mailing list</a>,
+        <a href="http://groups.yahoo.com/group/rest-discuss/message/822">the 
+        REST mailing list</a> and
+        <a href="http://www.xml.com/pub/a/2002/03/06/deviant.html">
+        XML Deviant on XML.COM</a>. Also, while I absolutely agree with Don 
+        that the way we use HTTP today leads to trouble, I thought that Ian 
+        Griffiths, a fellow DevelopMentor instructor, had a wonderful point of 
+        view that he allowed me to share:</p>
+        <p><i>Guest opinion by Ian Griffiths</i></p>
+        <p>Basically Don seemed to be saying that there are two problems with 
+        HTTP (and saying HTTP is dead is just an effective way of getting people 
+        to listen; I was half tempted to start my Windows Forms speech at the UK 
+        MSDN DevCon with &quot;The Web Application is Dead&quot;). </p>
+        <p>One of these is that HTTP is unidirectional. Surely .NET remoting 
+        shows that this isn't strictly true: individual connections are 
+        directional but it's entirely possible to do callbacks by having 
+        connections go in both directions. (Well duh.) The real problem is that 
+        the firewall architectures of the internet are designed to make sure the 
+        connections only go in one direction; it's not a problem with the 
+        protocol per se, it's a problem with the infrastructure. In order to fix 
+        this problem you need to change the infrastructure regardless of what 
+        you do to the protocol. And if you fix the infrastructure you don't 
+        actually need to fix the protocol, since we already know that it's fine 
+        on networks that don't deliberately break bidirectional communication.
+        </p>
+        <p>Arguably one of the main obstacles here is the use of NAT - NAT makes 
+        it hard for a client behind a firewall to publish an endpoint. But NAT 
+        is fundamentally important because we'd have run out of IP addresses 
+        already if it weren't in such widespread use. So the only way to get rid 
+        of NAT is for everyone to upgrade to IPv6. This will presumably happen 
+        fairly soon since we will run out of IP addresses in any case in about 3 
+        or 4 years. (Windows XP ships with IPv6 support by the way. Type &quot;ipv6 
+        install&quot; at a command prompt if you haven't already. So Microsoft are 
+        quietly making IPv6 ubiquitous on the desktop.) </p>
+        <p>So presuming ipv6 takes off, that's a fundamental technical obstacle 
+        to the one-way nature of HTTP removed. But another one remains: just 
+        because IPv6 pushes the address exhaustion date out of our lifetimes (we 
+        hope), doesn't mean that firewall admins will let connections work both 
+        ways through the firewall. The bidirectional problem can only be solved 
+        with the blessing of firewall admins. And once you have that you don't 
+        actually need IPv6, strictly speaking - given a suitable protocol 
+        between the client machines and the firewall there's no reason that NAT 
+        can't be done in both directions. (Indeed my sub-$100 firewall appliance 
+        can do this on a statically configured basis. It is possible (if a 
+        little inconvenient) for machines behind the firewall to publish 
+        endpoints successfully.) </p>
+        <p>UPnP apparently has a solution for this. (A better one than static 
+        configuration.) It supports P2P network applications that require 
+        clients behind the firewall to be able to accept incoming connections. 
+        It defines precisely what you need: a protocol that lets a client 
+        machine negotiate with the firewall to open up a port for incoming 
+        connections. So it turns out that a technical solution to the problem 
+        already exists. (Without even having to invoke IPv6. Although we still 
+        need that, due to a shortage of address bits in IPv4.)</p>
+        <p>So the first problem already has a technical solution. Presume for a 
+        moment (and it's a big presumption) that these solutions can be 
+        deployed, and firewall admin policies set up so that they are broadly 
+        useable. </p>
+        <p>At this point, the second complaint Don makes - the fact that 
+        long-running requests don't sit well with HTTP - becomes much less of an 
+        issue. We just need to use separate HTTP requests for the request and 
+        the response. We connect to the server, send a request, along with some 
+        response endpoint info (a URL). When the server is done it connects to 
+        us, sends us a response. And we're done. I'm guessing it would probably 
+        be possible to write a .NET remoting channel that works like this. The 
+        only obstacle is the ability for clients to advertise endpoints.</p>
+        <p>So if a client can advertise an endpoint somehow (i.e. it can (a) 
+        convince the firewall to let a connection request come in, and (b) work 
+        out what the endpoint should be - it needs to be aware of any NAT 
+        translation going on) then HTTP can actually solve both the problems 
+        raised here. And as far as I can tell, *any* solution to the problems 
+        raised is going to have to allow the client to receive incoming 
+        requests. In which case why invent a new protocol? Once you've solved 
+        the fundamental problems in the network that stop you from doing this, 
+        HTTP is good enough.</p>
+        <p>The only issues are: (1) getting everyone to agree on how clients 
+        will expose endpoints (UPnP has had nothing but bad press so far, since 
+        the only thing most people know about it is that the first security hole 
+        discovered in Windows XP was connected to it somehow; so it might have 
+        to be something else...), and (2) convincing firewall admins to allow 
+        this functionality to be used.</p>
+        <p>Of course just because a technical solution exists doesn't mean it's 
+        a great solution. Given that this is a fair distance from HTTP as 
+        originally envisaged, it would doubtless be possible to design a 
+        protocol better suited to the job. But would the benefits be worth it? 
+        Everyone already has an HTTP stack and an XML parser - will they flock 
+        to implement a new purpose-built solution?</p>
+        <p>The problems raised in the ZDnet article can essentially be summed up 
+        thus: clients can't expose endpoints. To me, this doesn't look like a 
+        problem with HTTP, it's a problem with the infrastructure. Changing the 
+        protocol is certainly not sufficient to fix the infrastructure problems; 
+        it's not clear to me that it is even necessary. </p>
+        <p>So really this is a social problem, not a technical one. ;-)</p>
+        <p><b><i>
+        <img border="0" src="/public/conference/mini_wsdclogo.gif" width="62" height="51" align="left">If 
+        you're interested in this topic or what other interesting things Don 
+        will say next, he's giving the keynote address at the
+        <a href="/conference">Web Services DevCon on March 21-22</a> in 
+        Beaverton, OR (10 minutes west of Portland).</i></b></p>
+        

@@ -1,0 +1,84 @@
+<!--
+Date: 10/27/2010 6:42:03 PM  -08:00
+Permalink: 12686
+Disqus: 12686
+Tags: tools
+-->
+<h1>LINQ Has Changed Me</h1>
+<p>In the old days, the post-colonial, pre-LINQ days of yore, I’d have written a one-way MD5 encryption like so:</p>  <pre class="csharpcode"><span class="kwrd">static</span> <span class="kwrd">string</span> GetMD5String(<span class="kwrd">string</span> s) {
+  MD5 md5 = <span class="kwrd">new</span> MD5CryptoServiceProvider();
+  <span class="kwrd">byte</span>[] hash = md5.ComputeHash(Encoding.ASCII.GetBytes(s));
+  StringBuilder sb = <span class="kwrd">new</span> StringBuilder();
+  <span class="kwrd">foreach</span>( <span class="kwrd">byte</span> b <span class="kwrd">in</span> hash ) sb.AppendFormat(<span class="str">&quot;{0:x2}&quot;</span>, b);
+  <span class="kwrd">return</span> sb.ToString();
+}</pre>
+<style type="text/css">
+
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>This implementation is fine and has served me well for 10 years (I pulled it out of <a href="/12426">the first .NET project I ever really did</a>). However, after using LINQ for so long, it’s hard not to see every problem as an operation over sets:</p>
+
+<pre class="csharpcode"><span class="kwrd">static</span> <span class="kwrd">string</span> GetMD5String(<span class="kwrd">string</span> s) { 
+  <span class="kwrd">return</span> (<span class="kwrd">new</span> MD5CryptoServiceProvider()). 
+    ComputeHash(Encoding.Unicode.GetBytes(s)). 
+    Aggregate(<span class="kwrd">new</span> StringBuilder(), (working, b) =&gt; working.AppendFormat(<span class="str">&quot;{0:x2}&quot;</span>, b)). 
+    ToString(); 
+} </pre>
+
+<p><style type="text/css">
+
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>I can’t say that the LINQ version is any better, but it felt better. However, you’ll notice that I’m not using any of the LINQ keywords, e.g. “select”, “where”, etc. I find that I don’t really use them that much. It’s too jarring to mix them, e.g. “(from f in foos select f).Take(3)”, since not everything has a LINQ keyword equivalent. I tend to do “LINQ-less LINQ” more often then not.</p>
+
+<p>P.S. I assume someone will be able to tell me how I can do it better. : )</p>
+
+<p>P.P.S. I’m using <a href="http://gallery.live.com/liveItemDetail.aspx?li=1f57bd9b-a692-4593-9e9e-e2962d9c0eee&amp;bt=9&amp;pl=8">the Insert Code for Windows Live Writer add-in</a>. I love WLW!</p>  

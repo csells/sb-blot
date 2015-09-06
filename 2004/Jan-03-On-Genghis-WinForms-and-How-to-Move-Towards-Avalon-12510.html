@@ -1,0 +1,172 @@
+<!--
+Date: 1/3/2004 12:00:00 AM  -08:00
+Permalink: 12510
+Disqus: 12510
+Tags: spout
+-->
+<h1>On Genghis, WinForms and How to Move Towards Avalon</h1>
+<p><i>Saturday, 
+<span class="created">January 3rd, 2004</span></i></p><p>Inspired by <a href="/1016">
+my pending interview of Don Box</a>, Paolo Severini sent along an interview for 
+me.</p><p><i>Paul: Being a faithful reader of your books, articles and of your 
+blog, I'd like to ask you a few questions about LH, Avalon and the future of 
+WinForms. Before all, let me say that I'm really fascinated by Longhorn, and 
+especially by Avalon. I installed the PDC stuff as soon as I received it through 
+my MSDN subscription and I've begun exploring it with &quot;pure geek&quot; enthusiasm. 
+Everything is extremely interesting, but I'm now not sure what to do with it.</i></p><p>
+Chris: I know what you mean, Paul. <a href="#I_dont_know_UIs,_but_I_know_what_I_like...">
+I'm going through that myself</a>. Suddenly having so many fewer barriers tends 
+to throw off the engineer in me. I'm working through it by begging <a href="http://msdn.microsoft.com/longhorn/understanding/ux">
+the Longhorn User Experience team</a> for guidance, <a href="http://www.amazon.com/exec/obidos/ASIN/0321193806/chrissells">
+learning Adobe Illustrator</a>, <a href="http://www.amazon.com/exec/obidos/tg/detail/-/1566091594/ref=ase_chrissells/">
+reading graphic design books</a> and trying to open my mind to the graphic 
+designer inside us all (I hope : ).</p><p><i>Paul: Paraphrasing one of the 
+questions you proposed to Don Box: what should a WinForms programmer *really* do 
+today to prepare for Avalon?</i></p><p>Chris: If you want to write code today 
+that'll work well on Longhorn tomorrow, write WinForms today. WinForms in 
+Whidbey gets tons more features and I expect they'll be some cool new 
+Longhorn-specific stuff when the time is right. If, when you're preparing a 
+Longhorn version of your application, you'd like to host Avalon controls from 
+your WinForms app or even build Avalon apps that host your WinForms controls, 
+you'll be able to do that in Longhorn via WinForms/Avalon interop.<br><br>For 
+maximum flexibility in the code you write now, be very thorough about separating 
+the data from the view of the data so that you can write a 100% Avalon front end 
+to replace your WinForms front end if such is your need. Likewise, be very 
+thorough about separating the data from the storage of the data is that you can 
+take advantage of WinFS.<br><br><i>Paul: I'm very grateful to MS for having 
+disclosed their future technologies so soon, and more generally, to have become 
+so &quot;opened&quot; to outsider's eyes, with so many devs and PMs now blogging about 
+their work.</i></p><p>Chris: Me, too. Without this openness, I'd get into lots 
+more trouble. : )</p><p><i>Paul: But I somehow also think that maybe LH was 
+presented a bit too soon. Since it's not planned to be released before 2006, 
+chances are that the shipped version could be significantly different. (Will it? 
+Is it already? Can you write anything about that? :-).</i></p><p>Chris: I used 
+to think that we were unveiling Longhorn too soon, too. However, the later in 
+the development process we get it out to reviewers, the fewer major changes 
+we'll be able to make based of your feedback. What that means, of course, is 
+that some major things are going to change between now and release, but those 
+changes will be based on decisions that include feedback from you. The downside 
+is that you'll have to relearn some of the things you learn with these bits. 
+Hopefully, the upside is that most of what you have to unlearn will be replaced 
+with something significantly better.<br><br><i>Paul: Furthermore, even when the 
+new presentation subsystem will ship, it seems like it won't be easy to write 
+code that supports both the new and the old platforms, being they so different, 
+and that could slow down its widespread acceptance even more. So I'm afraid that 
+we'll all have a difficult time writing user interfaces, having to decide 
+whether to take advantage of the new features or simply stay with the old 
+portable libraries. After all, there are today still (too many) people running 
+Windows 9x. And Windows XP is such a great OS that won't universally be replaced 
+so soon.</i></p><p>Chris: I've already mentioned how well WinForms will work 
+under Longhorn, so I think I've answered part of your question. However, you're 
+asking something deeper here, i.e. when do I give up the old &quot;way&quot; that has more 
+ubiquitous support for the new &quot;way?&quot; In this case, you're talking about .NET 
+and Longhorn, but you could as easily be talking about DOS and Windows or Win32 
+and .NET. This is the eternal struggle and the reason that we need software 
+engineers in the first place. As with all such questions, the answer is &quot;it 
+depends.&quot;</p><p>My general purpose answer is to always pick the newest thing 
+that meets my requirements. The newer the technology you pick, the longer the 
+shelf life. Can I build cool, scalable apps that take advantage of the high 
+resolution monitors and GPUs of tomorrow in DOS? Absolutely. Do I want to? Hell 
+no. Can I do it in WinForms? Yes, although it'll still be harder than doing it 
+on Avalon. Will I increase my available market by targeting DOS today? The 
+answer used to be &quot;yes,&quot; but for a while now it's been &quot;no.&quot; What about 
+WinForms? The answer is definitely &quot;yes&quot; today and will be for a while yet, even 
+after Longhorn ships.</p><p>The answer to the question of when to adopt new 
+technology has too many variables for me to provide any general advice better 
+than &quot;as soon as possible.&quot; Of course, Microsoft wants the answer to that 
+question to be &quot;sooner rather than later,&quot; and we're working to make Longhorn 
+kick-ass for developers, business users and consumers so that ubiquity is taken 
+out of the equation as soon as possible. Please use all channels of 
+communication you have into the company to help us make sure we're doing that. <a href="http://msdn.microsoft.com/longhorn/community/newsgroups/">
+The WinFX newsgroups are one good place for such feedback.</a> They are heavily 
+monitored by all of the WinFX teams and the Longhorn User Experience (Aero) 
+Team.<br><br><i>Paul: I found out that the PDC build of Avalon doesn't really 
+work in kernel mode but simply uses two (unmanaged) DLLs, milcore and milrender 
+built upon the old GDI APIs (to the point that it is actually possible to run 
+Avalon on XP). Of course, that's bound to change, as Chris Anderson wrote, with 
+the new video driver model and when the desktop composition stuff will get 
+turned on. But wouldn't it be nice if a subset of Avalon ran on XP? After all, 
+not every app will take advantage of its more advanced features.</i></p><p>
+Chris: Before I answer this question, I just wanted to point out that GDI is not 
+part of the Avalon rendering path. Instead, Avalon is built on DirectX, which is 
+built directly on the drivers. GDI is still supported, of course, but it's a 
+parallel rending path to Avalon's.</p><p>The answer to the core question, i.e. 
+why not ship Avalon on XP, is one of resources. Chris Anderson once told me that 
+something like a <i>man millennia </i>has gone into the development of Avalon 
+thus far. Even if Chris was exaggerating for effect, that's still one hell of a 
+lot of work. That work has gone into building an architecture that allows 
+application developers to take advantage of features present all the way down to 
+the hardware level, including changes at every point in the presentation stack. 
+What kind of work do you think it would take to make a subset of that available 
+under Windows XP? Or Windows 2000? Or Windows 98? What kind of work do you think 
+it would take to support those features on those down-level operating systems in 
+their subsetted states? If we're looking at a release years into the future 
+already, how many more years are we willing to wait to release Avalon in a form 
+that works in a subsetted form on those OSes? And what will we ship to our 
+customers expected a new OS in the meantime?</p><p>It may be that you could come 
+up with answers that you love to these questions. Would our other customers 
+answer them the same way? Would our shareholders answer them the same way? Would 
+your answers best position us against our competitors?</p><p>Even if you got a 
+subset of Avalon that works across .NET platforms today, would it really enable 
+you to be more successful at your business or is it an engineering &quot;gosh that'd 
+be neat?&quot;</p><p>I know that our product teams really listen to our customers 
+these days, so if you've got specific scenarios that you need enabled to be 
+successful, <a href="http://msdn.microsoft.com/longhorn/community/newsgroups/">
+please let them know</a>.</p><p><i>Paul: Furthermore, if XAML is, in the end, 
+only a way to glue together a graph of CLR objects, why don't use it also to 
+build WinForms UI? Both these options would make the transition much easier.</i></p><p>
+Now that's a question I can provide a more satisfactory answer to, I think 
+(sorry about that last answer : ). In the Longhorn PDC bits today, <a href="http://longhorn.msdn.microsoft.com/?//longhorn.msdn.microsoft.com/lhsdk/appcore/tasks/migration_window_in_longhorn.aspx">
+you can generate WinForms apps using XAML</a> for the very reason you state. 
+Likewise, if you'd like to try a subset of XAML in today's version of the .NET 
+Framework, there are not <a href="http://www.xamlon.com">one</a>, 
+but <a href="http://www.zaml.com">two</a> 3rd parties providing 
+early access to projects to allow this to happen. Given the amount of work that 
+has gone into, and will go into, getting Avalon out the door, I doubt very much 
+that their versions of XAML will be full-featured, but it may help ease the 
+transition, as you say.<br><br><i>Paul: That brings me to ask you about the 
+future of WinForms (about which I'm now reading your book and really enjoying 
+it). In the near future I will surely have to write WinForms code. But is it 
+still worthwhile to spend time studying and trying to improve it? (I personally 
+think so). Or should I rather concentrate my interest learning everything about 
+the new LH technologies? So I'm back on the question about how to prepare for 
+Avalon...</i></p><p>Chris: I'd say that it absolutely makes sense to continue to 
+write WinForms applications for years to come. Not only in WinForms a great 
+platform for client applications today, but in Whidbey, it about doubles in size 
+and capability. Plus, WinForms applications will continue to work great under 
+Longhorn and will form the core of an application that needs to take advantage 
+of Longhorn features under Longhorn but continue to work on the rest of the .NET 
+platform. Unless you are planning to target <i>only</i> Longhorn, WinForms is <i>
+absolutely</i> where you should be spending your client development effort today 
+and for years to come.<br><br><i>Paul: Speaking of WinForms, one of the things 
+I've never liked is the absence of windowless controls. It has been said that 
+windowed and windowless controls are difficult to make live together, and that's 
+true. But windowless controls are sometimes very useful (and cool! just think to 
+the Windows Media Player UI). I found in your Genghis page that the &quot;Windowless 
+control architecture&quot; feature is still &quot;opened&quot; and I'd like to try to work on 
+it. (In the past, I wrote an ActiveX control container that supported windowless 
+controls, so I wouldn't start from zero).</i></p><p>Chris: Windowless controls 
+were meant mostly as an optimization when creating thousands of Window handles 
+brought the platform to its knees. Some folks also used windowless controls as a 
+good way to fake non-rectangular controls. In modern implementations of User32, 
+neither is much of an issue, so windowless controls provide a service that is no 
+longer required in most cases. In the specialized cases where it is still 
+necessary, I find that building an aggregate control that does the drawing of 
+multiple controls that you would have made windowless in the past solves most of 
+my needs in this area, although your mileage may vary. Given that Genghis has 
+most of the rest of the features that I wanted for it, but no windowless control 
+architecture, I'd say that folks seem to agree with me that windowless controls 
+are no longer as important as they once were.<br><br><i>Paul: But I also noticed 
+that the Genghis project has been still for a few months, so I'm now wondering 
+if it is still alive and if my project still makes sense now that Avalon is on 
+its way. May you give me an advice?</i></p><p>Chris: I was waiting for a wizard 
+that would generate MDI, SDI and multi-SDI applications before shipping the next 
+drop of Genghis, but there are enough new things and fixes that we should have 
+another version of Genghis out in a week or so. If you or anyone would like to 
+build the wizard (or just send <a href="mailto:scottden?subject=Can you hurry up with the Genghis SDI, MDI, Multi-SDI wizard please?!?">
+Scott Densmore</a> email begging him to finish the one he already started and 
+has promised to me several times) that'd be great.</p><p><i>Thanks for your 
+wonderful job and for the time you dedicated to this mail. I just hope my 
+English was understandable... :-)</i></p><p><i>Best regards from Italy,<br>Have 
+a wonderful new year!<br>--Paolo Severini</i></p>
+

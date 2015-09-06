@@ -1,0 +1,10 @@
+<!--
+Date: 5/13/2005 4:47:44 PM  -08:00
+Permalink: 1779
+Disqus: 1779
+Tags: tools
+-->
+<h1>"dumpbin" is now "link -dump"</h1>
+<P>Apparently in Whidbey, "dumpbin" (and some other tools that were merely wrappers around link) has been dumped. To get to it now, do "link -dump -dumpbin_options" e.g. "link -dump -exports" does what "dumpbin -exports" used to do. In fact, if you just do "link -dump" the usage you get is labeled as the dumpbin usage. : )</P>
+<P>BTW, it looks like "lib," while still there, is also "link -lib" and "editbin" becomes "link -edit."</P>
+<P>[<A href="http://www.wiseowl.com/">via Brent Rector</A>]</P>

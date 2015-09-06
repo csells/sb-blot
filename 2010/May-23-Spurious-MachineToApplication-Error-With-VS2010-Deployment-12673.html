@@ -1,0 +1,37 @@
+<!--
+Date: 5/23/2010 8:40:54 PM  -08:00
+Permalink: 12673
+Disqus: 12673
+Tags: .net
+-->
+<h1>Spurious MachineToApplication Error With VS2010 Deployment</h1>
+<img align="right" width="256" height="205" style="margin: 5px" src="http://img11.imageshack.us/img11/6894/microsoftvisualstudio20.png" />
+<p>Often when I'm building my MVC 2 application using Visual Studio 2010, I get 
+the following error:</p>
+<p class="style1"><em>It is an error to use a section registered as 
+allowDefinition='MachineToApplication' beyond application level. This error can 
+be caused by a virtual directory not being configured as an application in IIS.</em></p>
+<p>
+<a href="http://www.bing.com/search?q=It+is+an+error+to+use+a+section+registered+as+allowDefinition%3D%27MachineToApplication%27+beyond+application+level.+This+error+can+be+caused+by+a+virtual+directory+not+being+configured+as+an+application+in+IIS.&amp;src=IE-SearchBox&amp;FORM=IE8SRC">
+On the internet</a>, this error seems to be related to having a nested 
+web.config in your application. I do have such a thing, but it's just the one 
+that came out of the MVC 2 project item template and I haven't touched it. </p>
+<p>
+In my case, this error in my case doesn't seem to have anything to do with a 
+nested web.config. This 
+error only started to happen when I began using the web site deployment features 
+in VS2010 which by itself, rocks (see Scott Hanselman's
+<a href="http://blogs.iis.net/shanselman/archive/2010/03/24/web-deployment-made-awesome-if-you-re-using-xcopy-you-re-doing-it-wrong.aspx">
+&quot;Web Deployment Made Awesome: If You're Using XCopy, You're Doing It Wrong&quot;</a> 
+for details).</p>
+<p>
+&nbsp;If it happens to you and it doesn't seem to make any sense, you can try to 
+fix it with a Build Clean command. If you're using to previous versions of 
+Visual Studio, you'll be surprised, like I was, not to find a Clean option in 
+sparse the Build menu. Instead, you can only get to it by right-clicking on your 
+project in the Solution Explorer and choosing Clean.</p>
+<p>
+Doing that, however, seems to make the error go away. I don't think that's a 
+problem with my app; I think that's a problem with VS2010.</p>
+
+

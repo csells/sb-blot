@@ -1,0 +1,57 @@
+<!--
+Date: 1/23/2003 12:00:00 AM  -08:00
+Permalink: 12564
+Disqus: 12564
+Tags: spout
+-->
+<h1>Sealed Sucks</h1>
+<p>I've come to the conclusion that the use of the &quot;sealed&quot; 
+keyword in C# (and the concept in .NET) should almost never be used, at least on 
+a class. Semantically, sealed applied to a class means that a class cannot be 
+used as a base class. For example, the ImageList class from the 
+System.Windows.Forms namespace is sealed:</p><font COLOR="#0000ff"><p><font face="Times New Roman">
+public</font></font><font face="Times New Roman"> <font COLOR="#0000ff">sealed</font> <font COLOR="#0000ff">
+class</font> System.Windows.Forms.ImageList : ... { ... }</font></p><p>What 
+sealed means is that the designers of the ImageList class didn't take the time 
+to test what would happen in all the scenarios where an ImageList is specified 
+but a subclass is provided, e.g. MyImageListEx2. So, since they didn't test 
+these scenarios, they're protecting developers from deriving from the ImageList 
+base class when bad things might happen. They're also protecting developers if 
+the base class changes radically in the future and derived classes no longer 
+work.</p><p>Stop it!</p><p>I don't want to be protected in this way! Instead, I 
+want to try to derive from ImageList and see if it works in the scenarios in 
+which I'm interested. And if future versions of the ImageList base class break 
+my derived class, I want to update my derived class in ways that work across 
+versions of the base class or have two versions or whatever else I need to do to 
+make it work. By making a class sealed, I just don't have any choice in the 
+matter, which severely limits me in what I can do.</p><p>As an example, I think 
+that the current ImageList implementation sucks in the following ways:</p><ul><li>
+	Every time you need to edit an image, you need to remove the old image and 
+	add it back again</li><li>Images are too small to see what they are</li><li>
+	Can't tag images with names</li></ul><p>So, I'd like to build my own 
+ImageList implementation that has the exact same programmatic interface, but 
+that pulls images from manifest resources, fixing most of the issues above. All 
+of the controls that take images get them from an ImageList type, so I need to 
+provide my extra functionality in a type that's compatible with ImageList. 
+However, the only way to do that in .NET is via inheritance and the damn sealed 
+attribute disables my ability to do that! Instead, I have to build a custom 
+component that's also an extender provider if I want to provide the same 
+design-time usage as an ImageList and I have to tell developers using my image 
+list component not to use any of the ImageList-related properties because it 
+will conflict with mine. I literally can't package my functionality in a way 
+that's developer-friendly in the same way as the ImageList and it's all because 
+it's *sealed*!</p><p>Of course, the ImageList class isn't the only one. I had a 
+solution to the problem of asynchronous method calls to web services from 
+WinForms apps the other day (the problem is that an extra hop is always required 
+to get back to the UI thread), but my solution can't work because the base 
+delegate type required to make an asynch call is sealed. And the list goes on 
+and on of things that I can't do because somebody is &quot;protected&quot; me from 
+potential bad things.</p><p>Please, please, please, please, please don't mark 
+your classes sealed. If you do, folks that want to provide extended 
+functionality, and test to make sure that it works the way it's supposed to, 
+don't even have the option. Type compatibility is a huge deal when you're 
+dealing with class-based abstractions instead of interface-based abstractions 
+and using the sealed keyword throws all of that away. The C++ community survived 
+very nicely without sealed for a decade and it's made half of the classes on my 
+site possible.</p><p>You took away my deterministic finalization. Must you also 
+take away my ability to derive?</p>

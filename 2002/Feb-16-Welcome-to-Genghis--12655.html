@@ -1,0 +1,838 @@
+<!--
+Date: 2/16/2002 12:00:00 AM  -08:00
+Permalink: 12655
+Disqus: 12655
+Tags: tools
+-->
+<h1>Welcome to Genghis!</h1>
+		<h2><img border="0" src="/public/tools/genghis/images/genghis.gif" align="left" width="140" height="231">Welcome 
+			to Genghis</h2>
+		<p>Genghis is a set of extensions built on top of .NET and integrated with WinForms 
+			to provide application-level services in the same flavor as the Microsoft 
+			Foundation Classes. Genghis gets its name as the functional heir to <a href="/12652">
+				Attila</a>, a similar set of functionality built on top of ATL.</p>
+		<h2>Disclaimer
+		</h2>
+		<p>Most of the Genghis classes were built by different folks and while every effort 
+			was made to keep things consistent by choosing .NET and WinForms design 
+			techniques, everyone does things their own way.</p>
+		<p>This work is the work of the individuals involved and does not represent any 
+			contribution of their respective employers. You are under no obligation to use 
+			any of Genghis at any time, but if you do, <a href="#license">you are required to 
+				abide by the License</a>.</p>
+		<h2>Installation</h2>
+		<p>You can
+		<a href="http://codeplex.com/genghis/">download the latest Genghis source code from here</a>. The Genghis 
+		archive includes this page, the source code to the Genghis class 
+		library, a series of samples showing off the various classes and a 
+		pre-built, signed version of genghis.dll in the redist folder. Notice 
+		that some of the samples use the Genghis files directly instead of using 
+		the compiled Genghis assembly. Either usage is supported by Genghis 
+		(except where it drives the WinForms Designer nuts).</p>
+		<h2>Source Code Control</h2>
+		<P>Genghis source code control has been moved to
+		<a href="http://codeplex.com/genghis/">
+		the Genghis CodePlex workspace</a>. Thanks to
+		GotDotNet and
+		<a href="mailto:rmacfadyen@rmtrack.com">Rob MacFadyen</a> for hosting 
+		the previous versions.</P>
+		<h2>Building Genghis</h2>
+      <p>
+         Genghis is written in C#. Building Genghis requires Visual C# or
+         Visual Studio.NET.
+         Visual Studio.NET solution and project files (*.sln and *.csproj)
+         are provided to build Genghis and all the samples. You should be able
+         to load any solution file into Visual C#/Visual Studio.NET and build
+         the project for yourself.</p>
+      <p>
+         A NAnt build script (Genghis.build) is also provided. It is used to 
+			make the snapshot for Genghis, and is not designed for general use. 
+			You may wish to use this file to simulate the snapshot build 
+			process; please be aware that you will not be able to properly sign 
+			the release mode Genghis DLL (the private key is not provided in 
+			this distribution).
+      </p>
+      <p>
+         For Visual Studio.NET related build issues, please contact the
+         <a href="http://groups.yahoo.com/group/win_tech_off_topic">Off Topic
+         Windows mailing list</a>. This is where the Genghis contributors have
+         their discussions, and most of them will be familiar with Visual
+         Studio.NET builds of Genghis.
+         If you have NAnt related build issues, you should contact
+         <a href="mailto:MplsCpl@yahoo.com">Mike Marshall</a> (the
+         Genghis build master) directly.</p>Thanks to <a href="http://dotnetguy.techieswithcats.com">
+				Brad Wilson</a> for the NAnt build scripts for folks without VS.NET.<h2>Bug Reports</h2>
+		<P>Bugs will now be kept in
+		<a href="http://codeplex.com/genghis/">
+		the Bug Tracker section of the GDN Workspace</a>.</P>
+		<p>Please do not send Chris Sells or any of the other contributors personal email 
+			complaining about Genghis. Also please do not post Genghis bug reports to any 
+			mailing list. A much better way to contribute to the life of Genghis is to 
+			submit the fix along with the bug report.</p>
+		<h2>Submission Guidelines</h2>
+		<ul>
+			<li>
+			Submissions should be in the Genghis namespace (I don't think we'll have to 
+			worry about collisions... : ).<li>Submissions should be single-file and 
+			stand-alone as much as possible. The goal is that Genghis can be built as a DLL 
+			and used as a whole or that bits of its source can be pulled into individual 
+			projects as needed ala atl.dll vs. atlwin.h.<li>All code should be commenting 
+			using C# doc comments so that docs can be generated via Tools-&gt;Generate 
+			Source Comments.<li>All source code files should include <a href="#license">the 
+					copyright and license notice</a>.<li>All code shall be set to use 
+			spaces, not tabs, and a vanilla coding style.<li>When hacking on existing code, 
+				thou shall conform to the existing coding standard of the file. Many coding 
+				standards are readable, but not when mixed.</li></ul>
+		<h2>The Genghis Group</h2>
+		<p>This group is made up of official Genghis 
+			contributors:</p>
+		<ul>
+			<li>
+				<a href="/">Chris Sells</a>
+			(9 features)<li><a href="mailto:ethan.j.brown@eastpointsystems.com">Ethan Brown</a>
+			(5 features)<li><a href="mailto:hveith@intercom.at">Horst Veith</a>
+			(2 features)<li><a href="mailto:mikedub@bigpond.com">Michael Weinhardt</a>
+			(2 features)<li><a href="mailto:swildermuth@adoguy.com">Shawn Wildermuth</a>
+			(2 features)<li><a href="mailto:chris_j_burrows@hotmail.com">Chris Burrows</a>
+			(1 feature and 1 sample)<li><a href="mailto:paulbartrum@mail.com">Paul 
+					Bartrum</a>
+			(1 feature and 1 sample)<li><a href="mailto:mwa@digital-healthcare.com">Matthew 
+					Adams</a>
+			(2 features)<li><a href="mailto:ethan.smith@pobox.com">Ethan Smith</a>
+			(1 feature)<li><a href="mailto:ramakrishnavavilala@3csoftware.com">Ramakrishna Vavilala</a>
+			(1 feature)<li><a href="mailto:shawnv@arithex.com">Shawn Van Ness</a>
+			(1 feature)<li><a href="mailto:peter_foreman@yahoo.com">Peter Foreman</a>
+			(1 feature)<li><a href="mailto:hchoroomi@usermail.com">Husein Choroomi</a>
+			(1 feature)<li><a href="mailto:dean.cleaver@nettech.co.nz">Dean Cleaver</a>
+			(1 sample)<li><a href="mailto:jeff.key@sliver.com">Jeff Key</a> (1 
+			feature)<li><a href="mailto:MplsCpl@yahoo.com">Mike Marshall</a>
+				(current build master and 3 features)</li><li><a href="http://dotnetguy.techieswithcats.com">Brad Wilson</a>
+			(former build and CVS master)</ul>
+		<h2>Who Does What</h2>
+		<p>If you'd got something you'd like to see contribute 
+			to Genghis, <a href="mailto:genghis@sellsbrothers.com?subject=I'd like to see something in Genghis">
+				please let me know</a> (multiple people are free to collaborate on a single 
+			feature).</p>
+		<table border="1" cellspacing="0" cellpadding="0" style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; BACKGROUND: white; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none; BORDER-COLLAPSE: collapse"
+			id="table1">
+			<tr>
+				<td bgcolor="#000000"><p class="MsoNormal"><b><span style="COLOR:white">Feature</span></b></p>
+				</td>
+				<td bgcolor="#000000"><p class="MsoNormal"><b><span style="COLOR:white">Owner(s)</span></b></p>
+				</td>
+				<td bgcolor="#000000"><p class="MsoNormal"><b><span style="COLOR:white">Progress</span></b></p>
+				</td>
+				<td bgcolor="#000000"><p class="MsoNormal"><b><span style="COLOR:white">Screen Shot(s)</span></b></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Command line parser</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/">Chris 
+								Sells</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/CommandLineTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Completion combo</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/">Chris 
+								Sells</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/CompletionComboTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Control hosting status bar</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:ethan.smith@pobox.com">Ethan 
+								Smith</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/ContainerStatusBarTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Cursor changer</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:swildermuth@adoguy.com">Shawn 
+								Wildermuth</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/CursorChangerTest.jpg">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Custom check state treeview</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/">Chris 
+								Sells</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/CustomStateTreeViewTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Custom XP theming controls</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:Genghis@sellsbrothers.com?subject=I'd%20like%20to%20claim%20owership%20of%20part%20of%20Genghis!">Matthew 
+								W. Adams et. al.</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/xptheme.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">File Search Engine</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:MplsCpl@yahoo.com">Mike 
+								Marshall</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/FileSearchEngine.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">FileDocument class (doc/dirty bit management)</span></p>
+				</td>
+				<td><p class="MsoNormal"><span><a href="/">Chris Sells</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/FileDocumentTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">FindReplaceDialog</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:ramakrishnavavilala@3csoftware.com">Ramakrishna 
+								Vavilala</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/FindReplace.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">FolderNameDialog</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/">Chris 
+								Sells</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/FolderBrowser.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">HandleCollector for the world</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:ethan.j.brown@eastpointsystems.com">Ethan 
+								Brown</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/HandleCollectorTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Header group box control</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:mwa@digital-healthcare.com">Matthew 
+								Adams</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/HeaderGroupBoxTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Image combo</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:hveith@intercom.at">Horst 
+								Veith</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/ImageComboTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">More robust validation ala WebForms</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:mikedub@bigpond.com">Michael 
+								Weinhardt</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/WinformValidationTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Most-Recently-Used (MRU) files support</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:mikedub@bigpond.com">Michael 
+								Weinhardt</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/MRUTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">MSN Messenger-style popup window</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:MplsCpl@yahoo.com">Mike 
+								Marshall</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/AniForm.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Multiple Top-Level Windows</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/">Chris 
+								Sells</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/multipletoplevel.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Multiple-instance detection</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/">Chris 
+								Sells</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Path resolution b/w UNC, local (including SUBST, etc)</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:ethan.j.brown@eastpointsystems.com">Ethan 
+								Brown</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/PathResolverTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Retrieving mapped drives</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:ethan.j.brown@eastpointsystems.com">Ethan 
+								Brown</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/PathResolverTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Retrieving shares</span></p>
+				</td>
+				<td><p class="MsoN&#13;&#10;ormal"><span style="COLOR:black"><a href="mailto:ethan.j.brown@eastpointsystems.com">Ethan 
+								Brown</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/PathResolverTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Screen Saver class</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:shawnv@arithex.com">Shawn 
+								Van Ness</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="http://antwrp.gsfc.nasa.gov/apod/astropix.html">screenshot</a> (sorta : )</span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Scrollable Picture Box</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:hchoroomi@usermail.com">Husein 
+								Choroomi</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/scrollablepicturebox.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Sorting listview (including the little triangle thingy)</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:hveith@intercom.at">Horst 
+								Veith</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/SortedLV.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Splash Screen class</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:peter_foreman@yahoo.com">Peter 
+								Foreman</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/SplashScreen.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Status Bar Extender</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/">Chris 
+								Sells</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/StatusBarExtender.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">WebCommandLineHelper</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/">Chris 
+								Sells</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/WebCommandLineHelperTest.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Window serializer</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:paulbartrum@mail.com">Paul 
+								Bartrum</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/WindowSerializer.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Wizard framework</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:swildermuth@adoguy.com">Shawn 
+								Wildermuth</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/WizardSheetSample.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td>HtmlLinkLabel class
+				</td>
+				<td><a href="mailto:jeff.key@sliver.com">Jeff Key</a></td>
+				<td><span style="COLOR:green">included</span></td>
+				<td><span style="COLOR:black"><A href="/public/tools/genghis/screenshots/HtmlLinkLabel.jpg">screenshot</a></span></td>
+			</tr>
+			<tr>
+				<td styl e="border-left: medium none; border-right: medium none; border-top: medium none; border-bottom: 1.0pt solid black; padding: 1.5pt">
+				User-resizable panel</td>
+				<td><a href="mailto:ethan.j.brown@eastpointsystems.com">Ethan Brown</a></td>
+				<td><span style="COLOR:green">included</span></td>
+				<td><a href="/public/tools/genghis/screenshots/UserResizablePanel.jpg">screenshot</a></td>
+			</tr>
+			<tr>
+				<td styl e="border-left: medium none; border-right: medium none; border-top: medium none; border-bottom: 1.0pt solid black; padding: 1.5pt"><p class="MsoNormal"><span style="COLOR:black">Gradient Progress Bar</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:MplsCpl@yahoo.com">Mike Marshall</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">included</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/GradientProgressBar.jpg">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td styl e="border-left: medium none; border-right: medium none; border-top: medium none; border-bottom: 1.0pt solid black; padding: 1.5pt"><p class="MsoNormal"><span style="COLOR:black">Command updating</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:paulbartrum@mail.com">Paul 
+								Bartrum</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">sample</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/SimplePad.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Cool bars/Cool menus</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:chris_j_burrows@hotmail.com">Chris 
+								Burrows</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">sample</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/CoolMenu.JPG">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Docking App Bar</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:dean.cleaver@nettech.co.nz">Dean 
+								Cleaver</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:green">sample</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/public/tools/genghis/screenshots/appbar.jpg">screenshot</a></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">A real image list control</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:wilsom4@hotmail.com">Matt 
+								Wilson</a> (of Attila fame!)</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:maroon">pending</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Advanced layout managers, e.g. grid/table</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:mwa@digital-healthcare.com">Matthew 
+								Adams</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:maroon">pending</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Command routing</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:paulbartrum@mail.com">Paul 
+								Bartrum</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:maroon">pending</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Dynamically docking/undocking windows</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:Genghis@sellsbrothers.com?subject=I'd%20like%20to%20claim%20owership%20of%20part%20of%20Genghis!">TBD</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:maroon">pending</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">href exe-safe serialization framework</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="/">Chris 
+								Sells</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:maroon">pending</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Managed HTML display ala a C# port of Mozilla?</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:Genghis@sellsbrothers.com?subject=I'd%20like%20to%20claim%20owership%20of%20part%20of%20Genghis!">TBD</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:maroon">pending</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Menu/toolbar editing ala Office or VS.NET</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:paulbartrum@mail.com">Paul 
+								Bartrum</a>, <a href="mailto:chris_j_burrows@hotmail.com">Chris Burrows</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:maroon">pending</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Outlook-style Bar</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:rbirkby@thundermain.com">Richard 
+								Birkby</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:maroon">pending</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">SDI, MDI and Explorer-style application wizard</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:Genghis@sellsbrothers.com?subject=I'd%20like%20to%20claim%20owership%20of%20part%20of%20Genghis!">TBD</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:maroon">pending</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p class="MsoNormal"><span style="COLOR:black">Tab-based MDI implementation (ala VS.NET)</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:Genghis@sellsbrothers.com?subject=I'd%20like%20to%20claim%20owership%20of%20part%20of%20Genghis!">TBD</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:maroon">pending</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"></span></p>
+				</td>
+			</tr>
+			<tr>
+				<td><p clas s="MsoNormal"><span style="COLOR:black">Tear-off menus</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"><a href="mailto:wilsom4@hotmail.com">Matt 
+								Wilson</a></span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:maroon">pending</span></p>
+				</td>
+				<td><p class="MsoNormal"><span style="COLOR:black"></span></p>
+				</td>
+			</tr>
+			</table>
+		<p class="MsoNormal">Note: Anything marked with "<font color="#008000">sample</font>" 
+			means that there's a sample included with Genghis that shows the current 
+			implementation of a feature but that it's not done enough to be part of the 
+			official Genghis component. Mostly the hold-up is integration with the WinForms 
+			Designer.</p>
+		<h2>Documentation</h2>
+		<p>The Genghis documentation is composed of the C# documentation comments as part 
+			of the automated build. Check redist\Genghis.chm for the latest.</p>
+		<h2>SimplePad</h2>
+		<p><a href="/public/tools/genghis/MfcSimplePad.zip">SimplePad is 
+				an MFC application</a> that should serve as a simple baseline for what 
+			Genghis should enable to be built easily. We currently need a raw WinForms 
+			implementation to help guide the Genghis development efforts. After building 
+			it, use Help-&gt;Help Topics to see the list of features that the MFC SimplePad 
+			application provides straight out of the wizard (also duplicated here):</p>
+		<ul>
+			<li>
+			MDI application<li>Multiple documents<li>Multiple views per document that are 
+			updated as the document changes<li>"Dirty" bit handling<li>Title bar that shows 
+			the document with the current focus along with a dirty indicator, i.e. the 
+			asterix.<li>File New, Open, Save, Save As, Exit and MRU<li>MDI Window menu<li>Separate 
+			icons for the application and the documents<li>Association of the icons with 
+			the documents in the shell<li>Dockable, floating toolbar<li>Print, Print 
+			Preview, Print Setup<li>Edit Undo, Cut, Copy and Paste.<li>View Toolbar and 
+			Status bar<li>Help Topics and About<li>Context-sensitive help<li>Status bar 
+			that updates when menu items or toolbar items are in "focus", as well as 
+			showing NUM, SCROLL and CAPS as these keys change. Since Microsoft has shown 
+			that no one looks at the status bar much, the auto-update as items come into 
+			focus is not a feature that needs to be duplicated in WinForms/Genghis.<li>Command 
+			line launching of the application based on the application's file extension<li>Drag-n-drop 
+			from the file explorer<li>Double-click support from the file explorer (including 
+				routing open requests to a currently open application)</li></ul>
+		<p><b>The current .NET implementation of SimplePad is now available as one of the 
+				Genghis samples.</b> Thanks to <a href="mailto:bartrumflat@xtra.co.nz">Paul 
+				Bartrum</a> and <a href="mailto:Chris_J_burrows@hotmail.com">Chris Burrows</a>
+			for all their hard work on this!</p>
+		<h2>History</h2>
+		<ul>
+			<li>
+				03/09/04: Release v0.5:
+				<UL>
+					<LI>
+						New HtmlLinkLabel class from
+						<a href="mailto:jeff.key@sliver.com">Jeff Key</a> that 
+						knows how to launch IE and EXEs directly w/o requiring 
+						you to handle the event</LI>
+					<LI>
+						Much prettier images in SimplePad from
+						<a href="mailto:Chris_J_burrows@hotmail.com">Chris Burrows</a></LI>
+					<LI>
+						Updated MRU code from <a href="mailto:mikedub@bigpond.com">Michael Weinhardt</a>
+						to match .NET event signature conventions and to fix a 
+						problem when using more than one MRU components on a 
+						single menu</LI>
+					<LI>
+						Updated FileSearchEngine code from
+         <a href="mailto:MplsCpl@yahoo.com">Mike Marshall</a> to check for 
+						whole words at beginning and end of line correctly</LI>
+					<LI>
+						Updated validation code from <a href="mailto:mikedub@bigpond.com">Michael Weinhardt</a>
+						with support for validating controls at a container 
+						level, e.g. validating controls on a tab instead of on 
+						an entire form</LI>
+					<LI>
+						New gradient progress bar from
+					         <a href="mailto:MplsCpl@yahoo.com">Mike Marshall</a> </LI>
+					<LI>
+						Updated FileDocument from
+						<a href="mailto:csells@sellsbrothers.com">Chris Sells</a> 
+						to match text of
+						<a href="/public/writing/wfbook">
+						Windows Forms Programming</a> to include more MFC-like 
+						features like a pluggable scheme for serialization 
+						handling, registration of document extension with the 
+						shell, and adding to recent docs, i.e. Start-&gt;Documents</LI>
+					<LI>
+						Updated HandleCollector from <span style="COLOR:black">
+						<a href="mailto:ethan.j.brown@eastpointsystems.com">Ethan 
+								Brown</a></span> to work with .NET 1.0 and .NET 
+						1.1</LI>
+					<LI>
+						Performance enhancements from <span style="COLOR:black">
+						<a href="mailto:ethan.j.brown@eastpointsystems.com">Ethan 
+								Brown </a></span>in the MappedDrives and 
+						SystemShares classes</LI>
+					<LI>
+						New user-resizable panel from <a href="mailto:ethan.j.brown@eastpointsystems.com">Ethan 
+							Brown</a></LI>
+					<LI>
+						Updated WebCommandLineHelper from Andrew Duncan to fix 
+						System.IO.FileLoadException in ieexec.exe</LI>
+					<LI>
+						Updated AniForm from
+         <a href="mailto:MplsCpl@yahoo.com">Mike Marshall</a> to support 
+						stacking ala SharpReader and fix a terminal 
+						server-related bug</LI>
+					<LI>
+						Updated cool menu sample from
+						<a href="mailto:Chris_J_burrows@hotmail.com">Chris Burrows</a> 
+						with additional support for abstracting commands from 
+						click even handlers</LI></UL>
+			<LI>
+				4/25/03: Release v0.4:<ul>
+					<li>
+					Everything tested under VS.NET 2002 &amp; 2003 (except HandleCollector, which 
+					doesn't work under VS.NET 2003)
+					<li>
+					Mike Marshall's AniForm -an MSN Messanger-style popup window<li>Chris Burrows' 
+					Image Index Editor - a UI Type Editor for use with ImageList index selection<li>Dean 
+					Cleaver's .NET AppBar implementation (a C# port of original code from Jeffrey 
+					Richter)<li>Mike Marshall's File Search Engine: a text file search 
+					implementation with behavior similar to dev studio's "Find In Files"<li>Matthew 
+					W. Adams' et. al. Themed controls<li>Chris Sells's InitialInstanceActivator. 
+					The InitialInstanceActivator makes sure that only one instance of an 
+					application is started and when another instance is started, the first instance 
+					is passed the command line arguments passed to the initial instance<li>Chris 
+					Sells's MultiSdiApplicationContext class for allowing multiple top-level 
+					Windows Forms<li>Peter Stephens' changes to the CommandlineParser that fix some 
+					bugs as well as add the ability to skip the first argument<li>Matt Berther's 
+					additions to the CompletionComboBox to fire an event when the text typed does 
+					not match any items in the dropdown<li>Peter Foreman's splash screen 
+					implementation<li>Chris Sells's newly improved WebCommandLineHelper class which 
+					now works with .NET 1.0 and 1.1, includes URL decoding and requires no 
+					additional permissions (although it does require a server-side HTTP handler, 
+					included as the ConfigFileHandler class that maps requests for 
+					foo.exe?bar=quux.config to the foo.exe.config file).<li>Shawn Wildermuth's 
+					WizardSheet updates<li>Chris Sells's Status Bar Extender for mapping status 
+					messages to Windows Forms controls<li>Andre Van Der Merwe's CommandLineParser 
+						changes as described below:
+						<ul>
+							<li>
+							Added ValueDelimiters: enum for ValueUsageAttribute which lets the user specify 
+							which (combination) of delimiters (space, : or =) will be allowed<li>Added 
+							AllowOnOff: bool in FlagUsageAttribute to specify if a +/- suffixes can be used 
+							on the flag<li>Added EnvironmentDefaults: string in ParserUsageAttribute, 
+							allows the user to specify defaults in an environment variable (ala DIRCMD).<li>Modified 
+								the Long&amp;Short help generation functions to<ul>
+									<li>
+									Format/pad flag/param names correctly regardless of length<li>Show [+|-] prefix 
+									(if applicable) for flags<li>Show [sp|:|=] delimiters (as applicable) for values</li></ul>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			<li>
+				08/18/02: Release v0.3:<ul>
+					<li>
+					Screen shots for everything.<li>CVS repository available, as provided by <a href="http://www.rmtrack.com">
+							our rmTrack sponsor</a>, along with extensive CVS docs from <a href="http://dotnetguy.techieswithcats.com">
+							Brad Wilson</a>.<li>MRU support from <a href="mailto:mikedub@optusnet.com.au">Michael 
+							Weinhardt</a>, including both in-menu and sub-menu support.<li>A much more 
+						robust set of validation components from <a href="mailto:mikedub@optusnet.com.au">Michael 
+							Weinhardt</a>
+					(Michael's been busy : ) modeled along the lines of the ASP.NET validation 
+					components, including required, regex, range and comparison validators.<li>FileDocument 
+						component from <a href="/">Chris Sells</a>
+					for document/dirty bit handling.<li>Wizard support from <a href="http://www.adoguy.com/">
+							Shawn Wildermuth</a>, including changing page groups on the fly!<li>Custom 
+						state treeview from <a href="/">Chris Sells</a>
+					so that you can set and show all three checkbox states.<li>A class to expose the 
+						WinForms HandleCollector from <a href="mailto:ethan.j.brown@eastpointsystems.com">Ethan 
+							Brown</a>
+					so that you can put your own custom resources into it.<li>A Screen Saver class from <a href="mailto:shawnv@arithex.com">
+							Shawn Van Ness</a>.<li>A bunch of file utility classes from <a href="mailto:ethan.j.brown@eastpointsystems.com">
+							Ethan Brown</a>, including retrieving mapped drives, retrieving shares 
+					and path resolution b/w UNC, local (including SUBST, etc).<li>A cursor changer 
+						class that works with the using block by <a href="http://www.adoguy.com/">
+							Shawn Wildermuth</a>.<li>A WebCommandLineHelper class from <a href="/">
+							Chris Sells</a>
+					to parse command line arguments from the URL used to launch href-exes.<li>Update to 
+						the FileNameDialog from <a href="mailto:shenoy@agnisoft.com">Deepak Shenoy</a> to 
+						include newish flags.</li></ul>
+			<li>
+				6/10/02: Release v0.2:<ul>
+					<li>
+					Updated ListViewSorter to be declarative. Look for Designer support ASAP.<li>Generated 
+					new genghis.key and removed it from the distribution.<li>Brad Wilson, our new 
+					Build Master, contributed a Nant build.<li>Paul Bartrum and Chris Burrows 
+					contributed a mostly-complete .NET implementation of SimplePad, along with some 
+					sample command updating and cool menus implementations.<li>Paul Bartrum also 
+					provided a window serializer and a preference class.<li>Michael Weinhardt 
+					contributed an MRU sample.<li>I contributed a custom state treeview useful for 
+					things like tri-state checkboxes.<li>Minor bug fixes.</li></ul>
+			<li>
+			4/3/02: Released v0.1.<li>2/28/02: Set the license.<li>2/16/02: Posted this page.</li></ul>
+		<h2>Sponsors</h2>
+		<p><a href="http://www.rmtrack.com/"><img border="0" src="/public/tools/genghis/images/SmallrmTrackLogo.gif" width="129" height="49"></a></p>
+		<p>rmTrack provided the initial hosting space and administration support for 
+			Genghis bug tracking and source code control.</p>
+		<h2><a name="license">License</a>
+		</h2>
+		<p>Copyright © 2002-2004 The Genghis Group</p>
+		<p>Th is software is provided 'as-is', without any express or implied warranty. In 
+			no event will the authors be held liable for any damages arising from the use 
+			of this software.</p>
+		<p>Permission is granted to anyone to use this software for any purpose, including 
+			commercial applications, subject to the following restrictions:</p>
+		<ol>
+			<li>
+				The origin of this software must not be misrepresented; you must not claim that 
+				you wrote the original software. If you use this software in a product, an 
+				acknowledgment in the product documentation is required, as shown here:<br>
+				<br>
+				Portions copyright © 2002-2004 The Genghis Group (<a href="http://www.genghisgroup.com/">http://www.genghisgroup.com/</a>).<br>
+			&nbsp;<li>No substantial portion of the source code of this library may be 
+				redistributed without the express written permission of the copyright holders, 
+				where "substantial" is defined as enough code to be recognizably from this 
+				library.</li></ol>
+		<h2>License Note</h2>
+		<p>This license based on <a href="http://www.opensource.org/licenses/zlib-license.html">
+				the open source zlib/libpng license</a>. The idea was to keep the license 
+			as simple as possible to encourage use of Genghis in free and commercial 
+			applications and libraries, but to keep the source code together and to give 
+			credit to the Genghis contributors for their efforts. While this license allows 
+			shipping Genghis in binary form, if shipping a Genghis variant is the sole 
+			purpose of your product, <a href="mailto:license@genghisgroup.com">please contact 
+				The Genghis Group for a new license</a>.</p>
+

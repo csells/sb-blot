@@ -1,0 +1,264 @@
+<!--
+Date: 5/20/2010 6:11:13 PM  -08:00
+Permalink: 12670
+Disqus: 12670
+Tags: colophon
+-->
+<h1>a whole new sellsbrothers.com</h1>
+<img align="right" width="182" height="132" src="/public/images/sellsbrothers_logo.jpg" />
+<p>The new sellsbrothers.com implementation has been a while in the making. In fact, I've had the final art in my hands 
+since August of 2005. I've tried several times to sit down and rebuild my 
+15-year-old sellsbrothers.com completely from scratch using the latest tools. 
+This time, I had a book contract (&quot;Programming Data,&quot; Addison-Wesley, 2010) and 
+I needed some real-world experience with Entity Framework 4.0 and OData, so I 
+fired up Visual Studio 2010 a coupla months ago and went to town.</p>
+<h2>The Data Modeling</h2>
+<p>The first thing I did was design my data model. I started very small with 
+just Post and Comment. That was enough to get most of my content in. And that 
+lead to my first principle (we all need principles):</p>
+<p><em>thou shalt have no .html files served from the file system.</em></p>
+<p>On my old site, I had a mix of static and dynamic content which lead to all 
+kinds of trouble. This time, the HTML at least was going to be all dynamic. So, once I had my 
+model defined, I had to import all of my static data into my live system. For 
+that, I needed a tool to parse the static HTML and pull out structured data. 
+Luckily, <a href="http://haacked.com/">Phil Haack</a> came to my rescue here.</p>
+<p>Before he was a Microsoft employee in charge of MVC, Phil was well-known 
+author of <a href="http://subtextproject.com/">the SubText open source CMS project</a>. A few years ago, in one of my 
+aborted attempts to get my site into a reasonable state (it has evolved from a 
+single static text file into a mish-mash of static and dynamic content over 15 
+years), I asked Phil to help me get my site moved over to SubText. To help me 
+out, he built 
+the tool that parsed my static HTML, transforming the data into the SubText database format. 
+For this, all I had to do was transform the 
+data from his format into mine, but before I could do that, I had to hook my 
+schema up to a real-live datastore. I didn't want to have to take old web site 
+down at all; I wanted to have both sites up and running at the same time. This 
+lead to principle #2:</p>
+<p><em>thou shalt keep both web sites running with the existing live set of 
+data.</em></p>
+<p>And, in fact, that's what happened. For many weeks while I was building my 
+new web site, I was dumping static data into the live database. However, since 
+my old web site sorting things by date, there was only one place to even see 
+this old data being put in (the <a href="/">/news/archive.aspx</a> page). Otherwise, it was all 
+imperceptible.</p>
+<p>To make this happen, I had to map my new data model onto my existing data. I 
+could do this in one of two ways:</p>
+<ol>
+	<li>I could create the new schema on my ISP-hosted SQL Server 2008 database 
+	(<a href="http://securewebs.com">securewebs.com</a> rocks, btw -- highly recommended!) and move the data over.</li>
+	<li>I could use my existing schema and just map it on the client-side using 
+	the wonder and beauty that was EF4.</li>
+</ol>
+<p>Since I was trying to get real-world experience with our data stack, I tried 
+to use the tools and processes that a real-world developer has and they often don't 
+get to change the database without a real need, especially on a running system. So, I went with option #2.</p>
+<p>And 
+I'm so glad I did. It worked really, really well to change names and select 
+fields I cared about or didn't care about all from the client-side without ever 
+touching the database. Sometimes I had to make database changes and when that happened, I 
+has careful and deliberate, making the case to my inner DB administrator, but 
+mostly I just didn't have to.</p>
+<p>And when I needed whole new tables of data, that lead to another principle:</p>
+<p><em>build out all new tables in my development environment first.</em></p>
+<p>This way, I could make sure they worked in my new environment and could 
+refactor to my heart's content before disturbing my (inner) DB admin with 
+request after request to change a live, running database. I used a very simple 
+repository pattern in my MVC2 web site to hide the fact that I was actually 
+accessing two databases, so when I switched everything to a single database, 
+none of my view or controller code had to change. Beautiful!</p>
+<h2>Data Wants To Be Clean</h2>
+<p>And even though I was careful to keep my schema the same on the backend and 
+map it as I wanted in my new web site via EF, not all of my old data worked in my new 
+world. For example, I was building a web site on my local box, so anything with 
+a hard-coded link to sellsbrothers.com had to be changed. Also, I was using a 
+set of &lt;a name=&quot;tag&quot; ? elements to reference specific posts in my static HTML that just didn't 
+scale to my dynamic ID-based permalinks, so data had to be &quot;cleaned.&quot;</p>
+<p>To do this cleaning, I used a combination of 
+<a href="http://www.linqpad.net/">LINQPad</a>, 
+<a href="http://msdn.microsoft.com/en-us/library/ms174173.aspx">SSMS</a> and EF-based C# 
+code to perform data cleaning tasks. This yielded two tools that I'm still 
+using:</p>
+<ol>
+	<li><strong>BlogEdit: </strong>An unimagintively named general-purpose post 
+	and comment creation and editing tool. I built the first version of this 
+	long before WPF, so kept hacking on it in WinForms (whose data binding sucks 
+	compared to WPF, btw) as I needed it to have new features. Eventually I gave 
+	this tool WYSIWIG HTML editing by shelling out to Expression Web, but I need 
+	real AtomPub support on the site so I can move to Windows Live Writer for 
+	that functionality in the future.</li>
+	<li><strong>BulkChangeDatabaseTable: </strong>This was an app that I'd use 
+	to run my questions to find &quot;dirty&quot; data, perform regular expression 
+	replaces with and then -- and this is the best part -- show the changes in 
+	WinDiff so I could make sure I was happy with the changes before commiting 
+	them to the database. This extra eyeballing saved me from wrecking a bunch 
+	of data.</li>
+</ol>
+<p>During this data cleaning, I applied one simple rule that I adopted early and 
+always regretted when I ignored:</p>
+<p><em>thou shalt throw away no data</em>.</p>
+<p>Even if the data didn't seem to have any use in the new world, I kept it. And 
+it's a good thing I did, because I always, always needed it.</p>
+<p>For example, when I ran Phil's tool to parse my static web pages, he pulled 
+out the &lt;a name=&quot;tag&quot; /&gt; tags that went with all of my static posts. I wasn't 
+going to use them to build permalinks, why did I need them?</p>
+<p>I'll tell you why: because I've got 2600 posts in my blog from 15 years of 
+doing this, I cross-link to my own content all the live-long day and a bunch of 
+those cross-links are to, you guessed it, to what used to be static data. So, I 
+have to turn links embedded in my content of the form &quot;/writing/#footag&quot; into 
+links of the form &quot;/posts/details/452&quot;. But how do I look up the mapping between 
+&quot;footag&quot; and &quot;452&quot;? That's right -- I actually went to my (inner) DB admin and 
+begged him for a new column on my live database called &quot;EntryName&quot; where I 
+tucked the &lt;a name=&quot;tag&quot; /&gt; data as I imported the data from Phil's tool, even 
+though I didn't know why I might need it. It was a good principle.</p>
+<h2>Forwarding Old Links</h2>
+<p>And how did I even figure out I had all those broken links? Well, I asked my 
+good friend and web expert Kent Sharkey how to make sure my site was at least 
+internally consist before I shipped it and he recommended
+<a href="http://home.snafu.de/tilman/xenulink.html">Xenu Link Sleuth</a> for the 
+job. This lead to another principle:</p>
+<p><em>thou shalt ship the new site with no broken internal links</em>.</p>
+<p>Which was followed closely by another principle:</p>
+<p><em>thou shalt not stress over broken links to external content.</em></p>
+<p>Just because I'm completely anal about making sure every link I ever pass out 
+to the world stays valid for all eternity doesn't mean that the rest of the 
+world is similiarly anal. That's a shame, but there's nothing I can do if little 
+sites like microsoft.com decide to move things without a forwarding address. I 
+can, however, make sure that all of my links worked internally and I used Xenu 
+to do that. I started out with several hundred broken links and before I shipped 
+the new site, I had zero.</p>
+<p>Not all of that was changing old content, however. In fact, most of it 
+wasn't. Because I wanted existing external links out in the world to find the 
+same content in the new place, I had to make sure the old links still worked. That's not to say I was a slave to the old URL format, however. I didn't 
+want to expose .aspx extensions. I wanted to do things the new, cool, MVC way, 
+i.e. instead of /news/showTopic.aspx?ixTopic=452 (my old format), I wanted 
+/posts/details/452. So, this lead to a new principle:</p>
+<p><em>thou shalt built the new web site the way you want and make the old URLs 
+work externally.</em></p>
+<p>I was using MVC and I wanted to do it right. That meant laying out the &quot;URL 
+space&quot; the way it made sense in the new world (and it's much nicer in general, 
+imo). However, instead of changing my content to use this new URL schema, I used 
+it as a representative sample of how links to my content in the real-world might 
+be coming into my site, which gave me initial data about what URLs I needed to 
+forward. Ongoing, I'll dig through 404 logs to find the rest and make those URLs 
+work appropriately.</p>
+<p>I used a few means of forwarding the old URLs:</p>
+<ol>
+	<li><strong>Mapping sub-folders to categories: </strong>In the old site, I 
+	physically had the files in folders that matched the sub-folders, e.g. /fun 
+	mapped to /fun/default.aspx. In the new world, /fun meant 
+	/posts/details/?category=fun. This sub-folder thing only works for the set 
+	of well-defined categories on the site (all of which are entries in the 
+	database, of course), but if you want to do sub-string search across 
+	categories on my site you can, e.g. /posts/details/?category=foo.</li>
+	<li><strong>Kept sub-folder URLs</strong>, e.g. /tinysells and /writing: I 
+	still liked these URLs, so I kept them and built controllers to handle them.</li>
+	<li><a href="http://www.iis.net/download/URLRewrite"><strong>Using the IIS 
+	URL Rewriter</strong></a><strong>: </strong>This was the big gun.
+	<a href="http://weblogs.asp.net/jgalloway/">Jon Galloway</a>, who was 
+	invaluable in this work, turned me onto it and I'm glad he did. The URL 
+	Rewriter is a small, simple add-in to IIS7 that lets you describe patterns and rules for 
+	forwarding when those patterns are matched. I have something like a dozen 
+	patterns that do the work to forward 100s of URLs that are in my own content 
+	and might be out in the world. And it works so, so well. Highly recommended.</li>
+</ol>
+<p>So, with a combination of data cleaning to make my content work across both 
+the old site and the new site under development, making some of my old URLs work 
+because of conventions I adopted that I wanted to keep and URL rewriting, I had 
+a simple, feature-complete, 100% data-driven re-implementation of 
+sellsbrothers.com. </p>
+<h2>What's New?</h2>
+<p>Of course, I couldn't just reimplement the site without doing something new:</p>
+<ul>
+	<li><strong>Way, way faster. </strong>SQL Server 2008 and EF4 make the site 
+	noticibly faster. I love it. Surfing from my box, as soon as the browser 
+	window is visible, I'm looking at the content on my site. What's better than 
+	that?</li>
+	<li><strong>I made tinysells.com work again</strong>, e.g.
+	<a href="http://tinysells.com/42">tinysells.com/42</a>. I broke when I moved 
+	it from simpleurl.com to godaddy.com. Luckily, godaddy.com was just 
+	forwarding to sellsbrothers.com/tinysells/&lt;code&gt;, so that was easy to 
+	implement with a MVC controller. That was all data I already had in the 
+	database because John Elliot, another helper I had on the site a while ago, 
+	set it up for me.</li>
+	<li><strong>I added reCAPTCHA support: </strong>Now I'm hoping I won't have 
+	to moderate comments at all. So far, so good. Also, I added the ability to 
+	add HTML content, which is encoded, so it comes right back the way it went 
+	in, i.e. no action scripts or links or anything a spammer would want but the 
+	characters a coder wants putting content into a technical blog.</li>
+	<li><strong>Per category ATOM and OData feeds</strong> (and RSS feeds, too, 
+	if you care). For example, if you click on the ATOM or OData icons on the 
+	home page, you'll get the feed for everything. However, if you click on it 
+	on one of the category pages, e.g. <a href="/fun">/fun</a>, you'll get a feed filtered by 
+	category.</li>
+	<li><strong>Paging in OData and HTML: </strong>This lets you scroll to the 
+	bottom of both the OData feed and the HTML page to scroll backwards and 
+	forwards in time.</li>
+	<li><strong>New layout</strong> including fixed-sized content area for 
+	readability, google ads and bing search (I'd happily replace google ads with 
+	bing ads if they'd let me).</li>
+	<li><strong>Nearly every sub-page is category driven</strong>, although even 
+	the ones that aren't, e.g. <a href="/tinysells">/tinysells</a> and 
+	<a href="/writing">/writing</a> and still completely 
+	data-driven. Further, the writing page is so data-driven that if the data is 
+	just an ISDN, it creates an ASIN associate ID for amazon.com. Buy those 
+	books, people! : )</li>
+</ul>
+<h2>The Room for Improvement</h2>
+<p>As always, there's a long list of things I wish I had time to do:</p>
+<ul>
+	<li><strong>The way I handle layout</strong> is with tables 'cuz I couldn't 
+	figure out how to make CSS do what I wanted. I'd love expert help!</li>
+	<li><strong>Space preservation in comments so code is formatted correctly.</strong> 
+	I don't actually know the right way to go about this.</li>
+	<li><strong>Blog Conversations: </strong>The idea here is to let folks put 
+	their email on a forum comment so that when someone else comments, they're 
+	notified. This happens on forums and Facebook now and I like it for 
+	maintaining a conversation over time.</li>
+	<li>In spite of my principle, <strong>I didn't get 100% of the HTML content 
+	on the site into the database</strong>. Some of the older, obscure stuff is 
+	still in HTML. It's still reachable, but I haven't motivated myself to get 
+	every last scrap. I will.</li>
+	<li>I can easily <strong>expose more via OData</strong>. I can't think why 
+	not to and who knows what folks might want to do with the data.</li>
+	<li>I could make the site a little <strong>more readable on mobile devices</strong>.</li>
+	<li>I really need <strong>full support for AtomPub</strong> so I can use 
+	Windows Live Writer.</li>
+	<li>I'd like to add the name of the article into the URL (apparently search 
+	engines like that kind of thing : ).</li>
+	<li>Pulling <strong>book covers on the writing page</strong> from the ISBN number 
+	would liven up the joint, I think.</li>
+	<li>Pass the <a href="http://www.iis.net/download/SEOToolkit">SEO Toolkit</a> check. (I'm 
+	not so great just now.)</li>
+</ul>
+<p>Luckily, with the infrastructure I've got in place now, laying in these 
+features over time will be easy, which was the whole point of doing this work in 
+the first place.</p>
+<h2>Where are we?</h2>
+<p>All of this brings me back to one more principle. I call it Principle Zero:</p>
+<p><em>thou shalt make everything data-driven.</em></p>
+<p>I'm living the data-driven application dream here, people. When designing my 
+data model and writing my code, I imagined that sellsbrothers.com was but one instance of a class of web 
+applications and I kept all of the content, down to my name and email address, 
+in the database. If I found myself putting data into the code, I figured out 
+where it belonged in the database instead.</p>
+<p>This lead to all kinds of real-world uses of the database features of Visual Studio, including EF, OData, Database 
+projects, SQL execution, live table-based data editing, etc. I lived the 
+data-driven dream and it yielded a web site that's much faster and runs on much 
+less code:</p>
+<ul>
+	<li>Old site:<ul>
+		<li>191 .aspx file, 286 KB</li>
+		<li>400 .cs file,&nbsp; 511 KB</li>
+	</ul>
+	</li>
+	<li>New site:<ul>
+		<li>14 .aspx files, 19 KB</li>
+		<li>34 .cs files,&nbsp; 80 KB</li>
+	</ul>
+	</li>
+</ul>
+<p>Do the math and that's 100+% of the content and functionality for 10% of the 
+code. I knew I wanted to do it to gain experience with our end-to-end data stack 
+story. I had no idea I would love it so much.</p>
+
+

@@ -1,0 +1,15 @@
+<!--
+Date: 5/28/2004 6:02:25 PM  -08:00
+Permalink: 1374
+Disqus: 1374
+Tags: .net
+-->
+<h1>A 3-Part, 3-Day Weekend XAML Quiz</h1>
+<P>Ian posted <A href="http://www.interact-sw.co.uk/iangblog/2004/05/27/imageeffects">a fun little snippet of XAML showing off the new support for image effects on anything that Avalon renders, not just images</A>:</P>
+<P>&lt;FlowPanel xmlns="http://schemas.microsoft.com/2003/xaml"<BR>&nbsp; xmlns:def="Definition" Text.FontSize="24"&gt;<BR>&nbsp; &lt;Text&gt;This seems clear enough.&lt;/Text&gt;<BR>&nbsp; &lt;Text&gt;<BR>&nbsp;&nbsp;&nbsp; <B>&lt;Text.ImageEffect&gt;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ImageEffectBlur Radius="3"/&gt;<BR>&nbsp;&nbsp;&nbsp; &lt;/Text.ImageEffect&gt;</B><BR>&nbsp;&nbsp;&nbsp; This is considerably less clear.	<BR><STRONG>&nbsp; &lt;/Text&gt;<BR></STRONG>&lt;/FlowPanel&gt;</P>
+<P>I've rewritten it using a more compact syntax:</P>
+<P><STRONG>&lt;Text ImageEffect="*ImageEffectBlur(Radius=3)"&gt;<BR></STRONG>This is considerably less clear.<BR><STRONG>&lt;/Text&gt;</STRONG></P>
+<OL>
+<LI>For 1 free UUID, is this legal XAML? Why or why not?</LI>
+<LI>For 2 free UUIDs, what other popular XAML construct uses the exact same syntax?</LI>
+<LI>For 3 free UUIDs, what popular C# construct has a similar syntax? How is it subtly different? (Hint: I'm not showing the difference in this example.)</LI></OL>

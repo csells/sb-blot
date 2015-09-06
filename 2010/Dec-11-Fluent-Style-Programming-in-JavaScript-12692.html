@@ -1,0 +1,394 @@
+<!--
+Date: 12/11/2010 5:57:50 PM  -08:00
+Permalink: 12692
+Disqus: 12692
+-->
+<h1>Fluent-Style Programming in JavaScript</h1>
+<p>I’ve been playing around with JavaScript a great deal lately and trying to find my way. I last programmed JS seriously about 10 years ago and it’s amazing to me how much the world has changed since then. For example, the fifth edition of <a href="http://www.ecmascript.org/">ECMAScript</a> (ES5) has recently been approved for standardization and it’s already widely implemented in modern browsers, including <a href="http://www.beautyoftheweb.com/">my favorite browser, IE9</a>.</p>  <h2>Fluent LINQ</h2>  <h2></h2>  <p>However, I’m a big C# fan, especially <a href="http://en.wikipedia.org/wiki/Fluent_interface">the fluent API style</a> of LINQ methods like Where, Select, OrderBy, etc. As an example, assume the following C# class:</p>  <pre class="csharpcode"><span class="kwrd">class</span> Person {
+  <span class="kwrd">public</span> Person() { Children = <span class="kwrd">new</span> List&lt;Person&gt;(); }
+  <span class="kwrd">public</span> <span class="kwrd">string</span> Name { get; set; }
+  <span class="kwrd">public</span> DateTime Birthday { get; set; }
+  <span class="kwrd">public</span> <span class="kwrd">int</span> Age { get { <span class="kwrd">return</span> (<span class="kwrd">int</span>)((DateTime.Now - Birthday).Days / 365.25); } }
+  <span class="kwrd">public</span> ICollection&lt;Person&gt; Children { get; <span class="kwrd">private</span> set; }
+  <span class="kwrd">public</span> <span class="kwrd">override</span> <span class="kwrd">string</span> ToString() { <span class="kwrd">return</span> <span class="kwrd">string</span>.Format(<span class="str">&quot;{0} ({1})&quot;</span>, Name, Age); }
+}</pre>
+<style type="text/css">
+
+
+
+
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<div id="codeSnippetWrapper">Creating a set of them is a matter of using the C# member initialization syntax:</div>
+
+<pre class="csharpcode">var chris = <span class="kwrd">new</span> Person() {
+  Name = <span class="str">&quot;Chris&quot;</span>,
+  Birthday = <span class="kwrd">new</span> DateTime(1969, 6, 2),
+  Children = {
+    <span class="kwrd">new</span> Person() {
+      Name = <span class="str">&quot;John&quot;</span>,
+      Birthday = <span class="kwrd">new</span> DateTime(1994, 5, 5),
+    },
+    <span class="kwrd">new</span> Person() {
+      Name = <span class="str">&quot;Tom&quot;</span>,
+      Birthday = <span class="kwrd">new</span> DateTime(1995, 8, 30),
+    },
+  },
+};</pre>
+<style type="text/css">
+
+
+
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<div>Without even realizing it, I used the word “set” to describe how I think of this collection of people. That’s how the LINQ methods encourage me to think and I like it – I’m working on sets of things, whether I’m filtering them, projecting them, ordering them, aggregating them in some way, etc. For example, here’s how I would print all of the items in my set:</div>
+
+<div id="codeSnippetWrapper">
+  <pre class="csharpcode">var people = <span class="kwrd">new</span> Person[] { chris }.<strong>Union</strong>(chris.Children);
+Console.WriteLine(<span class="str">&quot;People: &quot;</span> +
+  people.<strong>Aggregate</strong>(<span class="str">&quot;&quot;</span>, (s, p) =&gt; s + (s.Length == 0 ? <span class="str">&quot;&quot;</span> : <span class="str">&quot;, &quot;</span>) + p.ToString()));
+Console.WriteLine(<span class="str">&quot;Teens: &quot;</span> +
+  people.<strong>Where</strong>(p =&gt; p.Age &gt; 12 &amp;&amp; p.Age &lt; 20).
+    Aggregate(<span class="str">&quot;&quot;</span>, (s, p) =&gt; s + (s.Length == 0 ? <span class="str">&quot;&quot;</span> : <span class="str">&quot;, &quot;</span>) + p.ToString()));<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style><br /></pre>
+</div>
+
+<div>Here I’m using the Union method to combine all three elements into a new set, the Where method to filter one set to produce another and the Aggregate method to produce a single string. The output should be unsurprising:</div>
+
+<pre class="csharpcode">People: Chris (41), John (16), Tom (15)
+Teens: John (16), Tom (15)</pre>
+<style type="text/css">
+
+
+
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<h2>Fluent JavaScript</h2>
+
+<div>LINQ is lousy with such set-oriented functions, e.g. Select, OrderBy, Take, Skip, First, Single, etc. and <a href="/12686">I use them a ton in my code</a> (and <a href="/12691">my scripts</a>). As it turns out, JS has these methods, too, both provided by popular JS toolkits like <a href="http://jquery.org/">jQuery</a> and <a href="http://blogs.msdn.com/b/ie/archive/2010/12/13/ecmascript-5-part-2-array-extras.aspx">in the language itself</a>. Specifically, ES5 has a number of lovely methods for fluent programming. For example, given the same “class” in JS:</div>
+
+<pre class="csharpcode"><span class="rem">// Person constructor</span>
+<span class="kwrd">function</span> Person(args) {
+  <span class="kwrd">if</span> (args.name) { <span class="kwrd">this</span>.name = args.name; }
+  <span class="kwrd">if</span> (args.birthday) { <span class="kwrd">this</span>.birthday = args.birthday; }
+  <span class="kwrd">if</span> (args.children) { <span class="kwrd">this</span>.children = args.children; }
+}
+
+<span class="rem">// Person properties and methods</span>
+Person.prototype = Object.create(<span class="kwrd">null</span>, {
+  name: { value: <span class="str">&quot;&quot;</span>, writable: <span class="kwrd">true</span> },
+  birthday: { value: <span class="kwrd">new</span> Date(), writable: <span class="kwrd">true</span> },
+  age: { get: <span class="kwrd">function</span> () { <span class="kwrd">return</span> Math.floor((<span class="kwrd">new</span> Date() - <span class="kwrd">this</span>.birthday) / 31557600000); } },
+  children: { value: [], writable: <span class="kwrd">true</span> },
+  toString: { value: <span class="kwrd">function</span> () { <span class="kwrd">return</span> <span class="kwrd">this</span>.name + <span class="str">&quot; (&quot;</span> + <span class="kwrd">this</span>.age + <span class="str">&quot;)&quot;</span>; } }
+});</pre>
+<style type="text/css">
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>I can do several LINQ-style things on it:</p>
+
+<pre class="csharpcode"><span class="kwrd">var</span> s = <span class="str">&quot;&quot;</span>;
+<span class="kwrd">var</span> tom = <span class="kwrd">new</span> Person({ name: <span class="str">&quot;tom&quot;</span>, birthday: <span class="kwrd">new</span> Date(1995, 7, 30) });
+<span class="kwrd">var</span> john = <span class="kwrd">new</span> Person({ name: <span class="str">&quot;john&quot;</span>, birthday: <span class="kwrd">new</span> Date(1994, 4, 5) });
+<span class="kwrd">var</span> chris = <span class="kwrd">new</span> Person({ name: <span class="str">&quot;chris&quot;</span>, birthday: <span class="kwrd">new</span> Date(1969, 5, 2), children: [tom, john] });
+<span class="kwrd">var</span> people = [tom, john, chris];
+
+<span class="rem">// select</span>
+s += <span class="str">&quot;&lt;h1&gt;people&lt;/h1&gt;&quot;</span> + people.<strong>map</strong>(<span class="kwrd">function</span> (p) { <span class="kwrd">return</span> p; }).join(<span class="str">&quot;, &quot;</span>);
+
+<span class="rem">// where</span>
+s += <span class="str">&quot;&lt;h1&gt;teenagers&lt;/h1&gt;&quot;</span> + people.<strong>filter</strong>(<span class="kwrd">function</span> (p) { <span class="kwrd">return</span> p.age &gt; 12 &amp;&amp; p.age &lt; 20 }).join(<span class="str">&quot;, &quot;</span>);
+
+<span class="rem">// any</span>
+s += <span class="str">&quot;&lt;h1&gt;any person over the hill?&lt;/h1&gt;&quot;</span> + people.<strong>some</strong>(<span class="kwrd">function</span> (p) { <span class="kwrd">return</span> p.age &gt; 40; });
+
+<span class="rem">// aggregate</span>
+s += <span class="str">&quot;&lt;h1&gt;totalAge&lt;/h1&gt;&quot;</span> + people.<strong>reduce</strong>(<span class="kwrd">function</span> (totalAge, p) { <span class="kwrd">return</span> totalAge += p.age; }, 0);
+
+<span class="rem">// take</span>
+s += <span class="str">&quot;&lt;h1&gt;take 2&lt;/h1&gt;&quot;</span> + people.<strong>slice</strong>(0, 2).join(<span class="str">&quot;, &quot;</span>);
+
+<span class="rem">// skip</span>
+s += <span class="str">&quot;&lt;h1&gt;skip 2&lt;/h1&gt;&quot;</span> + people.<strong>slice</strong>(2).join(<span class="str">&quot;, &quot;</span>);
+
+<span class="rem">// sort</span>
+s += <span class="str">&quot;&lt;h1&gt;sorted by name&lt;/h1&gt;&quot;</span> + people.<strong>slice(0).sort</strong>(
+  <span class="kwrd">function</span> (lhs, rhs) { <span class="kwrd">return</span> lhs.name.localeCompare(rhs.name); }).join(<span class="str">&quot;, &quot;</span>);
+
+<span class="rem">// dump</span>
+document.getElementById(<span class="str">&quot;output&quot;</span>).innerHTML = s;</pre>
+
+<p>Notice that several things are similar between JS and C# LINQ-style:</p>
+
+<ul>
+  <li>The array and object initialization syntax looks very similar so long as I follow the JS convention of passing in an anonymous object as a set of constructor parameters. </li>
+
+  <li>The JS Date type is like the .NET DateTime type except that months are zero-based instead of one-based (weird). </li>
+
+  <li>When a Person object is “added” to a string, JS is smart enough to automatically call the toString method. </li>
+
+  <li>The JS map function lets you project from one set to another like LINQ Select. </li>
+
+  <li>The JS filter function lets you filter a set like LINQ Where. </li>
+
+  <li>The JS some function lets you check if anything in a set matches a predicate like LINQ Any. </li>
+
+  <li>The JS reduce function lets you accumulate results from a set like the LINQ Aggregate. </li>
+
+  <li>The JS slice function is a multi-purpose array manipulation function that we’ve used here like LINQ Take and Skip. </li>
+
+  <li>The JS slice function also produces a copy of the array, which is handy when handing off to the JS sort, which acts on the array in-place. </li>
+</ul>
+
+<p>The output looks as you’d expect:</p>
+
+<p><a href="/public/post-images/12692-23.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="/public/post-images/12692-24.png" width="697" height="916" /></a></p>
+<style type="text/css">
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<p>We’re not all there, however. For example, the semantics of the LINQ First method are to stop looking once a match is found. Those semantics are not available in the JS filter method, which checks every element, or the JS some method, which stops once the first matching element is found, but returns a Boolean, not the matching element. Likewise, the semantics for Union and Single are also not available as well as several others that I haven’t tracked down. In fact, there are several JS toolkits available on the internet to provide the entire set of LINQ methods for JS programmers, but I don’t want to duplicate my C# environment, just the set-like thinking that I consider language-agnostic.</p>
+
+<p>So, in the spirit of JS, I added methods to the build in types, like the Array type where all of the set-based intrinsics are available, to add the missing functionality:</p>
+
+<pre class="csharpcode">Object.defineProperty(Array.prototype, <span class="str">&quot;union&quot;</span>, { value: <span class="kwrd">function</span> (rhs) {
+  <span class="kwrd">var</span> rg = <span class="kwrd">this</span>.slice(0);
+  rhs.forEach(<span class="kwrd">function</span> (v) { rg.unshift(v); })
+  <span class="kwrd">return</span> rg;
+}});
+
+Object.defineProperty(Array.prototype, <span class="str">&quot;first&quot;</span>, { value: <span class="kwrd">function</span> (callback) {
+  <span class="kwrd">for</span> (<span class="kwrd">var</span> i = 0, length = <span class="kwrd">this</span>.length; i &lt; length; ++i) {
+    <span class="kwrd">var</span> value = <span class="kwrd">this</span>[i];
+    <span class="kwrd">if</span> (callback(value)) { <span class="kwrd">return</span> value; }
+  }
+  <span class="kwrd">return</span> <span class="kwrd">null</span>;
+}});
+
+Object.defineProperty(Array.prototype, <span class="str">&quot;single&quot;</span>, { value: <span class="kwrd">function</span> (callback) {
+  <span class="kwrd">var</span> result = <span class="kwrd">null</span>;
+  <span class="kwrd">this</span>.forEach(<span class="kwrd">function</span> (v) {
+    <span class="kwrd">if</span> (callback(v)) {
+      <span class="kwrd">if</span> (result != <span class="kwrd">null</span>) { <span class="kwrd">throw</span> <span class="str">&quot;more than one result&quot;</span>; }
+      result = v;
+    }
+  });
+  <span class="kwrd">return</span> result;
+}});</pre>
+
+<p>These aren’t perfectly inline with all of the semantics of the built-in methods, but they give you a flavor of how you can extend the prototype, which ends up feeling like adding extension methods in C#.</p>
+
+<p>The reason to add methods to the Array prototype is that it makes it easier to continue to chain calls together in the fluent style that started all this experimentation, e.g.</p>
+
+<pre class="csharpcode"><span class="rem">// union</span>
+s += <span class="str">&quot;&lt;h1&gt;chris's family&lt;/h1&gt;&quot;</span> +<br />  [chris].<strong>union</strong>(chris.children).map(<span class="kwrd">function</span> (p) { <span class="kwrd">return</span> p; }).join(<span class="str">&quot;, &quot;</span>);</pre>
+
+<h2>Where Are We?</h2>
+
+<p>If you’re a JS programmer, it may be that you appreciate using it like a scripting language and so none of this “set-based” nonsense is important to you. That’s OK. JS is for everyone.</p>
+
+<p>If you’re a C# programmer, you might dismiss JS as a “toy” language and turn your nose up at it. This would be a mistake. JS has a combination of ease-of-use for the non-programmer-programmer and raw power for the programmer-programmer that makes it worth taking seriously. Plus, with it’s popularity on the web, it’s hard to ignore.</p>
+
+<p>If you’re a functional programmer, you look at all this set-based programming and say, “Duh. What took you so long?”</p>
+
+<p>Me, I’m just happy I can program the way I like to in my new home on the web. : )</p>
+<style type="text/css">
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style><style type="text/css">
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>  

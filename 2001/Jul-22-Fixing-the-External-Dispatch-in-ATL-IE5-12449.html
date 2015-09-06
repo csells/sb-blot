@@ -1,0 +1,19 @@
+<!--
+Date: 7/22/2001 12:00:00 AM  -08:00
+Permalink: 12449
+Disqus: 12449
+Tags: tools
+-->
+<h1>Fixing the External Dispatch in ATL + IE5</h1>
+<span class="created">July 22, 2001</span>
+    <p align="left">
+        Are you getting this: "Error: object doesn't support this property or method" 
+        when you try to call a method on your ATL HTML Control exposed external 
+        dispatch (accessed via window.external in the HTML of the control)? Did it used 
+        to work with IE4 and now it doesn't with IE5? That's because the ATL boys 
+        played fast and loose with the identity laws of COM and, while it took the COM 
+        police a while to catch up with them, catch up with them they did.
+    </p>
+    <p align="left">
+        Download <a href="/public/tools/WrapperDispatch.h">WrapperDispatch.h</a> for an explanation 
+        of the problem and my solution to it.</p>

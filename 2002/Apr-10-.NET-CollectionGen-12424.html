@@ -1,0 +1,48 @@
+<!--
+Date: 4/10/2002 12:00:00 AM  -08:00
+Permalink: 12424
+Disqus: 12424
+Tags: tools
+-->
+<h1>.NET CollectionGen</h1>
+
+    <p>[Note: As of 5/5/03, the functionality of CollectionGen has been sucked 
+	into <a href="http://www.ericjsmith.net/codesmith/">Eric 
+	Smith's CodeSmith</a>. I asked Eric to take on these features because 
+	CodeSmith does all of what CollectionGen does and more. All new feature 
+	requests/bug reports should go his way.]</p>
+	<p>CollectionGen is 
+    <a href="/public/tools/collectiongen.zip">a Custom Tool Add-In to VS.NET 2002 &amp; 2003 to generate type-safe collections</a>. As it turns out, I did almost none of 
+the work. <a href="mailto:jfland@develop.com">Jon Flanders</a> figured out how to add a custom tool. 
+    <a href="mailto:shawnv@arithex.com">Shawn Van Ness</a> 
+implemented
+    the template for type-safe collections. I just put it together.</p>
+    <p>CollectionGen is an add-on to generate code for type-safe collections 
+    until we have templates in C# (likely) and VB (unlikely). The benefit of a 
+    type-safe collection, of course, is that you can use it without having to 
+    cast items to and from objects. Also, Shawn has been very careful to 
+    implement a collection class that is very efficient for both reference types 
+    and value types.</p>
+    <p>Once you've setup it up and defined your collections in a collection 
+    definition file in your project, you'll have type-safe collection classes 
+    generated as part of your design-process, as shown here:</p>
+    <p><img border="0" src="/public/tools/CollectionGen1.gif" width="403" height="98"></p>
+    <p><b>Figure 1: collections.xml collection definition file</b></p>
+    <p>&nbsp;</p>
+    <p>
+    <img border="0" src="/public/tools/CollectionGen2.gif" align="top" width="189" height="145"></p>
+    <p><b>Figure 2: collections.xml and generated collection.cs implementation 
+    file</b></p>
+    <p>&nbsp;</p>
+    <p>
+    <img border="0" src="/public/tools/CollectionGen3.gif" align="top" width="228" height="90"></p>
+    <p><b>Figure 3: CollectionGen custom tool add-in associated with the 
+    collections.xml file</b></p>
+    <p>&nbsp;</p>
+    <p><img border="0" src="/public/tools/CollectionGen4.gif" width="582" height="188"></p>
+    <p><b>Figure 4: Generate type-safe collection code</b></p>
+    <p>Enjoy!</p>
+	<p align="left">Also, Atif Aziz used some of my custom tool code and built
+	<a href="http://www.gotdotnet.com/Workspaces/Workspace.aspx?id=ef3d0a73-0468-46da-8780-ede0f12b6f22">
+	a generic VS.NET code generator shim</a> that allows you to build a code 
+	generator that plugs into VS.NET by implementing a single method.</p>

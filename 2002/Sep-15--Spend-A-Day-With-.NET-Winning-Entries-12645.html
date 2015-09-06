@@ -1,0 +1,116 @@
+<!--
+Date: 9/15/2002 12:00:00 AM  -08:00
+Permalink: 12645
+Disqus: 12645
+Tags: fun
+-->
+<h1>"Spend A Day With .NET" Winning Entries</h1>
+<p>Sorry it took so long to judge the entries, but I was overwhelmed. That'll 
+teach me to host <a href="/12646">an international, pan-galactic, cross-universe 
+coding contest</a>. : )</p>
+<h2>Grand Prize Winner and Best Developer Tool: 
+<a href="mailto:Stoyan.Damov@rila.com">Stoyan Damov</a></h2>
+<p>Stoyan wins the grand prize of free admission to the
+<a href="/conference">Web Services DevCon</a>. His entry is shown here:</p>
+<p>
+<img border="0" src="/public/fun/daywithdotnet/Stoyan%20screen%20shot.JPG" width="679" height="390"></p>
+<p>KbView allows the user to pick a technology or set of technologies that s/he 
+is interested in and see what's new in that space. Once the articles are 
+fetched, they're listed on the right hand side, where they can be shown directly 
+in the text viewer below or they can be hosted in a separate IE window. Also, 
+once the article has been downloaded, it's cached for quick access for next time. 
+This is an app that I will use. Great work, Stoyan!</p>
+<h2>Best Rookie: <a href="mailto:sorinj@softhome.net">Sorin Jianu</a></h2>
+<p><span style="font-size: 12.0pt; font-family: Times New Roman">Sorin wins a year 
+subscription to MSDN Universal for his submission:</span></p>
+<p>
+<img border="0" src="/public/fun/daywithdotnet/Sorin%20Jianu%20screen%20shot.JPG" width="471" height="430"></p>
+<p>Sorin's submission is a functional proxy server and represents his first .NET 
+project ever. It's fully asychronous and uses non-blocking I/O. It's quite a 
+testament to what can be done in .NET in a single day.</p>
+<h2>Most Polished: <a href="mailto:jeffb@onlinetoolworks.com">Jeff Braunstein</a></h2>
+<p>Jeff wins a 12-month 
+subscription (5 points) to Safari Tech Books Online for his entry:</p>
+<p>
+<img border="0" src="/public/fun/daywithdotnet/Jeff%20Brawstein%20screen%20shot.JPG" width="547" height="359"></p>
+<p>Jeff's entry was the most polished I got, both in the UI as shown above, but 
+also in the documentation, which included a market justification. I can see Jeff 
+selling a version of this tool soon. The UI above is a front end to an NT 
+service, also written in .NET, that takes jobs off of an MSMQ queue for batch 
+dispatch. Because of the flexible architecture, these jobs can be spawned on a 
+single machine or across multiple machines.</p>
+<h2>Best VS.NET Add-In: <a href="mailto:iioffe@bezeqint.net">Igal Ioffe</a></h2>
+<p><span style="font-size: 12.0pt; font-family: Times New Roman">Igal wins a 
+signed box copy of Visual Studio .NET for his VS.NET add-in:</span></p>
+<p>
+<img border="0" src="/public/fun/daywithdotnet/Igal%20Ioffe%20screenshot.JPG" width="561" height="300"></p>
+<p>Igal's submission is simple, but effective. I often mail snippets of code 
+around and now I can do it with the context menu from without VS.NET.</p>
+<h2>Best Consumption of XML: <a href="mailto:dejan@jelovic.com">Dejan Jelovic</a></h2>
+<p>Dejan won his pick of a combination of things, but I couldn't talk him into 
+taking anything -- he just wanted to compete. His application is a fully 
+functional RSS reader:</p>
+<p>
+<img border="0" src="/public/fun/daywithdotnet/Dejan%20screenshot.JPG" width="676" height="379"></p>
+<p>Dejan's RSS reader has two tabs, one for the RSS feed administration itself, 
+persisted between sessions, and one for the combination of the content for all 
+of your feeds in a single web page, cached between sessions.</p>
+<h2>Best Use of SQL: <a href="mailto:simon.wilson@objectnation.com">Simon E.P. Wilson</a>, Markus Burri &amp; Thomas Schwarz</h2>
+<p>Simon, Markus and Thomas win a 10-user copy of rmTrack for their SQL Stored 
+Procedure code generator:</p>
+<p>
+<img border="0" src="/public/fun/daywithdotnet/SPInvoke.jpg" width="756" height="579"></p>
+<p>Once the settings are chosen, the generated code lets the user make calls 
+into the stored procedure from their .NET language of choice almost as if the 
+function was a native .NET method:</p>
+<pre>class MyApp {
+    static void Main(string[] args) {
+        // Create Connection
+        SqlConnection conn = new SqlConnection(@&quot;...");
+        conn.Open();      
+
+<b>        // Invoke the Stored Procedure
+        SalesByCategory.Result res = SalesByCategory.Invoke(conn, "Beverages", "");
+</b>
+        // Show Results
+        foreach (SalesByCategory.Row row in res.Rows) {
+            Console.WriteLine("{0} : {1}", row.ProductName, row.TotalPurchase);
+        }</pre>
+<pre>        conn.Close();
+    }
+}</pre>
+<h2>Honorable Mention</h2>
+<p>There were so many other great entries that I couldn't narrow it to just the 
+big prize winners. The following were each awarded their pick of a book or a 
+free software package:</p>
+<ul>
+  <li><b>Best Use of XML, <a href="mailto:AdamCogan@ssw.com.au">Adam Cogan</a></b>: This entry was cool because it used a 
+  smart client to gather information about a user's system, email to deliver it 
+  and XML to make server-side processing a snap (<a href="/public/fun/daywithdotnet/Adam%20Cogan%203%20screenshot.JPG">screen 
+  shot</a>).</li>
+  <li><b>Best Web Service Client, <a href="mailto:darrel@tavis.ca">Darrel Miller</a></b>: I liked Darrel's 
+  application because of the nice mix of a smart client front-end to capture all 
+  settings to make a single, atomic web service call and the production of a web 
+  site based on the  posted data (<a href="/public/fun/daywithdotnet/Darrel%20Miller%20screenshot.JPG">screen 
+  shot 1</a>, <a href="/public/fun/daywithdotnet/Darrel%20Miller%20screenshot%202.JPG">screen shot 2</a>).</li>
+  <li><b>Best Technical Insight, <a href="mailto:glombard@everdreamcorp.com">Gert Lombard</a></b>: Gert's command line parser 
+  was near and dear to me for two reasons. One, he'd built a command line parser 
+  based on .NET's Reflection, <a href="http://www.genghisgroup.com">just like 
+  I've done</a> in Genghis with the CommandLineParser class, and two, he built it because he fell in love with Reflection, 
+  just like I did (<a href="/public/fun/daywithdotnet/Gert%20screen%20shot.JPG">screen shot</a>,
+  <a href="http://codeblast.com/~gert/dotnet/sells.html">source</a>).</li>
+  <li><b>Best Game Library, <a href="mailto:richard@caetano.com">Richard Caetano</a></b>: Richard's entry wasn't quite 
+  complete, but I love Poker as much as I love .NET, so I thought I'd point out 
+  that he's provided a complete managed card drawing library, in case anyone 
+  needs one (<a href="http://www.stronglytyped.com/npoker/">screen 
+  shot and source</a>).</li>
+  <li><b>Best Entry From High School Student, <a href="mailto:rd933@msn.com">Ryan Dawson</a></b>: I'm not sure I 
+  should be encouraging such behavior, but I certainly spent my fair share alone 
+  in my parent's basement with my computer and I turned out all right (didn't 
+  I?!?), so I thought I'd mention that Ryan was the only high school student 
+  (that I know of) that submitted an entry. Also, he used
+  <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnforms/html/winforms08162002.asp">
+  my pi calculator</a> to calculate 20K digits of pi for extra credit, so 
+  clearly things are working out for him. Remember to cite your sources, Ryan! : 
+  )</li>
+</ul>

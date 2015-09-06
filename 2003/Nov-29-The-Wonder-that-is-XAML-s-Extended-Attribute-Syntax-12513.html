@@ -1,0 +1,86 @@
+<!--
+Date: 11/29/2003 12:00:00 AM  -08:00
+Permalink: 12513
+Disqus: 12513
+Tags: spout
+-->
+<h1>The Wonder that is XAML's Extended Attribute Syntax</h1>
+<p><i>Saturday, 
+<span class="created">November 29, 2003</span></i></p><p>I've been playing with GridPanel today and really 
+like how elegant it is. If I say the following:</p>
+<pre>&lt;GridPanel&gt;
+  &lt;SimpleText&gt;Testing&lt;/SimpleText&gt;
+  &lt;SimpleText&gt;1&lt;/SimpleText&gt;
+  &lt;SimpleText&gt;2&lt;/SimpleText&gt;
+  &lt;SimpleText&gt;3&lt;/SimpleText&gt;
+&lt;/GridPanel&gt;</pre><p>I get the equivalent of an HTML table with four rows with 
+each SimpleText element forming a cell like so (augmented with Border elements 
+not shown above to accentuate the cells):</p><p><img border="0" src="/public/spout/xaml1.JPG" width="113" height="92"></p><p>
+If I want to split the data into columns, I can do that using the Columns 
+attribute:</p>
+<pre>&lt;GridPanel <b>Columns=&quot;2&quot;</b>&gt;
+  &lt;SimpleText&gt;Testing&lt;/SimpleText&gt;
+  &lt;SimpleText&gt;1&lt;/SimpleText&gt;
+  &lt;SimpleText&gt;2&lt;/SimpleText&gt;
+  &lt;SimpleText&gt;3&lt;/SimpleText&gt;
+&lt;/GridPanel&gt;</pre><p>Which gives me two rows of two columns each:</p><p><img border="0" src="/public/spout/xaml2.JPG" width="113" height="61"></p><p>
+That's all nice and simple, but still flexible. For example, if I want to set 
+the Testing string to cover two columns, I can give it an ID in the XAML and 
+call the GridPanel.SetColumnSpan static method in code, e.g. when the Window 
+loads:</p>
+<pre>&lt;!-- xaml --&gt;
+&lt;Window ... <b>Loaded=&quot;window1_Loaded&quot;</b>&gt;
+  &lt;GridPanel Columns=&quot;2&quot;&gt;
+    &lt;SimpleText <b>ID=&quot;testingSimpleText&quot;</b>&gt;Testing&lt;/SimpleText&gt;
+    &lt;SimpleText&gt;1&lt;/SimpleText&gt;
+    &lt;SimpleText&gt;2&lt;/SimpleText&gt;
+    &lt;SimpleText&gt;3&lt;/SimpleText&gt;
+  &lt;/GridPanel&gt;
+&lt;/Window&gt;</pre>
+<pre>// C#
+<b>void window1_Loaded(...) {
+  GridPanel.SetColumnSpan(testingSimpleText, 2);
+}</b></pre><p>This code yields 3 rows arranged as follows:</p><p><img border="0" src="/public/spout/xaml3.JPG" width="113" height="76"></p><p>
+This is all fine and makes you appreciate the elegance of the GridPanel. 
+However, that's not what inspired me to write this entry.</p><p>Remember that 
+the SimpleText element serves as a cell in the GridPanel. Even better, the 
+SimpleText element doesn't know it's serving as a cell in a GridPanel. The 
+architecture of Avalon is loosely-couple so that all of the elements don't need 
+to have intimate knowledge of each other. This loose coupling is really great 
+for future elements that some developer wants to host in a GridPanel or that 
+want to host SimpleText elements. Still, I'd like to be able to set GridPanel-related 
+properties for each &quot;cell&quot; on the cell element itself, even if the cell element 
+doesn't know it's a child of a GridPanel. And that's what the extended attribute 
+syntax in XAML lets me do. Instead of writing the code, I can just do this:</p>
+<pre>&lt;GridPanel Columns=&quot;2&quot;&gt;
+  &lt;SimpleText <b>GridPanel.ColumnSpan=&quot;2&quot;</b>&gt;Testing&lt;/SimpleText&gt;
+  &lt;SimpleText&gt;1&lt;/SimpleText&gt;
+  &lt;SimpleText&gt;2&lt;/SimpleText&gt;
+  &lt;SimpleText&gt;3&lt;/SimpleText&gt;
+&lt;/GridPanel&gt;</pre><p>This dotted attribute syntax allows me to set a GridPanel 
+setting for the SimpleText element w/o any knowledge from the GridPanel of the 
+SimpleText or vice versa. That means that if I define the FooBar element 
+tomorrow, I can set it's GridPanel.ColumnSpan on it when it's used inside a 
+GridPanel w/o extending GridPanel. This also means that if FooBar has a Quux 
+per-child property, I can set the FooBar.Quux attribute of the SimpleText 
+element w/o extending SimpleText. Nice!</p><p>BTW, if you'd like to see the code 
+that provides the GridPanel in &quot;outline mode&quot; as above, it looks like this:</p>
+<pre><b>&lt;Border Background=&quot;black&quot; Width=&quot;100%&quot; Height=&quot;100%&quot;&gt;
+</b>  &lt;GridPanel Columns=&quot;2&quot;&gt;
+<b>    &lt;Border Background=&quot;white&quot; GridPanel.ColumnSpan=&quot;2&quot;&gt;
+</b>      &lt;SimpleText &gt;Testing&lt;/SimpleText&gt;
+<b>    &lt;/Border&gt;
+    &lt;Border Background=&quot;white&quot;&gt;
+</b>      &lt;SimpleText&gt;1&lt;/SimpleText&gt;
+<b>    &lt;/Border&gt;
+    &lt;Border Background=&quot;white&quot;&gt;
+</b>      &lt;SimpleText&gt;2&lt;/SimpleText&gt;
+<b>    &lt;/Border&gt;
+    &lt;Border Background=&quot;white&quot;&gt;
+</b>      &lt;SimpleText&gt;3&lt;/SimpleText&gt;
+<b>    &lt;/Border&gt;
+</b>  &lt;/GridPanel&gt;
+<b>&lt;/Border&gt;</b></pre><p>Notice that the GridPanel.ColumnSpan is on the Border 
+element, not the SimpleText element. That's because it's the Border that's the 
+cell of the GridPanel, not the SimpleText.</p>
+

@@ -1,0 +1,776 @@
+<!--
+Date: 1/6/2002 12:00:00 AM  -08:00
+Permalink: 12594
+Disqus: 12594
+Tags: .net
+-->
+<h1>VS.NET Fun Facts</h1>
+        <p>After about a month of banging my head on it, Visual Studio.NET has 
+        become my favorite IDE of all time. To save you the bruising, I 
+        thought I'd post some productivity tricks and traps I've learned [1] that 
+        make VS.NET useful. If you've got your own,
+        <a href="mailto:csells@sellsbrothers.com?subject=Here's a VS.NET Fun Fact for you!">
+        send them to me</a> and I'll post the good ones.</p>
+        <p><b>DISCLAIMER: </b>I always leave the standard VS.NET key bindings, i.e. I 
+        don't set it to VC6 style. In general, I just learn the default 
+        keystrokes for things instead of changing them. Saves me time when 
+        repaving my machines or sitting down at strange machines. If you've 
+        changed key bindings in your VS.NET, these keystrokes aren't likely to 
+        work, but the tricks will still be useful if you can figure out what the 
+        key bindings are.</p>
+        <h2>Download</h2>
+        <p>If you don't already have VS.NET, run, don't walk, to MSDN to 
+        download a
+        <a href="http://msdn.microsoft.com/vstudio/productinfo/trial.asp">
+        60-day evaluation of VS.NET Professional</a>.</p>
+        <h2>Tricks</h2>
+        <ul>
+          <li>The most important thing I've done to make VS.NET useful for me is 
+          to <b>unpin all of the windows</b>. This gives me tons of room for the source 
+          or design view. This, combined with the keystrokes to pull out 
+          the windows (below) as I need them, is probably my favorite feature of VS.NET.<br>
+&nbsp;</li>
+          <li>The 2nd most important thing to know is that VS.NET can be invoked 
+          from Start-&gt;Run using its name &quot;devenv&quot; (no quotes). Therefore, 
+          <b>to 
+          start VS.NET, type Ctrl-Esc, R, devenv, Enter</b>. Much better than 
+          digging into the deep Programs menu.<br>
+&nbsp;</li>
+          <li>Make sure to <b>move the &quot;Visual Studio .NET Command Prompt&quot;</b> that's 
+          buried deep inside of Start-&gt;Programs-&gt;Microsoft Visual Studio 
+          .NET-&gt;Visual Studio .NET Tools to somewhere more handy, e.g. the Quick 
+          Launch toolbar, so that you can get to it easily. You'll be using the 
+          command shell often in your .NET development.<br>
+&nbsp;</li>
+          <li><b>Let the IDE implement the stubs of an interface function in a 
+          class</b> (not a struct):<ol>
+            <li>Type the name of the interface after the name of the class, e.g. 
+            &quot;class Foo : IDisposable&quot;.</li>
+            <li>In the Class View (Ctrl-Shift-C), navigate to the class, e.g. 
+            Foo, and choose the interface you'd like stubs for under Bases and 
+            Interfaces for that class.</li>
+            <li>In the context menu (Shift-F10), choose Add-&gt;Implement 
+            Interface.</li>
+            <li>Bask in the glory of
+            <a href="http://www.donbox.com/">Don Box</a> (who 
+            showed me this trick).<br>
+&nbsp;</li>
+          </ol>
+          </li>
+          <li><b>Let the IDE implement the stub of an virtual function override</b>:<ol>
+            <li>In the Class View (Ctrl-Shift-C), navigate to the class, e.g. 
+            Foo, and choose the method on the base class you'd like to override 
+            under Bases and 
+            Interfaces for that class.</li>
+            <li>In the context menu (Shift-F10), choose Add-&gt;Override.</li>
+            <li>Bask in the glory of me, who found this all by myself. I found 
+            this digging through the .VSZ files on my system. It looks like you 
+            can add your own context items to the menus, which sounds like 
+            fun...<br>
+&nbsp;</li>
+          </ol>
+          </li>
+          <li>If you'd like some samples of VS.NET Add-Ins,
+          <a href="http://msdn.microsoft.com/vstudio/nextgen/automation.asp">
+          MS provides some</a>. MSDN Magazine provides
+          <a href="http://msdn.microsoft.com/msdnmag/issues/02/02/VSIDE/VSIDE.asp">
+          an add-in article</a> that you may find useful.<br>
+&nbsp;</li>
+          <li>Likewise, <span class="pd"><a href="mailto:leon@exmsft.com">Leo A. 
+          Notenboom</a> has written
+          <a href="http://msdn.microsoft.com/msdnmag/issues/02/02/VSIDE/VSIDE.asp">
+          a thorough article about how to write an add-in to VS.NET</a>.<br>
+&nbsp;</span></li>
+          <li><span class="pd">Also, in </span>
+            <a href="http://www.codeproject.com/netcomponents/propertytree.asp">A Designable 
+                PropertyTree for VS.NET</a>: <a href="mailto:rmorris@cc.gatech.edu">Russell 
+                Morris</a>
+        has built an implementation of the PropertyTree control that you see in 
+        VS.NET's Project Properties dialog. What makes this really cool is that 
+        Russell's control is a great example of what to do to integrate with the VS.NET 
+        Forms Designer. <br>
+&nbsp;</li>
+          <li>If you'd like to <b>add to the Solution, Project, Project Item or 
+          Context Menu wizards</b> for VC++, VC# or VB.NET, you can. Here's
+          <a href="/public/writing/projectItemTemplates.htm">
+          an example of a project item wizard that produces a custom aspx file 
+          and a custom code behind file to go with it</a>.<br>
+&nbsp;</li>
+          <li>While ildasm.exe is very thorough, if you'd like to have <b>a 
+          prettier view of the types in an assembly, you can load it into the 
+          VS.NET Object Browser</b>. Using the file open dialog, click the 
+          drop-down and choose Open With and select the Object Browser. Once 
+          it's loaded, you can unload it by choosing the Remove item from the 
+          context menu of the assembly in the Object Browser.<br>
+&nbsp;</li>
+          <li>This isn't a tip so much as an observation. If you use an #if with 
+          a compilation symbol, e.g. DEBUG or TRACE, notice that as you move 
+          from configuration to configuration that the editor will gray out the 
+          code path that won't be taken. Is that cool, or what?!?<br>
+&nbsp;</li>
+          <li><b>Read the online documentation. </b>It's *so* much more useful than the 
+          online documentation of old.<br>
+&nbsp;</li>
+          <li> <a href="mailto:ballen@DEVELOP.COM">Brock Allen</a> showed me <b>the 
+          3rd tab (Projects) in the Add References dialog</b> for adding references 
+          from one project to the target of another. This works *so* much better 
+          than hard-coding .NET references to a specific output folder.<br>
+&nbsp;</li>
+          <li><a href="mailto:elstegman@home.com">Ed Stegman</a> pointed out 
+          that <b>the Toolbox can be used to store snippets of code</b>. Simply select 
+          some and drag-n-drop it on the Toolbox. To paste, drag-n-drop from the 
+          Toolbox to your editor. Of course, this is great for duplicating bugs 
+          as well. : )<br>
+&nbsp;</li>
+          <li>Ed really likes <b>regions</b>, marked using #region/#endregion compiler 
+          directives, too. Now that's he's clued me into the keystrokes (below) 
+          for expanding and collapsing them, I really like them, too. : )<br>
+&nbsp;</li>
+          <li>Ed also reminded me of <b>the Task List</b> and how anything marked with TODO, HACK or UNDONE will be included in your list of tasks.
+          <a href="mailto:Astopford@beta.dabs.com">Andrew Stopford</a> reminded 
+          me that you can set up your own keywords via Tools -&gt; Options -&gt; 
+          Environment.<br>
+&nbsp;</li>
+          <li>If, on the other hand, you <b>hate the Task List</b>,
+          <a href="mailto:kperry@microsoft.com">Kevin Perry</a> suggested the 
+          followings steps to turn if off after a build:<ol>
+            <li>Go to Tools -&gt; Options -&gt; Environment -&gt; Project and Solutions.</li>
+            <li>Uncheck the &quot;Show task list window if build finishes with 
+            errors&quot; option.</li>
+            <li>Make sure the &quot;Show output window when build starts&quot; option is 
+            checked.</li>
+            <li>Now go and close the task list window and it's gone for good!<br>
+&nbsp;</li>
+          </ol>
+          </li>
+          <li>Several folks have sent along <b>macros that are life savers</b> to them.
+          <a href="mailto:csells@sellsbrothers.com?subject=A VS.NET Macro To Die For!">
+          If you'd like to do that</a>, I'm happy to post them here along with 
+          your name and a brief description. Please send attached files instead 
+          of inline text, however. Thanks!<ul>
+          <li><a href="mailto:richard.broida@datatraknet.com">Richard Broida</a> 
+          sent along <b> <a href="/public/spout/KeyboardShortcuts.zip">a macro that inserts curly 
+          braces</a></b> and moves insertion point to first line inside, following 
+          K&amp;R or MS style, depending on indentation option.</li>
+          <li><a href="mailto:jcauble@caublestoneink.com">Joshua Cauble</a> sent 
+          along <b> <a href="/public/spout/IDEEnhancements.zip">a macro to sort declarations in a 
+          VB.NET</a></b> class to get the items in the wizard bar sorted.</li>
+          <li>Don Box sent along a <b><a href="/public/spout/emacsCompileMacro.txt">macro to achieve emacs-like M-x compile functionality</a></b>.</li>
+          <li><a href="mailto:pan@interse.com">Peter Andersen</a> sent in <b>
+          <a href="/public/spout/PanModule.zip">a macro that creates a C# string from an 
+          arbitrary mark</a></b>, e.g.. if you select the following lines:<br>
+          <br>
+          &lt;xml&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;hithere&gt;mom&lt;/hithere&gt;<br>
+          &lt;/xml&gt;<br>
+          <br>
+          running the macro produces the following output in the editor:<br>
+          <br>
+          &quot;&lt;xml&gt;&quot; +<br>
+&nbsp;&nbsp;&nbsp; &quot;&lt;hithere&gt;mom&lt;/hithere&gt;&quot;+<br>
+          &quot;&lt;/xml&gt;&quot;;<br>
+&nbsp;</li>
+        </ul>
+          </li>
+          <li>
+          <p align="left"><a href="mailto:drub0y@hotmail.com">Drew Marsh</a> 
+          pointed out that <b>Ctrl-S works in any of the output windows</b>, 
+          e.g. build, debug, etc, to save the contents to a file.<br>
+&nbsp;</li>
+          <li>
+          <p align="left">It's cool to have MS folk reading this list.
+          <a href="mailto:kperry@microsoft.com">Kevin Perry</a> sent me to 
+          procedure to bypass the &quot;Attach to Process&quot; dialog that asks what kind 
+          of debugger you'd like to pick, i.e. CLR, T-SQL, Native and/or Script, 
+          when you click on the Attach... button in the Debug Processes dialog. 
+          <b>Ctrl-clicking on Attach... will give you the Native debugger without 
+          asking.<br>
+&nbsp;</b></li>
+          <li>
+          <p align="left">My good friend <a href="mailto:tewald@obelisk-llc.com">
+          Tim Ewald</a> reminded me that one of the coolest features of VS.NET 
+          is that the solution explorer is really just a view of your actual 
+          project folders in the shell. This is especially useful if you choose 
+          Show All Files, so that you can add files to your project that are 
+          already in your project directory simply by using the context menu. If 
+          you'd like <b>to add a file that isn't in your project, you can do so 
+          by opening the file and choosing &quot;Move &lt;file&gt; into Project&quot; from the 
+          context menu</b>. This is a poorly named item, however, as it actually 
+          links to the existing file outside the project instead of moving it in 
+          the file system (although the linking is the correct behavior).<br>
+&nbsp;</li>
+          <li>
+          <p align="left">To <b>speed the IDE start-up time</b>, you want to 
+          avoid the browser being loaded. To do that, from the Start Page, 
+          choose My Profile and set At Startup to Show empty environment. Also, 
+          close the Dynamic Help window and the Start Page. Now IE will only be 
+          loaded on demand.<br>
+&nbsp;</li>
+          <li>
+          <p align="left">If you like the tabs showing the various files you 
+          have open, but miss <b>the ability to show multiple files at the same 
+          time</b>, right-click on one of the tabs and choose New 
+          Horizontal/Vertical Tab Group. Both tab groups will show 
+          simultaneously and you can move tabs (and therefore the window that 
+          the tab represents) between tab groups by right-clicking on the tab.<br>
+&nbsp;</li>
+          <li>
+          <p align="left"><a href="mailto:m_cabreu@hotmail.com">Maria Abreu</a> 
+          points out that VS.NET, by default, neglects to colorize strings (an 
+          omission, IMO). You can colorize them via Tools-&gt;Options-&gt;Fonts and 
+          Colors and it really helps. Thanks, Maria.<br>
+&nbsp;</li>
+          <li>
+          <p align="left"><span id="MSGHDR-PRE"><span id="MSGHDR-FROM-PRE">
+          <a href="mailto:graeme.foster@ASTON.TV">Graeme Foster</a> posted
+          <a href="http://discuss.develop.com/archives/wa.exe?A2=ind0201B&L=DOTNET&P=R27347">
+          this tip on the DOTNET mailing list</a> for </span>
+          <span id="MSGHDR-SUBJECT-PRE"><b>getting VS.NET to copy the 
+          application .config file during the build</b>: simply name the file 
+          app.config and put it in the main project directory. At build time, 
+          VS.NET will copy the file into the output directory with the build 
+          output.<br>
+&nbsp;</span></span></li>
+          <li>
+          <p align="left"><a href="mailto:db@die-lounge.com">Dominick Baier</a> 
+          reminded me that by <b>typing &quot;///&quot; (no quotes) above the declaration 
+          of a method or property, the C# editor will give you the template for 
+          the C# XML documentation tags</b> with all parameters and return 
+          value. The IDE will compose these comments into (fairly ugly) 
+          HTML-based documentation for your classes using the Tools-&gt;Build 
+          Comment Web Pages menu item. A much nicer set of documentation from 
+          these comments can be generated by
+          <a href="http://ndoc.sourceforge.net/">NDoc</a>.<br>
+&nbsp;</li>
+          <li>
+          <p align="left"><a href="mailto:studyonnet@hotmail.com">Kunal Cheda</a> 
+          pointed out that if you've got multiple things you'd like to start 
+          when running or debugging a solution, you can do so at Solution 
+          Explorer-&gt;Solution Properties-&gt;Startup Project-&gt;Multiple Startup 
+          Projects. *Very* handy for client-server testing.<br>
+&nbsp;</li>
+          <li>
+          <p align="left"><a href="mailto:nickhod@microsoft.com">Nick Hodapp</a> 
+          passed along this tip on how to <b>exclude included files that don't 
+          change from VC++ dependency checking:</b><br>
+&nbsp;<ol>
+            <li>
+          <p align="left">Add header file directory names (using full, absolute 
+          paths) one per line, to SYSINCL.dat.</li>
+            <li>
+          <p align="left">Exit the development environment.</li>
+            <li>
+          <p align="left">Restart the development environment.</li>
+            <li>
+          <p align="left">Click Rebuild for changes to take effect, noticing a 
+          reduction in build times.<br>
+&nbsp;</li>
+          </ol>
+          </li>
+          <li>
+          <p align="left"><a href="mailto:shawnv@arithex.com">Shawn Van Ness</a> 
+          thinks that <b>the clipboard ring &quot;is so cool, it should be 
+          back-propped into all of Windows&quot;</b>: Using Ctrl+Shift+V as an 
+          alternative to the usual Ctrl+V paste command, will &quot;cycle&quot; through 
+          the last dozen or so bits of text you've copied onto the clipboard. 
+          This simple user scenario demonstrates:<br>
+&nbsp;<ol>
+            <li>
+          <p align="left">Copy &quot;#if DEBUG&quot; onto the clipboard.</li>
+            <li>
+          <p align="left">A few lines below, copy &quot;#else&quot; onto the clipboard.</li>
+            <li>
+          <p align="left">A few lines further below, copy &quot;#endif&quot; onto the 
+          clipboard.</li>
+            <li>
+          <p align="left">Scroll down many hundreds of lines... or open a 
+          different file, etc.</li>
+            <li>
+          <p align="left">Ctrl+Shift+V to paste &quot;#endif&quot;.</li>
+            <li>
+          <p align="left">Ctrl+Shift+V, Ctrl+Shift+V to paste &quot;#else&quot;.</li>
+            <li>
+          <p align="left">Ctrl+Shift+V, Ctrl+Shift+V, Ctrl+Shift+V to paste &quot;#if 
+          DEBUG&quot;.<br>
+&nbsp;</li>
+          </ol>
+          </li>
+          <li>
+          <p align="left"><a href="mailto:Scott@Corillian.com">Scott Hanselman</a> 
+          pointed out that you can set the font size to VS.NET from the command 
+          line using the /fs argument, e.g. &quot;devenv.exe /fs 14&quot;. This is great 
+          for presenters!<br>
+&nbsp;</li>
+          <li>
+          <p align="left">For <b>the complete list of key bindings</b>, MS 
+          provides
+          <a href="http://msdn.microsoft.com/code/default.asp?URL=/code/sample.asp?url=/msdn-files/026/002/527/msdncompositedoc.xml">
+          a Keybindings Table Add-In</a>. <a href="/public/spout/KeyMap.zip">Here it is 
+          already compiled</a>. Just drop it anywhere, register it as a COM 
+          server and the next time you start VS, you'll have a KeyMap command in 
+          the Help menu.<br>
+&nbsp;</li>
+          <li>
+          <p align="left"><a href="mailto:russell@synthesystems.com">Russell 
+          Sinclair</a> has provided <a href="/public/spout/rsvskeys.xls">his favorite key 
+          bindings in an Excel spreadsheet</a> that prints and folds nicely for 
+          keeping it handy.<br>
+&nbsp;</li>
+          <li>Here are <b>my favorite key bindings</b>:<br>
+&nbsp;<table border="1" cellpadding="0" cellspacing="0" id="AutoNumber1" style="border-left-style: none; border-right-style: none; border-top: 1.5pt solid black; border-bottom: 1.5pt solid black; background-color: white" fpstyle="26,111111000">
+            <tr>
+              <td style="font-weight: bold; color: navy; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: 1.5pt solid black; background-color: white" align="left" valign="top">
+              Keys</td>
+              <td style="font-weight: bold; color: navy; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: 1.5pt solid black; background-color: white" align="left" valign="top">
+              Binding</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              F8/Shift-F8</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Navigate compilation errors</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-D</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Move to mini-buffer</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-Shift-G in mini-buffer or<br>
+              Ctrl-O in mini-buffer</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Open file name in mini-buffer (Ctrl-O seems to open stuff 
+              Ctrl-Shift-G does not)</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              &quot;&gt; command&quot; in mini-buffer</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Execute command</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl+/</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Move to mini-buffer, typing the leading &gt; for you</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-Alt-A</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Open the command window</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-PageUp in HTML Design View</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Open source view</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">Ctrl-PageDown 
+              in HTML Source View</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Open design view</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              F7 in Form Design View</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Open source view</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Shift-F7 in Form Source View</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Open design view</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-Alt-L</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Solution Explorer</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">F4 
+              or Alt-Enter</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Properties of selected item</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-Shift-B</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Build</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              F5</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Debug</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-F5</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Run, but not debug</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-Alt-J</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Object Browser</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-Shift-C</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Class View</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-Space when typing a symbol</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Complete the symbol you're currently typing or give you a choice 
+              of possibilities</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-Space when entering arguments</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Show the function prototype</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              &quot;-&quot; (no quotes) as the name of a menu item</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Menu item becomes a separator</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-K Ctrl-F</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Reformat selection</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              }</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Reformat scope being closed</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-K Ctrl-C</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Comment out selected lines</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-K Ctrl-U</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Uncomment selected lines</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-}</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Match braces, brackets or compiler directives</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Shift-Ctrl-}</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Select match between braces, brackets or compiler directives</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-L or Shift-Del or<br>
+              Ctrl-X w/ no selection</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Delete entire line</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-Del</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Delete next &quot;word&quot;</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Alt-F6</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Next visible pane (not for use with all windows unpinned)</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-Shift-F12</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Jumps to next *whatever*, depending on what's active, e.g. next 
+              find result, next task, next error, etc.</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-&quot;-&quot;/Ctrl-Shift-&quot;-&quot; (no quotes)</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Jumps to last/next place you worked</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-C in the Class View</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Copies fully qualified name to the Clipboard</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-M Ctrl-M</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Collapse or expand a region or outlined block (as marked by the 
+              [+] and [-] on the left hand side of the editor).</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-M Ctrl-O</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Collapse everything in the current file</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-M Ctrl-L</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Expand everything in the current file</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              F12</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Jump to the current symbol's declaration</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-G, line #, Enter or<br>
+              Ctrl-D, line #, Ctrl-G</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Jump to line</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-I/Ctrl-Shift-I + string</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Incremental search for string</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl-R+Ctrl-R</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Turn on/off word wrap</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Ctrl+Up/Down Arrow</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Scroll window up/down without moving the cursor away from the 
+              current line</td>
+            </tr>
+            <tr>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Shift+Alt+Arrows<br>
+              (Alt+Mouse works, too)</td>
+              <td style="font-weight: normal; color: black; border-left-style: none; border-right-style: none; border-top-style: none; border-bottom: .75pt solid black; background-color: white" align="left" valign="top">
+              Column selection (include of line selection)</td>
+            </tr>
+          </table>
+          </li>
+        </ul>
+        <h2>Traps</h2>
+        <ul>
+          <li>VS.NET's Copy Project uses FrontPage Extensions to publish a web 
+          site from a local testing machine to the deployment machine. This is 
+          virtually important if you don't want to hack on your live web sites. However, 
+          <b>Copy Project sends everything every time instead of sending the deltas</b>, so it's 
+          pretty worthless as far as I can tell. Instead,
+          <a href="http://www.quality.nu/">Brad Wilson</a> clued 
+          me into the FrontPage Publish Web command, which only publishes 
+          deltas.<br>
+&nbsp;</li>
+          <li><b>The command window (or &gt; in the mini-buffer) seems really cool</b>, 
+          but I don't know any good commands to type.
+          <a href="mailto:csells@sellsbrothers.com?subject=Here's a cool VS.NET command!">
+          Do you?</a><br>
+&nbsp;<ul>
+          <li><a href="mailto:Joe.Bauer@PRICESystems.com">Joe Bauer</a> points 
+          out that you can, of course, use the command window to print fields or 
+          call methods using the ?, e.g. &quot;&gt; ? objMyClass.GetCount()&quot;.</li>
+          <li><a href="mailto:rbirkby@thundermain.com">Richard Birkby</a> 
+          pointed out the &quot;shell&quot; command, which seems a bit unwieldy for me, 
+          but you may like it. &quot;&gt;shell /?&quot; in the mini-buffer will show usage 
+          (now that's cool!).</li>
+          <li><a href="mailto:dmarsh@mimeo.com">Drew Marsh</a> points out that 
+          the command window (or the mini-buffer with a &gt; prefix) allows you to 
+          execute any command provided by the shell, add-ins, or macros. 
+          Anything you don't bind to a key combination or toolbar button, you 
+          can go into the command window to execute. Also, it supports 
+          auto-completion for those of us with poor memories.</li>
+          <li><a href="mailto:richard.broida@datatraknet.com">Richard Broida</a> 
+          pointed out the use of the &quot;?&quot; command to print variables at debug 
+          time.</li>
+          <li><a href="mailto:jlam@IUNKNOWN.COM">John Lam</a> showed me where
+          <a href="ms-help://MS.VSCC/MS.MSDNVS/vsintro7/html/vxgrfpredefinedcommandlinealiases.htm">
+          the docs are for the pre-defined command aliases</a>. He also points 
+          out that you can create your own aliases, but you need cool commands 
+          first before you can do that. : )</li>
+          <li>
+          <p align="left"><a href="mailto:ramakrishnavavilala@3csoftware.com">
+          Ramakrishna Vavilala</a> recommends a cool alias &quot;&gt;alias ! shell 
+          /command cmd /c&quot; which reduces the syntax of the shell command 
+          considerably and sends the command output to the Command window.</li>
+          <li>
+          <p align="left">Don Box pointed me at two commands that forces me to 
+          learn the keyboard shortcut to put focus in the command window 
+          (Ctrl-Alt-A):<br>
+&nbsp;<ul>
+          <li>
+          <p align="left">&quot;&gt;open &lt;partial path&gt;&quot; will give Intellisense on the 
+          file system, e.g. &quot;&gt;open c:\&quot;.<br>
+&nbsp;</li>
+          <li>
+          <p align="left">&quot;&gt;File.NewFile &lt;file name&gt;&quot; will open a new file with 
+          the appropriate name and syntax highlighting, e.g. &quot;&gt;open foo.cs&quot;. 
+          This is even handier when you alias &quot;new&quot; to File.NewFile, e.g. 
+          &quot;&gt;alias new File.NewFile&quot;, because you can just do this &quot;&gt;new foo.cs&quot;.<br>
+&nbsp;</li>
+        </ul>
+          </li>
+        </ul>
+          </li>
+          <li>As far as I can tell, <b>there is no way in a C# project to run 
+          custom pre or post-build commands</b>, either on a project or a file 
+          level. If the VC++ wizards still had a Utility project, that could be 
+          used, but the closest I've seen in VS.NET is a Makefile project. 
+          Anyone have ideas on this one?<br>
+&nbsp;<ul>
+          <li>Several folks have recommended
+          <a href="http://msdn.microsoft.com/code/default.asp?URL=/code/sample.asp?url=/msdn-files/026/002/526/msdncompositedoc.xml">
+          a VS.NET Add-In Sample that is supposed to provide this capability</a>.</li>
+          <li><a href="mailto:kperry@microsoft.com">Kevin Perry</a> showed me 
+          where the UI scrambler put the Utility project in this version of the 
+          IDE:<ol>
+            <li>Run the makefile appwizard to create a makefile project.</li>
+            <li>Bring up the project properties for the project and look at the 
+            general page</li>
+            <li>Select “Utility” in the “Configuration Type” property drop down.</li>
+            <li>Click Apply.<br>
+            POOF! Instant Utility project.<br>
+            BTW: C++ Static Library projects can also double as utility projects 
+            in a pinch.<br>
+&nbsp;</li>
+          </ol>
+          </li>
+        </ul>
+          </li>
+          <li>As cute as the Add Reference menu item is on a project's context 
+          menu, your going to have to <b>avoid Add Reference for COM servers</b> and build the 
+          references by hand if you sign your assemblies (which you should 
+          always do). Apparently a signed assembly is not allowed to reference 
+          an assembly that's not signed and the Add Reference menu item doesn't 
+          sign the generated assembly. All Add Reference does is the moral 
+          equivalent of the tlbimp command line tool anyway, so get used to 
+          calling it yourself using the /keyfile command line argument. If you 
+          import COM Controls, e.g. the WebBrowser control, you'll 
+          need to use aximp instead of tlbimp, but the /keyfile argument is the 
+          same.<br>
+          <br>
+          However, <a href="mailto:jerry@dennany.org">Jerry Dennany</a> points 
+          out that you can have VS.NET itself sign your interop assemblies by 
+          going to the Project Properties, and under Common Properties / General 
+          there will be a section for &quot;wrapper Assembly for ActiveX / COM 
+          Objects.&quot; You may place your path to the Key File here, and everything 
+          still works from the IDE.<br>
+&nbsp;</li>
+          <li><b>There are no wizards for standard SDI, MDI or Explorer-style 
+          applications in WinForms</b> as there were in VC++ for MFC applications. 
+          However, the wizard stuff is there, although it's obscure, so maybe I'll build one. 
+          I've certainly done my share of that kind of 
+          work...<br>
+&nbsp;</li>
+          <li>Likewise, there is no built in support for MFC-style document 
+          handling, separation of data and view, command line processing or 
+          command UI handling. I've done my share of <a href="/12652">
+          that kind of work</a>, too, and I *will* be building that stuff. 
+          Anyone want to
+          <a href="mailto:csells@sellsbrothers.com?subject=I'd love to help add MFC-style functionality to .NET!">
+          volunteer to help</a>?<br>
+&nbsp;</li>
+          <li>I don't seem to be able to <b>get a custom control on the toolbox</b> 
+          unless it's part of a separate assembly. What if I have a custom 
+          control in my application? Can I make it show up on the toolbox 
+          somehow?<br>
+&nbsp;<ul>
+          <li><a href="mailto:bobb@develop.com">Bob Beauchemin</a> pointed out 
+          that I can customize the toolbox and point it at a built version of my 
+          EXE, which sounds kind of awkward, but works.<br>
+&nbsp;</li>
+        </ul>
+          </li>
+          <li>I can't tell. <b>Is everything being recompiled every time I build</b>, 
+          regardless of whether the source has changed or not?<br>
+&nbsp;<ul>
+          <li>Drew Marsh pointed out that the Incremental Build option in a C# 
+          project will decide whether you rebuild only if it is changed or not.<br>
+&nbsp;</li>
+        </ul>
+          </li>
+          <li>If a file is &quot;thought of&quot; internally by the IDE as one text, e.g. 
+          Text, and you try to save it as another type, e.g. XML, <b>if you're not 
+          very careful the save 
+          dialog will append the extension of the type it thinks it is</b>, e.g. 
+          .txt. To enforce the extension you want, put double quotes around the file 
+          name, e.g. &quot;foo.xml&quot;.<br>
+&nbsp;</li>
+          <li><b>Neither BeginInvoke nor EndInvoke is shown when calling methods on 
+          a delegate in C#</b>, even though they do in VB.NET. This just seems 
+          wrong...<br>
+&nbsp;</li>
+          <li>Docs on the built-in VsWizardEngine that VS.NET provides would be 
+          nice.<br>
+&nbsp;<ul>
+          <li><a href="mailto:jfland@develop.com">Jon Flanders</a> says that 
+          they're documented as part of Enterprise Templates.<br>
+&nbsp;</li>
+        </ul>
+          </li>
+          <li>By default, <b>adding a new project to an existing solution wants to 
+          put the new project in a peer directory instead of in a sub-directory</b>. 
+          This seems strange if you're trying to keep these things together 
+          (which, presumably, you are if you're grouping multiple projects into 
+          a single solution). Certainly, I've seen users dig through several 
+          peer directories looking for the solution file. I put sub-projects 
+          into sub-directories by hand, but it would be nice if the IDE did this 
+          automatically.<br>
+&nbsp;</li>
+          <li><b>Cleaning a project of it's output files doesn't actually work for 
+          C# or VB.NET projects</b> (although the UI shows it as an option, as does 
+          the command line). <a href="mailto:tomasr@mvps.org">Tomas Restrepo</a> 
+          has provided <b>
+          <a href="http://www.mvps.org/windev/dotnet/ProjectCleaner.html">
+          an add-in that provides the missing Clean functionality</a></b>, along 
+          with a rant on what problems he had building the add-in.<br>
+&nbsp;</li>
+          <li>In spite of CodeWright and every other 3rd party editor supporting 
+          it for years, <b>VS still doesn't support keyword expansion</b>, e.g. 
+          expanding &quot;if( &quot; into &quot;if( | )\n{\n}&quot;, so I use
+          <a href="http://www.nilgirihouse.com/">Dexter, from 
+          NilgiriHouse</a>. I don't have to change my typing habits at all, but 
+          I get tons o' text for free.<br>
+&nbsp;</li>
+          <li><b>The macro recorder is pretty stunted</b>. For example, if I 
+          want a macro to switch between some editor settings, e.g. my normal 
+          code formatting style and my prose code formatting style, and I record 
+          a macro to watch me change the settings, all the recorded macro does 
+          is record that the dialog was shown, not what settings I changed. What 
+          a let down...</li>
+        </ul>
+        <p><i>[1] I've learned a ton of these tricks and traps from my fellow 
+        DevelopMentor instructors, my students and the
+        <a href="http://discuss.develop.com/">.NET mailing list</a>, 
+        all of which I can heartily recommend.</i></p>

@@ -1,0 +1,16 @@
+<!--
+Date: 1/5/2009 8:20:55 AM  -08:00
+Permalink: 2230
+Disqus: 2230
+Tags: oslo
+-->
+<h1>What is all the fuss about how you can write DSLs in Lisp?</h1>
+<P>I found an interesting <A href="http://list.cs.brown.edu/pipermail/plt-scheme/2007-June/018753.html">post on domain-specific languages and Lisp</A> from June of 2007. It has this to say about designing a DSL:</P>
+<BLOCKQUOTE dir=ltr style="MARGIN-RIGHT: 0px">
+<P><EM>"There are three approaches to designing programming language syntax. The first is to develop a good understanding of programming language grammars and parsers and then carefully construct a grammar that can be parsed by an LALR(1), or LL(k) parser. The second approach is to `wing it' and make up some ad-hoc syntax involving curly braces, semicolons, and other random punctuation. The third approach is to `punt' and use the parser at hand."</EM></P></BLOCKQUOTE>
+<P>I like these categories. I find most folks do #2 with no tooling support or #3 using XML. <A href="http://msdn.com/oslo">MGrammar in Oslo</A> is about making #1 easier than #2 and providing the tooling support, e.g. language-specific Intellisense services.</P>
+<P>The real topic of the thread, however, is how to do a DSL in Lisp. The questioner would like to implement the following syntax:</P>
+<P><EM>trade 100 shares(x) when (time &lt; 20:00) and timingisright()</EM></P>
+<P>I find this syntax to be reasonable for an event and it wouldn't be hard to imagine a system with a bunch of rules expressed this way and I could imagine a developer and a business person working together on such a system to ensure things were expressed properly. I don't think I could imagine the business person keeping up as well with syntax expressed as the answerer suggests, however:</P>
+<P><EM>(when (and (&lt; time 20:00)<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (timing-is-right))<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (trade (make-shares 100 x)))</EM></P>
+<P>IMO, that's not a DSL -- that's just a set of function calls in an existing language.</P>

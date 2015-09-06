@@ -1,0 +1,17 @@
+<!--
+Date: 6/16/2004 3:23:53 PM  -08:00
+Permalink: 1401
+Disqus: 1401
+Tags: .net
+-->
+<h1>Refining the Versioning Story</h1>
+<P>Wesner Moise reports on a talk that Jeff Richter did on <A href="http://wesnerm.blogs.com/net_undocumented/2004/06/platform_vs_lib.html">the .NET versioning story in the Longhorn time frame</A>. Some interesting quotes:</P>
+<UL>
+<LI>"a library could not easily be updated since the CLR looked for an exact version match. There was a complex way to solve this problem through policy files; however, even engineers at Microsoft found this approach too difficult."</LI>
+<LI>"Microsoft has a new approach for Longhorn and Orcas (.NET v3.0), which divides assemblies into two categories, Platforms and Libraries."</LI>
+<LI>"Most assemblies will or should be libraries. Microsoft discourages the use of platform assemblies."</LI>
+<LI>"There are actually three types of platform assemblies: System-wide, process-wide, and app domain-wide."</LI>
+<LI>"Longhorn will no longer support multiple CLRs. Every managed application will be forced to use the latest version of the CLR on the system."</LI>
+<LI>"Whidbey is expected to include an Assembly attribute, AssemblyFlagsAttribute, which allows to developer to specify Library, AppDomainPlatform, ProcessPlatform, SystemPlatform, or Legacy to identify the versioning scheme the CLR uses to load a reference assembly."</LI></UL>
+<P>I know that the existing versioning story doesn't cut it for a lot of folks. Will this new model solve the problems? Is there a complexity danger?</P>
+<P>Also, <A href="http://www.interact-sw.co.uk/iangblog/2004/06/15/clrversioning">Ian has some thoughts on the new model</A>.</P>
