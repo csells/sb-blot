@@ -2,21 +2,19 @@ Tags: colophon
 
 Moved to Blot
 =============
-
-<img src="http://csells.blot.im/public/post-images/blot-logo.png" class="main-blog-image" />
+<img src="/public/post-images/blot-logo.png" class="entry-main-image" />
 
 You're reading this on the 5th version of my blog.
 
 Some History
 ------------
-
 The [first](</12641>) was a set of static text files I managed in FrontPage. The
 editing was nice (once it get the HTML-on-the-disk problems right), but I
 dropped everything into the same file, using anchor tags to separate posts in
 one giant file, which didn’t scale.
 
 The [second version](</12642>) was ASP.NET code to pull in my static content (I
-did not want to give up my FrontPage) and arrange it into a nice layout.
+didn’t not want to give up my FrontPage) and arrange it into a nice layout.
 
 The third version has been lost in the mists of time.
 
@@ -28,12 +26,12 @@ way into AtomPub at the time, so that’s the one I implemented). Along the way,
 
 The good news is that Windows Live Writer worked very well with this site (even
 better than FrontPage!). The bad news is that it was the only editor that did,
-it requires Windows and we no longer live in a single OS world. I want to write my
+it requires Windows and we no longer live a single OS world. I want to write my
 blog in Markdown from OSX or even my phone.
 
-So, the fifth version my site, the one you’re looking at now, is running on
+So, the fifth version my site, the one you’re looking at now, is now running on
 [Blot](<http://blot.im>). It was the video of the workflow on the home page that
-really did it for me. I saw that, paid my $20 and have been spending weekends
+really did it for me. I saw that, paid my \$20 and have been spending weekends
 exporting the data from my old blog ever since.
 
 The Beauty of Blot
