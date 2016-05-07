@@ -5,122 +5,76 @@ Disqus: 12667
 Tags: book
 -->
 <h1>Windows Telephony Programming: A Developer's Guide to TAPI</h1>
-        <h2>
-            The Book
-        </h2>
-        <p>
-            This page is dedicated to my book, <strong><em>Windows Telephony Programming: A 
-                    Developer's Guide to TAPI,</em></strong> from Addison-Wesley. If you'd 
-            like to order a copy, you can do so from <a href="http://www.amazon.com/exec/obidos/ASIN/0201634503/chrissells">
-                Amazon.com</a>.
-        </p>
-        <h2>
-            The Table of Contents
-        </h2>
-        <ul>
-            <li>
-            Prologue: The Story of Windows Telephony
-            <li>
-                Windows Telephony Architecture (<a href="/public/writing/intro2tapi/index.htm">excerpted here</a>)
-            <li>
-            Assisted Telephony
-            <li>
-            Making a Call
-            <li>
-            Telephony Framework
-            <li>
-            Answering a Call
-            <li>
-            Call Management
-            <li>
-            Telephony Service Providers
-            <li>
-                The Future of Telephony</li>
-        </ul>
-        <h2>
-            The Source
-        </h2>
-        <p>
-            After 6 years of keeping the sample code of my Windows Telephony 
-            Programming book up to date, I couldn't do it any more. Since I 
-            literally haven't written a TAPI program since I shipped the book 
-            (although I wrote tons of them for years before that), I'm was just 
-            trying to stay ahead of Microsoft's compiler changes, the service 
-            packs and the platform SDKs. I'm already two technology waves beyond TAPI 
-            and no longer up on the latest in that space.</p>
-        <p>
-            So, <a href="mailto:vze3tcmc@verizon.net">Robert 
-            Bamberg</a> is taking over the support of the source code for the 
-            book. He does telephony consulting and is
-            <a href="http://mysite.verizon.net/robert.bamberg/csells.htm">maintaining the code for the book on his site</a>. Thanks, Robert!</p>
-        <h2>
-            Hardware/Software Requirements
-        </h2>
-        <p>
-            I built most of the samples under Windows 95. They should work equally well 
-            under Windows 98, but none of the audio applications will work under Windows NT 
-            (like tMonitor) unless you're using a TSP that supports the audio media mode. 
-            Unimodem under NT4 or Win95 doesn't support audio. Unimodem/V, which can be 
-            installed on Win95 and comes out of the box on Win98 and NT5/Windows 2000, does 
-            support audio applications, assuming you've got compatible hardware. For the 
-            book, I used an external Supra Voice Modem. Nothing else would work (and 
-            believe me, I tried everything available at the time). However, there's been 
-            other modems built since then. If you'd like to take a look at other possible 
-            modems, check out <a href="http://www.sunny-beach.net/Modems/Modemlist.htm">
-                http://www.sunny-beach.net/Modems/Modemlist.htm</a>, which lists a set of 
-            modems that Sunny Beach tested for the Personal Receptionist product. No 
-            guarantees, though, as I haven't compared these modems myself.
-        </p>
-        <h2>
-            FAQ
-        </h2>
-        <p>
-            Two questions come up again and again:
-        </p>
-        <ol>
-            <li>
-                <b>Why doesn't my modem work as a voice modem?</b> This is something to take up 
-                with your modem vendor. Ask about TAPI and Unimodem/V support. Please don't ask 
-                me to debug your modem.
-                <br>
-            &nbsp;
-            <li>
-                <b>How do I do fax with TAPI?</b> I haven't done any fax work with TAPI. My 
-                background is integrated voice response (IVR), not modems. The reason the data 
-                modem stuff is in the book is because I like the movie <i>War Games</i>. If 
-                you'd like to do fax with TAPI, check the TAPI FAQs:
-                <br>
-                <br>
-                Grant Schenck's website: <font COLOR="#0000ff"><a href="http://members.home.net/grantschenck/">
-                        <u>http://members.home.net/grantschenck/</u></a></font>
-                <p>
-                    Bruce Pennypacker's website: <font COLOR="#0000ff"><a href="http://people.ne.mediaone.net/brucep/tapifaq/">
-                            <u>http://tapifaq.pennypacker.org/</u></a></font>
-                </p>
-                <p>
-                    Michael Dunn's website: <font COLOR="#0000ff"><a href="http://members.home.net/tapifaq/tapi.htm">
-                            <u>http://members.home.net/tapifaq/tapi.htm</u></a></font>
-                </p>
-            </li>
-        </ol>
-        <p>
-            If you have other questions about TAPI that I haven't covered in my book, you 
-            should post them to the following newsgroups: <span style="FONT-SIZE:12pt;FONT-FAMILY:'Times New Roman';mso-bidi-font-size:10.0pt;mso-fareast-font-family:'Times New Roman';mso-ansi-language:EN-US;mso-fareast-language:EN-US;mso-bidi-language:AR-SA">
-                <a href="news://microsoft.public.win32.programmer.tapi">microsoft.public.win32.programmer.tapi</a>
-                and <a href="news://microsoft.public.win95.commtelephony">microsoft.public.win95.commtelephony</a>.</span>
-        </p>
-        <h2>
-            TAPI Explorer</h2>
-	<p align="left">I built the TAPI Explorer (tExplorer) to allow me to 
-	understand the various capabilities of the telephony devices installed on my 
-	system when I was developing TAPI applications and writing my TAPI book. It 
-	grew into a utility for showing all line, address and phone capabilities as 
-	well as other TAPI settings, e.g. country codes, telephony locations, 
-	service providers, etc. If you're running into TAPI errors that you don't 
-	understand, TAPI Explorer will help you work through them.</p>
+<h2>
+  The Book
+</h2>
+<p>
+  This page is dedicated to my book, <strong>
+    <em>
+      Windows Telephony Programming: A
+      Developer's Guide to TAPI,
+    </em>
+  </strong> from Addison-Wesley. If you'd
+  like to order a copy, you can do so from <a href="http://www.amazon.com/exec/obidos/ASIN/0201634503/chrissells">
+    Amazon.com
+  </a>.
+</p>
+<h2>
+  The Table of Contents
+</h2>
+<ul>
+  <li>
+    Prologue: The Story of Windows Telephony
+  <li>
+    Windows Telephony Architecture (<a href="/public/writing/intro2tapi/index.htm">excerpted here</a>)
+  <li>
+    Assisted Telephony
+  <li>
+    Making a Call
+  <li>
+    Telephony Framework
+  <li>
+    Answering a Call
+  <li>
+    Call Management
+  <li>
+    Telephony Service Providers
+  <li>
+    The Future of Telephony
+  </li>
+</ul>
+<h2>
+  The Source
+</h2>
+<p align="left">
+  This source code has been run and tested on Windows 98, Windows
+  ME, Windows NT 4.0, Windows 2000 and Windows XP and supports TAPI versions
+  1.4 through 3.1. I have not touched this source code in years and can no longer support it unfortunately.
+</p>
+<p align="left">
+  <a href="/public/writing/telprog/telprog6.zip">VS.NET Sample Source</a> |
+  <a href="/public/writing/telprog/telprog5.zip">VC6 Sample Source (previous version)</a>
+</p>
+<p>Here's <a href="/public/writing/telprog/vc6mfc42.zip">vc6mfc42.dll (zipped)</a> if you need it.</p>
+<h2>
+  TAPI Explorer
+</h2>
+<p align="left">
+  I built the TAPI Explorer (tExplorer) to allow me to
+  understand the various capabilities of the telephony devices installed on my
+  system when I was developing TAPI applications and writing my TAPI book. It
+  grew into a utility for showing all line, address and phone capabilities as
+  well as other TAPI settings, e.g. country codes, telephony locations,
+  service providers, etc. If you're running into TAPI errors that you don't
+  understand, TAPI Explorer will help you work through them.
+</p>
 <img src="/public/tools/texplorer.GIF" width="300" height="240" />
-	<p align="left">This version has been run and tested on Windows 98, Windows 
-	ME, Windows NT 4.0, Windows 2000 and Windows XP and supports TAPI versions 
-	1.4 through 3.1.</p>
-	<p align="left"><a href="/public/tools/tExplorerSrcVS.NET.zip">VS.NET Source</a> |
-	<a href="/public/tools/tExplorerSrcVC6.zip">VC6 Source (previous version)</a></p>
+<p align="left">
+  This source code has been run and tested on Windows 98, Windows
+  ME, Windows NT 4.0, Windows 2000 and Windows XP and supports TAPI versions
+  1.4 through 3.1. I have not touched this source code in years and can no longer support it unfortunately.
+</p>
+<p align="left">
+  <a href="/public/tools/tExplorerSrcVS.NET.zip">VS.NET tExplorer Source</a> |
+  <a href="/public/tools/tExplorerSrcVC6.zip">VC6 tExplorer Source (previous version)</a>
+</p>
