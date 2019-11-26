@@ -1,3 +1,5 @@
+Date: 12/29/2017
+
 #Returning to D&D
 
 <img src="http://sellsbrothers.com/public/post-images/2017/DnD_Logo.png" class="main-blog-image" style="width: 250px">

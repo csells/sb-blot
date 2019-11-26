@@ -1,3 +1,5 @@
+Date: 8/7/2016
+
 #Google Cloud Storage Hierarchy in .NET
 
 <img src="https://vienna-wv.com/images/tree.jpg" class="main-blog-image" style="width: 250px" />

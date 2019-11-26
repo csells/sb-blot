@@ -1,3 +1,5 @@
+Date: 7/29/2016
+
 <img src="http://1.bp.blogspot.com/_FV-iAD8SAbc/S6GV9-oiX1I/AAAAAAAAAw0/ZtQnw3cMkxM/S1600-R/oldcode.jpg" class="main-blog-image" />
 
 #Breaking Into the Industry
