@@ -2,12 +2,12 @@ Date: 7/29/2016
 
 <img src="http://1.bp.blogspot.com/_FV-iAD8SAbc/S6GV9-oiX1I/AAAAAAAAAw0/ZtQnw3cMkxM/S1600-R/oldcode.jpg" class="main-blog-image" />
 
-#Breaking Into the Industry
+# Breaking Into the Industry
 I got an email the other day from an old friend that said he'd met a young developer named Ben and that he was impressed with his "acumen, initiative and hunger to learn," which made me want to help him if I could. He also said that "his Dad followed your blogs for years," which made me want to eat right and exercise.
 
 In the meantime, Roger introduced me to Ben via email and Ben had some excellent questions, which I thought I'd share here along with my answers, if only to avoid other people sending me emails that make me feel old...
 
-##From: Benaiah Mischenko
+## From: Benaiah Mischenko
 > [ben] I was hoping to pick your brain for any advice you’d have for a young developer trying to break into the industry. I’ve been coding for some time, but most of my work has been small one-off contracts (I currently work at a radio company building websites for the stations they own).
 
 Ben, you are about to "break into" an industry with near 0% unemployment. Practically everyone able to string together working code/markup can get a job of some sort. All you really have to do is to keep coding, be prepared to show off your work (GitHub is great for this) and you'll find a job. Right now there's no other industry I know of that has this luxury and it's not going to last forever, so enjoy it.
