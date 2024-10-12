@@ -4,35 +4,73 @@ Permalink: 12548
 Disqus: 12548
 Tags: spout
 -->
-<h1>Exposing RSS 
-Comments</h1>
-<p>So far, comments have gotten 
-a lot of play in the RSS space:</p><ul><li>The <a href="http://backend.userland.com/rss2#comments">
-	RSS 2.0 &lt;comments&gt; element</a> to expose a link for a browser-based UI to 
-	view/add comments</li><li>The <a href="http://groups.yahoo.com/group/rss-dev/files/Modules/Proposed/mod_slash.html#model">
-	&lt;slash:comments&gt; extension</a> element to expose the number of comments 
-	current made on an item</li><li>The <a href="http://wellformedweb.org/story/9">
-	&lt;wfw:comment&gt; extension</a> element to expose the URL endpoint for posting 
-	comments via <a href="http://wellformedweb.org/story/9">the 
-	CommentAPI</a></li></ul><p>However, what's missing is the ability to pull 
-out a list of comments associated with an item. Instead, <a href="http://intertwingly.net/rss/">
-folks like Sam publish their comments as a separate feed</a>, and then <a href="http://www.25hoursaday.com/rssbandit_slashdot2.gif">
-feed readers thread the comments with the content</a> by comparing the elements 
-from the type feeds (as well as all of the other feeds). That works for most 
-standard-sized RSS sites, but what about sites that exposes hundreds of 
-thousands of entries like msdn.com? Cached per site comment feeds don't scale as 
-well as on-demand per-item comment feeds. Towards that end, I'd like to propose 
-another element to <a href="http://wellformedweb.org/story/9">
-the well-formed web's CommentAPI namespace</a>: commentRss.</p><p>The commentRss 
-element would be a per-item URL for an RSS feed of comments. It looks very like 
-the wfw:comment element:</p>
+<h1>Exposing RSS Comments</h1>
+<p>
+  UPDATE: Since publication, this recommendation has been incorporated into many
+  RSS feeds. You can
+  <a href="https://www.rssboard.org/comment-api"
+    >read the semi-official docs for the wfw:commentsRss element on
+    rssboard.org</a
+  >.
+</p>
+<p>So far, comments have gotten a lot of play in the RSS space:</p>
+<ul>
+  <li>
+    The
+    <a href="http://backend.userland.com/rss2#comments">
+      RSS 2.0 &lt;comments&gt; element</a
+    >
+    to expose a link for a browser-based UI to view/add comments
+  </li>
+  <li>
+    The
+    <a
+      href="http://groups.yahoo.com/group/rss-dev/files/Modules/Proposed/mod_slash.html#model"
+    >
+      &lt;slash:comments&gt; extension</a
+    >
+    element to expose the number of comments current made on an item
+  </li>
+  <li>
+    The
+    <a href="http://wellformedweb.org/story/9">
+      &lt;wfw:comment&gt; extension</a
+    >
+    element to expose the URL endpoint for posting comments via
+    <a href="http://wellformedweb.org/story/9">the CommentAPI</a>
+  </li>
+</ul>
+<p>
+  However, what's missing is the ability to pull out a list of comments
+  associated with an item. Instead,
+  <a href="http://intertwingly.net/rss/">
+    folks like Sam publish their comments as a separate feed</a
+  >, and then
+  <a href="http://www.25hoursaday.com/rssbandit_slashdot2.gif">
+    feed readers thread the comments with the content</a
+  >
+  by comparing the elements from the type feeds (as well as all of the other
+  feeds). That works for most standard-sized RSS sites, but what about sites
+  that exposes hundreds of thousands of entries like msdn.com? Cached per site
+  comment feeds don't scale as well as on-demand per-item comment feeds. Towards
+  that end, I'd like to propose another element to
+  <a href="http://wellformedweb.org/story/9">
+    the well-formed web's CommentAPI namespace</a
+  >: commentRss.
+</p>
+<p>
+  The commentRss element would be a per-item URL for an RSS feed of comments. It
+  looks very like the wfw:comment element:
+</p>
 <pre>&lt;wfw:commentRss<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:fuchsia"> </span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:maroon">xmlns</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:fuchsia">:</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:red">wfw</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:blue">=&quot;http://wellformedweb.org/CommentAPI/&quot;&gt;</span>&nbsp;
   http://bitworking.org/news/commentsRss/52
-&lt;/wfw:commentRss&gt;</pre><p>With wfw:commentRss, the RSS reader can pull the 
-comments down on demand, merging them in with the cross-references from other 
-blogs as it does now. In addition, an extension to RSS like this would allow 
-feed readers to subscribe to comments for a particular item, either manually for 
-conversations in which the user is interested or automatically when the user 
-posted a comment for an item.</p><p><a href="/12548">
-Comments?</a></p>
-
+&lt;/wfw:commentRss&gt;</pre>
+<p>
+  With wfw:commentRss, the RSS reader can pull the comments down on demand,
+  merging them in with the cross-references from other blogs as it does now. In
+  addition, an extension to RSS like this would allow feed readers to subscribe
+  to comments for a particular item, either manually for conversations in which
+  the user is interested or automatically when the user posted a comment for an
+  item.
+</p>
+<p><a href="/12548"> Comments?</a></p>
