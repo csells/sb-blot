@@ -1,9 +1,10 @@
+Date: 9/13/2015
 Tags: colophon
 
 Moved to Blot
 =============
 
-<img src="http://csells.blot.im/public/post-images/blot-logo.png" class="main-blog-image" />
+<img src="/public/post-images/blot-logo.png" class="main-blog-image" />
 
 You're reading this on the 5th version of my blog.
 

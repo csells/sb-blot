@@ -1,3 +1,5 @@
+Date: 8/4/2019
+
 # Fun with Curl and Dart
 <img src="http://sellsbrothers.com/public/post-images/2019-08-04-curl-dart-fun/curl-logo.png" class="main-blog-image" style="width: 250px" />
 

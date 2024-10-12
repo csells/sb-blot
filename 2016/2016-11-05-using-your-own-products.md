@@ -1,3 +1,5 @@
+Date: 11/5/2016
+
 # Backgammon and Using Your Own Products
 <img src="http://sellsbrothers.com/public/post-images/fibs-logo.png" class="main-blog-image" style="width: 400px" />
 Have you ever used a product of any kind -- an app, a device, a plunger -- and thought to yourself "Do these people even use their own product?" As a Product Manager at Google and a long-time software product guy, I think this all the time. Sure, [Donald Norman](https://www.amazon.com/Design-Everyday-Things-Donald-Norman/dp/1452654123), [Steve Krug](https://www.amazon.com/dp/0321344758/) and [countless others](https://www.amazon.com/s/field-keywords=product+design) have written well on the topic of product design, but that's not enough.

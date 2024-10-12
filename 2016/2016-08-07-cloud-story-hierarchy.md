@@ -1,4 +1,6 @@
-#Google Cloud Storage Hierarchy in .NET
+Date: 8/7/2016
+
+# Google Cloud Storage Hierarchy in .NET
 
 <img src="https://vienna-wv.com/images/tree.jpg" class="main-blog-image" style="width: 250px" />
 
@@ -96,5 +98,5 @@ var folderObj = client.CreateFolder(bucketName, "baaz/");
 
 ```
 
-##Where Are We?
+## Where Are We?
 The BucketHelper is an extension to [the hand-crafted Google Cloud Storage client library for .NET](https://github.com/GoogleCloudPlatform/google-cloud-dotnet#google-cloud-storage). It helps to provide access to the same fictional hierarchy that the Cloud Storage Browser provides over your buckets and objects. Enjoy.

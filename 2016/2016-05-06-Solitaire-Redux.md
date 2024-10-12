@@ -1,3 +1,4 @@
+Date: 5/6/2016
 Tags: fun
 
 Solitaire Redux
