@@ -1,14 +1,15 @@
 Date: 8/4/2019
+Tags: flutter
 
 # Fun with Curl and Dart
-<img src="http://sellsbrothers.com/public/post-images/2019-08-04-curl-dart-fun/curl-logo.png" class="main-blog-image" style="width: 250px" />
+<img src="/public/post-images/2019-08-04-curl-dart-fun/curl-logo.png" class="main-blog-image" style="width: 250px" />
 
 If you're a Dart programmer, [the curl command](https://curl.haxx.se/docs/manpage.html) doesn't really help you. Oh, it can tease you with of its wonderful functionality, but you still have to take anything you can do with curl and manually translate it into Dart code.
 
 Until now.
 
-## Updating curl.trillworks.com for Dart
-For almost 5 years now, [Nick Carneiro](https://github.com/NickCarneiro) has maintained a wonderful site for converting curl commands into network code for your favorite language: curl.trillworks.com.
+## Updating curlconverter.com for Dart
+For almost 5 years now, [Nick Carneiro](https://github.com/NickCarneiro) has maintained a wonderful site for converting curl commands into network code for your favorite language: curlconverter.com.
 
 <img src="http://sellsbrothers.com/public/post-images/2019-08-04-curl-dart-fun/curl.trillworks.com.png" />
 
@@ -28,7 +29,7 @@ curl "https://www.fantasynamegen.com/barbarian/short/" -H "Upgrade-Insecure-Requ
 Even if you never run this as a curl command, you can still use it to generate code for your language of choice.
 
 ## Dart networking code
-Pasting the curl from Chrome DevTools into [Nick's curl converter website](https://curl.trillworks.com/#dart) gives you Dart code that looks like this:
+Pasting the curl from Chrome DevTools into Nick's [curl converter website](https://curlconverter.com/dart/) gives you Dart code that looks like this:
 
 ```dart
 import 'package:http/http.dart' as http;
@@ -94,6 +95,6 @@ Ordhall
 ```
 
 ## Where are we?
-If the network code you want is already being executed via curl or on the web, that means you can take that curl command and turn it into Dart code with zero effort on [curl.trillworks.com](https://curl.trillworks.com/#dart). The code from that site can be executed just like a curl command immediately or used as the start of your own code.
+If the network code you want is already being executed via curl or on the web, that means you can take that curl command and turn it into Dart code with zero effort on [curlconverter.com](https://curlconverter.com/#dart). The code from that site can be executed just like a curl command immediately or used as the start of your own code.
 
 The example I was showing in this post generated HTML, but if instead the result was JSON, then you can take that JSON output and paste it into [quicktype.io](https://app.quicktype.io/) to get the JSON serialization/deserialization code for Dart, too. It's a great time to be a Dart programmer!

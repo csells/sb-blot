@@ -2,7 +2,7 @@ Date: 8/7/2016
 
 # Google Cloud Storage Hierarchy in .NET
 
-<img src="https://vienna-wv.com/images/tree.jpg" class="main-blog-image" style="width: 250px" />
+<img src="_images/tree.jpg" class="main-blog-image" style="width: 250px" />
 
 Google's [Cloud Storage Browser](https://console.cloud.google.com/storage/browser) perpetrates a fiction of files and folders that doesn't exist. The [Google Cloud Storage (GCS) API](https://cloud.google.com/storage/docs/json_api/) only has two concepts: buckets and objects.
 

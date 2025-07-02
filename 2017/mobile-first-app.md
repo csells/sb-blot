@@ -2,7 +2,7 @@ Date: 11/11/2017
 
 # Building a modern, mobile-first app
 
-<img src="http://media.idownloadblog.com/wp-content/uploads/2014/12/IBM-Apple-apps-Retention-screenshot.jpg" class="main-blog-image" style="width: 250px">
+<img src="_images/IBM-Apple-apps-Retention-screenshot.jpg" class="main-blog-image" style="width: 250px">
 
 
 

@@ -1,3 +1,5 @@
+Tags: flutter
+
 # Understanding Flutter: deep links on the web
 
 > **NOTE: This content has been subsumed by the package I wrote to support declarative routing via the Navigation 2.0 API: [go_router](https://pub.dev/packages/go_router). This package is what I use now for my own projects and I hope that you'll find it useful for your projects as well. Enjoy.**

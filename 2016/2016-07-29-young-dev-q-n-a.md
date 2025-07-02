@@ -1,6 +1,6 @@
 Date: 7/29/2016
 
-<img src="http://1.bp.blogspot.com/_FV-iAD8SAbc/S6GV9-oiX1I/AAAAAAAAAw0/ZtQnw3cMkxM/S1600-R/oldcode.jpg" class="main-blog-image" />
+<img src="_images/oldcode.jpg" class="main-blog-image" />
 
 # Breaking Into the Industry
 I got an email the other day from an old friend that said he'd met a young developer named Ben and that he was impressed with his "acumen, initiative and hunger to learn," which made me want to help him if I could. He also said that "his Dad followed your blogs for years," which made me want to eat right and exercise.
@@ -17,7 +17,7 @@ Ben, you are about to "break into" an industry with near 0% unemployment. Practi
 Identifying the biggest growth opportunity is easy: [containers](https://cloud.google.com/container-engine/) are the way we’ll be packaging and deploying out software for the foreseeable future, [the cloud](http://cloud.google.com) will be the target of said deployments and [Machine Learning](https://cloud.google.com/products/machine-learning/) is going to be part of practically every system we build from now on. I’d also look at [Augmented Reality](http://www.forbes.com/sites/jlim/2016/07/30/pokemon-go-could-be-the-answer-to-making-augmented-reality-mainstream/) as the next computing platform beyond web and mobile. Forgive me for making all of those links Google-related (Pokemon Go runs on the Google Cloud), but Google has it's hands in lots of cool stuff.
 
 > [ben] What do you look for when determining the ability and potential to grow of a junior developer?
- 
+
 I look for two things when evaluating any engineer:
 
 1. *How deeply do you know the things you know?* Can they answer *why* questions in addition to *how* questions?

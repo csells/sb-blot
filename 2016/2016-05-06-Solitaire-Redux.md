@@ -4,7 +4,7 @@ Tags: fun
 Solitaire Redux
 ===============
 
-<img src="http://sellsbrothers.com/public/post-images/sol-redux.png" class="main-blog-image" />
+<img src="/public/post-images/sol-redux.png" class="main-blog-image" />
 
 I've done [a bunch of stuff related to Solitaire](http://sellsbrothers.com/search?q=Solitaire) on my blog for some reason. I guess I'm a fan, although mostly these days I focusing my listening in boring meetings with [2048](http://gabrielecirulli.github.io/2048/) or [Border Siege](https://play.google.com/store/apps/details?id=com.game.drisk) (the real reason I have an Android phone).
 

@@ -1,6 +1,8 @@
+Tags: flutter
+
 # Dart and Flutter packages need your Love!
 
-<img src="https://sellsbrothers.com/public/post-images/dash-love.png" class="main-blog-image" style="width: 250px" />
+<img src="/public/post-images/dash-love.png" class="main-blog-image" style="width: 250px" />
 
 Do you have some free time? Are you excited to get involved in the Dart and Flutter ecosystem? Then have I got a deal for you!
 

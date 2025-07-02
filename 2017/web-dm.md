@@ -2,7 +2,7 @@ Date: 12/29/2017
 
 # Returning to D&D
 
-<img src="http://sellsbrothers.com/public/post-images/2017/DnD_Logo.png" class="main-blog-image" style="width: 250px">
+<img src="/public/post-images/2017/DnD_Logo.png" class="main-blog-image" style="width: 250px">
 
 30 years ago, I paused a 5-year love of D&D to attend college. About six months ago, I picked it up again with my adult sons, who'd gathered for my birthday. We started with $20 on [the D&D 5e Starter Set](http://dnd.wizards.com/products/tabletop-games/rpg-products/rpg_starterset), which includes everything you need for a group to play: a subset of the 5th Edition D&D rules, a starter module, a set of pre-rolled characters and dice. My youngest son had learned all of the rules watching [Critical Role](https://geekandsundry.com/shows/critical-role/), so I lead the interactive story telling as the DM, asking him for the specific mechanics as needed.
 
