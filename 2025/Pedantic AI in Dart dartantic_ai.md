@@ -1,4 +1,6 @@
-Tags: flutter
+---
+tags: flutter, ai
+---
 
 # Pedantic AI in Dart: [dartantic_ai](https://pub.dev/packages/dartantic_ai)
 

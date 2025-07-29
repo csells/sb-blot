@@ -1,4 +1,6 @@
-Tags: flutter
+---
+tags: flutter, ai
+---
 
 # AI Agent with Dart + Gemini
 

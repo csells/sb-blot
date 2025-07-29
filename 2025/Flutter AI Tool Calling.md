@@ -1,4 +1,6 @@
-Tags: flutter
+---
+tags: flutter, ai
+---
 
 # Flutter AI Tool Calling
 

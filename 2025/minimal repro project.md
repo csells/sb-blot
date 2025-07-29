@@ -1,4 +1,6 @@
-Tags: tools
+---
+tags: tools
+---
 
 # How to Write Actionable Bug Reports
 

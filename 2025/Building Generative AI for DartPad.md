@@ -1,4 +1,6 @@
-Tags: flutter
+---
+tags: flutter, ai
+---
 
 # Building Generative AI for DartPad
 
