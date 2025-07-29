@@ -6,7 +6,7 @@ tags: flutter, ai
 
 <img src="_images/welcome-to-dartantic-1.0/gemini-dartantic-logo.jpg" class="main-blog-image" style="width: 250px" />
 
-Dartantic is an agentic framework designed to make building client and server-side apps in Dart with generative AI easier and more fun!
+[Dartantic](https://docs.dartantic.ai) is an agentic framework designed to make building client and server-side apps in Dart with generative AI easier and more fun!
 
 It works across providers (Google, OpenAI, Anthropic, etc) and runs anywhere your Dart code runs (Flutter desktop, Flutter mobile, Flutter web, CLI, server).
 
@@ -30,7 +30,7 @@ final tools = [
   ),
 ];
 
-// Agent chains tools automatically, no matte what provider you're using,
+// Agent chains tools automatically, no matter what provider you're using,
 // e.g. openai, google, openrouter or your custom provider. And if you want to
 // specify the model, you can, e.g. "openai:gpt-4o", "google:gemini-2.5-flash" or
 // "your-provider:your-model".
@@ -48,11 +48,11 @@ I had all of that working with Gemini and OpenAI LLMs three weeks ago. I just ne
 
 ## Building on langchain_dart
 
-It was three weeks ago when I first really dove into [the most excellent langchain_dart repo](https://github.com/davidmigloz/langchain_dart) from [David Miguel Lozano](https://github.com/davidmigloz). And when I did, I discovered that he was way ahead of me with features AND providers. There was a lot of Langchain stuff in there of course -- David had been very thorough -- but it also had a lovely compatibility layer over the set of LLM provider-specific Dart SDK packages (which David also built and maintained). So, on the day after a launched dartanic 0.9.7 at FlutterCon in New York, I sat down with Claude Code and carved my way into David's Langchain implementation, chipping away until I had extracted that compat-layer.
+It was three weeks ago when I first really dove into [the most excellent langchain_dart repo](https://github.com/davidmigloz/langchain_dart) from [David Miguel Lozano](https://github.com/davidmigloz). And when I did, I discovered that he was way ahead of me with features AND providers. There was a lot of Langchain stuff in there of course -- David had been very thorough -- but it also had a lovely compatibility layer over the set of LLM provider-specific Dart SDK packages (which David also built and maintained). So, on the day after I launched dartantic 0.9.7 at FlutterCon in New York, I sat down with Claude Code and carved my way into David's Langchain implementation, chipping away until I had extracted that compat-layer.
 
 And on top of that, I built dartantic_ai 1.0.
 
-As you can see from the most [epic CHANGELOG ever](https://pub.dev/packages/dartantic_ai/changelog#100), I learned a ton from David along the way, including:
+As you can see from [the most epic CHANGELOG ever](https://pub.dev/packages/dartantic_ai/changelog#100), I learned a ton from David along the way, including:
 
 - to use Dart types for typed output on the `Agent.sendFor<TOutput>` method instead of on the `Agent` itself so each LLM response can have it's own type
 - to use Dart types for typed input on tool calls on the parameterized `Tool<TInput>` type itself
@@ -71,7 +71,7 @@ On top of David's langchain work, I then built out a lot of new features for dar
 - custom providers that participate in the named lookup just like the built-in providers
 - typed output
 - typed tool input
-- typed ouput WITH tool calls WITH streaming ([progressive JSON rendering](https://github.com/csells/partial_json_expander) anyone?)
+- typed output WITH tool calls WITH streaming ([progressive JSON rendering](https://github.com/csells/partial_json_expander) anyone?)
 - multi-provider chat-compatible message format
 - thorough logging w/ easy setup and filtering
 - usage tracking
@@ -79,7 +79,7 @@ On top of David's langchain work, I then built out a lot of new features for dar
 
 You can see the nitty gritty in [the dartantic docs](https://docs.dartantic.ai).
 
-# What's Next
+## What's Next
 
 I've separated out [the core dartantic interfaces](https://github.com/csells/dartantic_ai/tree/main/packages/dartantic_interface) so that you can build a dartantic provider without depending on all of dartantic and so that I can make sure that dartantic continues to run everywhere that Dart runs. I'm working with [the nice folks at Cactus](https://cactuscompute.com/) to get their enterprise-grade local mobile-device-optimized LLMs into dartantic as a custom provider. I also want to [get a provider for firebase_ai in there](https://github.com/csells/dartantic_ai/issues/11) for my Flutter peeps who don't want to mess with API keys in their client apps.
 
@@ -106,7 +106,7 @@ I'm tracking [my ideas for the future of dartantic](https://github.com/csells/da
 
 ## Where Are We
 
-My goal with dartantic isn't for me to be a one-man band. The idea is that dartantic can grow with the AI needs of the Dart and Flutter community, while maintaining it's principles of multi-provider support, multi-platform support and fun!
+My goal with dartantic isn't for me to be a one-man band. The idea is that dartantic can grow with the AI needs of the Dart and Flutter community, while maintaining its principles of multi-provider support, multi-platform support and fun!
 
 Want to steer where dartantic goes? Hate something and want it fixed? Get involved! Here's how:
 - **Package**: [pub.dev/packages/dartantic_ai](https://pub.dev/packages/dartantic_ai)
